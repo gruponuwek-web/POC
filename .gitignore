@@ -1,0 +1,7 @@
+node_modules/
+dist/
+.env
+.env.local
+datos poc/csv/
+datos poc/*.xlsx
+datos poc/*.csv
