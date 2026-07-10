@@ -38,9 +38,14 @@ export default function TablaClientesPerdidos({ clientes, filtros, compact = fal
     setPage(0)
   }
 
-  const perdidosTodos = clientes.filter(c => effectiveStatus(c) === 'Perdido')
-  // Si hay mes seleccionado: mostrar clientes que cruzaron el umbral ese mes
-  // = clients whose ultima_compra month === mesFiltro - 4 (o sin compra si mes es el primero)
+  const perdidosTodos = clientes.filter(c => {
+    if (effectiveStatus(c) !== 'Perdido') return false
+    // Año 2025: solo perdidos que nunca compraron en 2026
+    if (filtros?.año === '2025') return !c.ultima_compra_2026
+    // Año 2026 / todos: todos los perdidos actuales (incluye los que su última compra fue en 2025)
+    return true
+  })
+  // Si hay mes seleccionado: clientes cuya última compra fue exactamente 4 meses antes
   const perdidos = mesFiltro
     ? perdidosTodos.filter(c => {
         if (!c.ultima_compra) return false

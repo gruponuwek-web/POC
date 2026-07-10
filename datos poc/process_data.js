@@ -438,6 +438,7 @@ function buildClienteTable(ventas2026, ventas2025, cartera, clientesNR) {
       variacion: v25cli > 0 ? ((c.ventas_2026 - v25cli) / v25cli * 100) : null,
       tickets: tks, ticket_promedio: tks > 0 ? c.ventas_2026 / tks : 0,
       ultima_compra, dias_sin_compra: diasUltima,
+      ultima_compra_2026: c.ultima_compra_2026,
       riesgo: diasUltima !== null ? (diasUltima >= 120 ? 'Alto' : diasUltima >= 60 ? 'Medio' : 'Bajo') : 'Sin datos'
     };
   }).sort((a, b) => b.ventas_2026 - a.ventas_2026);

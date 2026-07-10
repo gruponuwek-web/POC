@@ -134,12 +134,12 @@ export default function App() {
       : kpiAgentes.reduce((s, a) => s + (a.clientes_recuperados_2025 || 0), 0)
     const totalNuevos = es2025 ? nuevos2025 : filtros.año === 'todos' ? nuevos2026 + nuevos2025 : nuevos2026
     const totalRecup  = es2025 ? recup2025  : filtros.año === 'todos' ? recup2026  + recup2025  : recup2026
-    // Perdidos: sin compra en los últimos 120 días (4 meses) — respeta filtros año/mes/agente
+    // Perdidos: sin compra en los últimos 120 días — respeta filtros año/mes/agente
     const _esPerdido = c => c.status === 'Perdido' || !c.ultima_compra || c.dias_sin_compra >= 120
     const totalPerdidos = filtros.meses.length > 0
       ? kpiAgentes.reduce((s, a) => s + filtros.meses.reduce((sm, m) => sm + ((es2025 ? a.perdidos_al_mes_2025 : a.perdidos_al_mes)?.[m] || 0), 0), 0)
-      : es2025
-        ? kpiAgentes.reduce((s, a) => s + (a.clientes_perdidos_2025 || 0), 0)
+      : filtros.año === '2025'
+        ? clientesBase.filter(c => _esPerdido(c) && !c.ultima_compra_2026).length
         : clientesBase.filter(_esPerdido).length
 
     // Cumplimiento justo: solo agentes con meta asignada
