@@ -5,3 +5,4 @@ dist/
 datos poc/csv/
 datos poc/*.xlsx
 datos poc/*.csv
+datos poc/credentials.json

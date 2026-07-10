@@ -4,14 +4,35 @@ import { fmt } from '../utils/format.js'
 
 const MESES = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic']
 
-export default function ChartMargen({ kpi2026 }) {
-  const data = kpi2026.map(m => ({
-    mes: MESES[m.mes_num - 1],
-    Venta: Math.round(m.ventas),
-    Costo: Math.round(m.costo),
-    Margen: Math.round(m.margen),
-    'Margen %': Number(m.margen_pct.toFixed(1))
-  }))
+export default function ChartMargen({ kpi2026, kpiAgentes, año }) {
+  let data
+  if (año === '2025') {
+    const totMes = {}
+    ;(kpiAgentes || []).forEach(a => {
+      const v25 = a.ventas_2025_por_mes || {}
+      const c25 = a.costo_2025_por_mes  || {}
+      Object.keys(v25).forEach(m => {
+        const mn = parseInt(m)
+        if (!totMes[mn]) totMes[mn] = { venta: 0, costo: 0 }
+        totMes[mn].venta += v25[m] || 0
+        totMes[mn].costo += c25[m] || 0
+      })
+    })
+    const meses2025 = (kpi2026.length > 0 ? kpi2026.map(m => m.mes_num) : Object.keys(totMes).map(Number)).sort((a,b)=>a-b)
+    data = meses2025.map(mn => {
+      const t = totMes[mn] || { venta: 0, costo: 0 }
+      const margen = t.venta - t.costo
+      return { mes: MESES[mn-1], Venta: Math.round(t.venta), Costo: Math.round(t.costo), Margen: Math.round(margen), 'Margen %': t.venta > 0 ? Number((margen/t.venta*100).toFixed(1)) : 0 }
+    })
+  } else {
+    data = kpi2026.map(m => ({
+      mes: MESES[m.mes_num - 1],
+      Venta: Math.round(m.ventas),
+      Costo: Math.round(m.costo),
+      Margen: Math.round(m.margen),
+      'Margen %': Number(m.margen_pct.toFixed(1))
+    }))
+  }
 
   return (
     <div style={cardStyle}>

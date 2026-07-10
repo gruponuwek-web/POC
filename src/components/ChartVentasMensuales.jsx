@@ -4,15 +4,25 @@ import { fmt } from '../utils/format.js'
 
 const MESES = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic']
 
-export default function ChartVentasMensuales({ kpi2025, kpi2026, metas, filtros }) {
+export default function ChartVentasMensuales({ kpi2025, kpi2026, metas, filtros, año }) {
   const data = []
-  const meses = [...new Set([...kpi2025.map(m => m.mes_num), ...kpi2026.map(m => m.mes_num)])].sort((a,b) => a-b)
+  // Solo mostrar meses donde hay datos 2026 (filtra automáticamente con filtros de mes)
+  // Incluir 2025 donde exista para el mismo periodo
+  const meses2026 = new Set(kpi2026.map(m => m.mes_num))
+  const meses = [...new Set([...kpi2025.map(m => m.mes_num), ...kpi2026.map(m => m.mes_num)])]
+    .filter(m => meses2026.has(m))  // solo meses con datos 2026
+    .sort((a,b) => a-b)
+
+  // Filtrar metas por agente activo
+  const metasFiltradas = (metas || []).filter(m =>
+    m.año === 2026 &&
+    (filtros.agente === 'todos' || m.agente_nombre === filtros.agente)
+  )
 
   meses.forEach(mes => {
     const m25 = kpi2025.find(m => m.mes_num === mes)
     const m26 = kpi2026.find(m => m.mes_num === mes)
-    // suma metas de ese mes (todos agentes)
-    const metaMes = (metas || []).filter(m => m.mes_num === mes && m.año === 2026).reduce((s, m) => s + m.meta, 0)
+    const metaMes = metasFiltradas.filter(m => m.mes_num === mes).reduce((s, m) => s + m.meta, 0)
     const v26 = m26?.ventas || 0
     const v25 = m25?.ventas || 0
     data.push({
@@ -20,7 +30,7 @@ export default function ChartVentasMensuales({ kpi2025, kpi2026, metas, filtros 
       mes_num: mes,
       '2025': Math.round(v25),
       '2026': Math.round(v26),
-      Meta: Math.round(metaMes),
+      Meta: metaMes > 0 ? Math.round(metaMes) : null,
       var_pct: v25 > 0 ? ((v26 - v25) / v25 * 100).toFixed(1) : null,
       cumpl: metaMes > 0 ? ((v26 / metaMes) * 100).toFixed(1) : null
     })
@@ -55,9 +65,9 @@ export default function ChartVentasMensuales({ kpi2025, kpi2026, metas, filtros 
           <YAxis tickFormatter={v => `$${(v/1000000).toFixed(1)}M`} tick={{ fontSize: 10, fill: '#94a3b8' }} width={55} />
           <Tooltip content={customTooltip} />
           <Legend wrapperStyle={{ fontSize: 11 }} />
-          <Bar dataKey="2025" fill="#bfdbfe" name="2025" radius={[3,3,0,0]} maxBarSize={32} />
-          <Bar dataKey="2026" fill="#1a6cf0" name="2026" radius={[3,3,0,0]} maxBarSize={32} />
-          <Line type="monotone" dataKey="Meta" stroke="#f59e0b" strokeWidth={2} dot={{ r: 4, fill: '#f59e0b' }} name="Meta 2026" />
+          {año !== '2026' && <Bar dataKey="2025" fill="#bfdbfe" name="2025" radius={[3,3,0,0]} maxBarSize={32} />}
+          {año !== '2025' && <Bar dataKey="2026" fill="#1a6cf0" name="2026" radius={[3,3,0,0]} maxBarSize={32} />}
+          {año !== '2025' && <Line type="monotone" dataKey="Meta" stroke="#f59e0b" strokeWidth={2} dot={{ r: 4, fill: '#f59e0b' }} name="Meta 2026" />}
         </ComposedChart>
       </ResponsiveContainer>
     </div>

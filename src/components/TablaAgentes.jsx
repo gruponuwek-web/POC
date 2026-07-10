@@ -1,10 +1,36 @@
 import React, { useState } from 'react'
 import { fmt, semaforo, SEM_VENTA, SEM_COBERTURA } from '../utils/format.js'
 
-export default function TablaAgentes({ agentes, onSelectAgente, agenteSeleccionado }) {
+export default function TablaAgentes({ agentes, onSelectAgente, agenteSeleccionado, filtros }) {
   const [sortCol, setSortCol] = useState('cumplimiento_pct')
   const [sortDir, setSortDir] = useState(-1)
   const [search, setSearch] = useState('')
+  const es2025 = filtros?.año === '2025'
+
+  // Extrae métricas del año activo para cada agente
+  const av = (a) => {
+    if (!es2025) return a
+    const costo2025 = Object.values(a.costo_2025_por_mes || {}).reduce((s, v) => s + v, 0)
+    const v25 = a.ventas_2025 || 0
+    const t25 = a.tickets_2025 || 0
+    const at25 = a.clientes_atendidos_2025 || 0
+    return {
+      ...a,
+      ventas: v25,
+      meta: null,
+      diferencia_meta: null,
+      cumplimiento_pct: null,
+      clientes_atendidos: at25,
+      cobertura_pct: a.cartera_total > 0 ? at25 / a.cartera_total * 100 : null,
+      clientes_nuevos: a.clientes_nuevos_2025 || 0,
+      clientes_recuperados: a.clientes_recuperados_2025 || 0,
+      tickets: t25,
+      ticket_promedio: t25 > 0 ? v25 / t25 : 0,
+      costo: costo2025,
+      margen: v25 - costo2025,
+      margen_pct: v25 > 0 ? (v25 - costo2025) / v25 * 100 : 0,
+    }
+  }
 
   const sort = (col) => {
     if (sortCol === col) setSortDir(d => -d)
@@ -12,6 +38,7 @@ export default function TablaAgentes({ agentes, onSelectAgente, agenteSelecciona
   }
 
   const filtered = agentes
+    .map(av)
     .filter(a => a.agente.toLowerCase().includes(search.toLowerCase()))
     .sort((a, b) => {
       const va = a[sortCol] ?? -Infinity

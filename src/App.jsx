@@ -7,12 +7,14 @@ import ChartAgenteCuota from './components/ChartAgenteCuota.jsx'
 import ChartCobertura from './components/ChartCobertura.jsx'
 import ChartClientesNP from './components/ChartClientesNP.jsx'
 import ChartTickets from './components/ChartTickets.jsx'
+import ChartClientesPerdidos from './components/ChartClientesPerdidos.jsx'
 import ChartMargen from './components/ChartMargen.jsx'
 import TablaAgentes from './components/TablaAgentes.jsx'
 import TablaClientes from './components/TablaClientes.jsx'
 import AlertasPanel from './components/AlertasPanel.jsx'
 import LecturaTactica from './components/LecturaTactica.jsx'
 import CalidadDatos from './components/CalidadDatos.jsx'
+import TablaClientesPerdidos from './components/TablaClientesPerdidos.jsx'
 
 export default function App() {
   const [data, setData] = useState(null)
@@ -36,6 +38,9 @@ export default function App() {
 
   const dataFiltrada = useMemo(() => {
     if (!data) return null
+    const es2025 = filtros.año === '2025'
+    const mesMaxDatos = Math.max(...(data.resumen.meses_disponibles || [7]))
+    const mesCortePerdido = mesMaxDatos - 4
     let kpiAgentes = data.kpi_agentes
     let kpi2026 = data.kpi_mensual_2026
     let kpi2025 = data.kpi_mensual_2025
@@ -46,26 +51,96 @@ export default function App() {
       kpiAgentes = kpiAgentes.filter(a => a.agente === filtros.agente)
       clientes = clientes.filter(c => c.agente === filtros.agente)
       alertas = alertas.filter(a => !a.agente || a.agente === filtros.agente)
+      // Reconstruir kpi mensual desde los datos por mes del agente seleccionado
+      const ag = kpiAgentes[0]
+      if (ag) {
+        const MES_NOM = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre']
+        kpi2026 = Object.entries(ag.ventas_por_mes || {}).map(([m, ventas]) => {
+          const mesNum = parseInt(m)
+          const costo = ag.costo_por_mes?.[m] || 0
+          return { mes_num: mesNum, mes_nombre: MES_NOM[mesNum-1], año: 2026,
+            ventas, costo, tickets: ag.tickets_por_mes?.[m] || 0,
+            clientes: ag.clientes_por_mes?.[m] || 0,
+            margen: ventas - costo, margen_pct: ventas > 0 ? (ventas-costo)/ventas*100 : 0 }
+        }).sort((a,b) => a.mes_num - b.mes_num)
+        kpi2025 = Object.entries(ag.ventas_2025_por_mes || {}).map(([m, ventas]) => {
+          const mesNum = parseInt(m)
+          return { mes_num: mesNum, mes_nombre: MES_NOM[mesNum-1], año: 2025, ventas }
+        }).sort((a,b) => a.mes_num - b.mes_num)
+      }
     }
     if (filtros.meses.length > 0) {
       kpi2026 = kpi2026.filter(m => filtros.meses.includes(m.mes_num))
       kpi2025 = kpi2025.filter(m => filtros.meses.includes(m.mes_num))
+      // Recalcular kpiAgentes para los meses seleccionados
+      kpiAgentes = kpiAgentes.map(a => {
+        const ventas = filtros.meses.reduce((s, m) => s + (a.ventas_por_mes?.[m] || 0), 0)
+        const costo  = filtros.meses.reduce((s, m) => s + (a.costo_por_mes?.[m]  || 0), 0)
+        const tickets = filtros.meses.reduce((s, m) => s + (a.tickets_por_mes?.[m] || 0), 0)
+        const _idsCampo = es2025 ? 'clientes_ids_por_mes_2025' : 'clientes_ids_por_mes'
+        const _idsSet = new Set(filtros.meses.flatMap(m => a[_idsCampo]?.[m] || []))
+        const clientes_atendidos = _idsSet.size
+        const meta   = filtros.meses.reduce((s, m) => s + (a.meta_por_mes?.[m]   || 0), 0)
+        return {
+          ...a,
+          ventas, costo, tickets, clientes_atendidos, meta,
+          margen: ventas - costo,
+          margen_pct: ventas > 0 ? (ventas - costo) / ventas * 100 : 0,
+          diferencia_meta: ventas - meta,
+          cumplimiento_pct: meta > 0 ? ventas / meta * 100 : null,
+          ticket_promedio: tickets > 0 ? ventas / tickets : 0,
+        }
+      })
     }
+    // Snapshot antes del filtro de tipo — para KPI de perdidos (independiente de tipoCliente)
+    const clientesBase = clientes
+
     if (filtros.tipoCliente !== 'todos') {
       clientes = clientes.filter(c => (c.status || '').toLowerCase() === filtros.tipoCliente.toLowerCase())
     }
 
     // recalcular resumen con filtros
+    const meses2026Set = new Set(kpi2026.map(m => m.mes_num))
+    const mesesFiltro = filtros.meses.length > 0 ? filtros.meses : null
     const totalVenta = kpiAgentes.reduce((s, a) => s + (a.ventas || 0), 0)
     const totalMeta = kpiAgentes.reduce((s, a) => s + (a.meta || 0), 0)
     const totalCosto = kpiAgentes.reduce((s, a) => s + (a.costo || 0), 0)
-    const totalTickets = kpiAgentes.reduce((s, a) => s + (a.tickets || 0), 0)
-    const totalAtendidos = kpiAgentes.reduce((s, a) => s + (a.clientes_atendidos || 0), 0)
+    const costo2025 = kpiAgentes.reduce((s, a) => {
+      const byMes = a.costo_2025_por_mes || {}
+      if (mesesFiltro) return s + mesesFiltro.reduce((sm, m) => sm + (byMes[m] || 0), 0)
+      return s + Object.entries(byMes).filter(([m]) => meses2026Set.has(parseInt(m))).reduce((sm, [, v]) => sm + v, 0)
+    }, 0)
+    const mesesTickets = filtros.meses.length > 0 ? filtros.meses : [...meses2026Set]
+    const tickets2026 = kpiAgentes.reduce((s, a) => s + mesesTickets.reduce((sm, m) => sm + (a.tickets_por_mes?.[m] || 0), 0), 0)
+    const tickets2025 = kpiAgentes.reduce((s, a) => s + mesesTickets.reduce((sm, m) => sm + (a.tickets_2025_por_mes?.[m] || 0), 0), 0)
+    const totalTickets = es2025 ? tickets2025 : tickets2026
+    const totalAtendidos = es2025
+      ? kpiAgentes.reduce((s, a) => s + (a.clientes_atendidos_2025 || 0), 0)
+      : kpiAgentes.reduce((s, a) => s + (a.clientes_atendidos || 0), 0)
     const totalCartera = filtros.agente !== 'todos'
       ? kpiAgentes.reduce((s, a) => s + (a.cartera_total || 0), 0)
       : data.resumen.cartera_total
-    const totalNuevos = kpiAgentes.reduce((s, a) => s + (a.clientes_nuevos || 0), 0)
-    const totalRecup = kpiAgentes.reduce((s, a) => s + (a.clientes_recuperados || 0), 0)
+    const nuevos2026 = mesesFiltro
+      ? kpiAgentes.reduce((s, a) => s + mesesFiltro.reduce((sm, m) => sm + (a.nuevos_por_mes?.[m] || 0), 0), 0)
+      : kpiAgentes.reduce((s, a) => s + (a.clientes_nuevos || 0), 0)
+    const nuevos2025 = mesesFiltro
+      ? kpiAgentes.reduce((s, a) => s + mesesFiltro.reduce((sm, m) => sm + (a.nuevos_2025_por_mes?.[m] || 0), 0), 0)
+      : kpiAgentes.reduce((s, a) => s + (a.clientes_nuevos_2025 || 0), 0)
+    const recup2026 = mesesFiltro
+      ? kpiAgentes.reduce((s, a) => s + mesesFiltro.reduce((sm, m) => sm + (a.recup_por_mes?.[m] || 0), 0), 0)
+      : kpiAgentes.reduce((s, a) => s + (a.clientes_recuperados || 0), 0)
+    const recup2025 = mesesFiltro
+      ? kpiAgentes.reduce((s, a) => s + mesesFiltro.reduce((sm, m) => sm + (a.recup_2025_por_mes?.[m] || 0), 0), 0)
+      : kpiAgentes.reduce((s, a) => s + (a.clientes_recuperados_2025 || 0), 0)
+    const totalNuevos = es2025 ? nuevos2025 : filtros.año === 'todos' ? nuevos2026 + nuevos2025 : nuevos2026
+    const totalRecup  = es2025 ? recup2025  : filtros.año === 'todos' ? recup2026  + recup2025  : recup2026
+    // Perdidos: sin compra en los últimos 120 días (4 meses) — respeta filtros año/mes/agente
+    const _esPerdido = c => c.status === 'Perdido' || !c.ultima_compra || c.dias_sin_compra >= 120
+    const totalPerdidos = filtros.meses.length > 0
+      ? kpiAgentes.reduce((s, a) => s + filtros.meses.reduce((sm, m) => sm + ((es2025 ? a.perdidos_al_mes_2025 : a.perdidos_al_mes)?.[m] || 0), 0), 0)
+      : es2025
+        ? kpiAgentes.reduce((s, a) => s + (a.clientes_perdidos_2025 || 0), 0)
+        : clientesBase.filter(_esPerdido).length
 
     // Cumplimiento justo: solo agentes con meta asignada
     const agentesConMeta = kpiAgentes.filter(a => a.meta > 0)
@@ -75,18 +150,21 @@ export default function App() {
     // ── Comparación dinámica vs 2025 ──────────────────────────────────────────
     // Si hay filtro de agente: sumar ventas_2025_por_mes de ese agente para los meses activos
     // Si no: usar kpi2025 mensual ya filtrado por mes
+    // Comparación siempre al mismo periodo que kpi2026 activo (meses disponibles en 2026)
+    const meses2026Activos = new Set(kpi2026.map(m => m.mes_num))
     let venta2025_periodo
     if (filtros.agente !== 'todos') {
-      const mesesFiltro = filtros.meses.length > 0 ? new Set(filtros.meses) : null
       venta2025_periodo = kpiAgentes.reduce((s, a) => {
         const byMes = a.ventas_2025_por_mes || {}
-        const total = mesesFiltro
-          ? Object.entries(byMes).filter(([m]) => mesesFiltro.has(parseInt(m))).reduce((x, [, v]) => x + v, 0)
-          : (a.ventas_2025 || 0)
+        const total = Object.entries(byMes)
+          .filter(([m]) => meses2026Activos.has(parseInt(m)))
+          .reduce((x, [, v]) => x + v, 0)
         return s + total
       }, 0)
     } else {
-      venta2025_periodo = kpi2025.reduce((s, m) => s + (m.ventas || 0), 0)
+      venta2025_periodo = kpi2025
+        .filter(m => meses2026Activos.has(m.mes_num))
+        .reduce((s, m) => s + (m.ventas || 0), 0)
     }
     const diferencia_vs_2025 = totalVenta - venta2025_periodo
     const variacion_pct = venta2025_periodo > 0
@@ -110,25 +188,47 @@ export default function App() {
       total_costo: totalCosto,
       margen_monetario: totalVenta - totalCosto,
       margen_pct: totalVenta > 0 ? (totalVenta - totalCosto) / totalVenta * 100 : 0,
+      margen_monetario_2025: venta2025_periodo - costo2025,
+      margen_pct_2025: venta2025_periodo > 0 ? (venta2025_periodo - costo2025) / venta2025_periodo * 100 : 0,
       total_tickets: totalTickets,
       ticket_promedio: totalTickets > 0 ? totalVenta / totalTickets : 0,
+      total_tickets_2026: tickets2026,
+      total_tickets_2025: tickets2025,
+      ticket_promedio_2025: tickets2025 > 0 ? venta2025_periodo / tickets2025 : 0,
       clientes_atendidos: totalAtendidos,
       cartera_total: totalCartera,
+      cartera_total_empresa: data.resumen.cartera_total,
       cobertura_cartera_pct: totalCartera > 0 ? totalAtendidos / totalCartera * 100 : null,
       clientes_pendientes: Math.max(0, totalCartera - totalAtendidos),
       clientes_nuevos: totalNuevos,
       clientes_recuperados: totalRecup,
+      clientes_nuevos_2026: nuevos2026,
+      clientes_nuevos_2025: nuevos2025,
+      clientes_recuperados_2026: recup2026,
+      clientes_recuperados_2025: recup2025,
+      clientes_perdidos: totalPerdidos,
       // Comparación dinámica — se actualiza con cada filtro de mes/agente
       total_venta_2025_mismo_periodo: venta2025_periodo,
       diferencia_vs_2025,
       variacion_interanual: variacion_pct,
       periodo_comparacion: periodo_label,
+      filtro_label: filtros.meses.length > 0
+        ? `${mesesActivos} ${filtros.año !== 'todos' ? filtros.año : '2025/2026'}`
+        : filtros.año !== 'todos'
+          ? `Año ${filtros.año} · ${mesesActivos}`
+          : `Total acumulado · ${mesesActivos}`,
     }
 
-    return { resumen, kpiAgentes, kpi2026, kpi2025, clientes, alertas }
+    // NR por mes: filtrar por agente si está activo
+    const nrPorMes = filtros.agente !== 'todos'
+      ? (data.clientes_nr_por_agente?.[filtros.agente] || [])
+      : data.clientes_nr_por_mes
+
+    return { resumen, kpiAgentes, kpi2026, kpi2025, clientes, alertas, nrPorMes, año: filtros.año }
   }, [data, filtros])
 
-  const limpiarFiltros = () => setFiltros({ año: 'todos', meses: [], agente: 'todos', tipoCliente: 'todos' })
+  const [mesPerdidoSel, setMesPerdidoSel] = useState(null)
+  const limpiarFiltros = () => { setFiltros({ año: 'todos', meses: [], agente: 'todos', tipoCliente: 'todos' }); setMesPerdidoSel(null) }
 
   if (loading) return (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', flexDirection: 'column', gap: 16 }}>
@@ -162,26 +262,37 @@ export default function App() {
           <KPIRow resumen={dataFiltrada.resumen} />
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
-            <ChartVentasMensuales kpi2025={dataFiltrada.kpi2025} kpi2026={dataFiltrada.kpi2026} metas={data.metas} filtros={filtros} />
+            <ChartVentasMensuales kpi2025={dataFiltrada.kpi2025} kpi2026={dataFiltrada.kpi2026} metas={data.metas} filtros={filtros} año={dataFiltrada.año} />
             <ChartAgenteCuota agentes={dataFiltrada.kpiAgentes} />
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16, marginBottom: 16 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
             <ChartCobertura agentes={dataFiltrada.kpiAgentes} />
-            <ChartClientesNP kpi2026={dataFiltrada.kpi2026} clientesNR={data.clientes_nr} filtros={filtros} />
-            <ChartTickets kpi2026={dataFiltrada.kpi2026} />
+            <ChartClientesNP kpi2026={dataFiltrada.kpi2026} clientesNR={data.clientes_nr} nrPorMes={dataFiltrada.nrPorMes} filtros={filtros} año={dataFiltrada.año} />
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.6fr', gap: 16, marginBottom: 16 }}>
+            <ChartClientesPerdidos kpiAgentes={dataFiltrada.kpiAgentes} año={filtros.año} filtros={filtros}
+              mesesConDatos={filtros.año === '2025'
+                ? dataFiltrada.kpi2025.map(m => m.mes_num)
+                : dataFiltrada.kpi2026.map(m => m.mes_num)}
+              mesSel={mesPerdidoSel}
+              onMesClick={(m) => setMesPerdidoSel(prev => prev === m ? null : m)} />
+            <TablaClientesPerdidos clientes={dataFiltrada.clientes} filtros={filtros} compact={true} mesFiltro={mesPerdidoSel} onClearMes={() => setMesPerdidoSel(null)} />
           </div>
 
-          <div style={{ marginBottom: 16 }}>
-            <ChartMargen kpi2026={dataFiltrada.kpi2026} />
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
+            <ChartTickets kpi2026={dataFiltrada.kpi2026} kpi2025={dataFiltrada.kpi2025} kpiAgentes={dataFiltrada.kpiAgentes} año={filtros.año} />
+            <ChartMargen kpi2026={dataFiltrada.kpi2026} kpiAgentes={dataFiltrada.kpiAgentes} año={filtros.año} />
           </div>
+
+
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 16, marginBottom: 16 }}>
-            <TablaAgentes agentes={dataFiltrada.kpiAgentes} onSelectAgente={(ag) => setFiltros(f => ({ ...f, agente: f.agente === ag ? 'todos' : ag }))} agenteSeleccionado={filtros.agente} />
+            <TablaAgentes agentes={dataFiltrada.kpiAgentes} onSelectAgente={(ag) => setFiltros(f => ({ ...f, agente: f.agente === ag ? 'todos' : ag }))} agenteSeleccionado={filtros.agente} filtros={filtros} />
           </div>
 
           <div style={{ marginBottom: 16 }}>
-            <TablaClientes clientes={dataFiltrada.clientes} />
+            <TablaClientes clientes={dataFiltrada.clientes} filtros={filtros} />
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>

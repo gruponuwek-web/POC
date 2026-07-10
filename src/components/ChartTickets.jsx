@@ -4,12 +4,34 @@ import { fmt } from '../utils/format.js'
 
 const MESES = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic']
 
-export default function ChartTickets({ kpi2026 }) {
-  const data = kpi2026.map(m => ({
-    mes: MESES[m.mes_num - 1],
-    Tickets: m.tickets,
-    'Ticket Prom.': Math.round(m.ticket_promedio)
-  }))
+export default function ChartTickets({ kpi2026, kpi2025, kpiAgentes, año }) {
+  let data
+  if (año === '2025') {
+    // Agregar tickets_2025_por_mes de los agentes filtrados
+    const totalesMes = {}, ventaMes = {}
+    ;(kpiAgentes || []).forEach(a => {
+      Object.entries(a.tickets_2025_por_mes || {}).forEach(([m, v]) => {
+        const mn = parseInt(m)
+        totalesMes[mn] = (totalesMes[mn] || 0) + v
+      })
+      Object.entries(a.ventas_2025_por_mes || {}).forEach(([m, v]) => {
+        const mn = parseInt(m)
+        ventaMes[mn] = (ventaMes[mn] || 0) + v
+      })
+    })
+    const meses2025 = (kpi2025 || []).map(m => m.mes_num)
+    data = meses2025.map(mn => {
+      const t = totalesMes[mn] || 0
+      const v = ventaMes[mn] || 0
+      return { mes: MESES[mn - 1], Tickets: t, 'Ticket Prom.': t > 0 ? Math.round(v / t) : 0 }
+    })
+  } else {
+    data = kpi2026.map(m => ({
+      mes: MESES[m.mes_num - 1],
+      Tickets: m.tickets,
+      'Ticket Prom.': Math.round(m.ticket_promedio)
+    }))
+  }
 
   return (
     <div style={cardStyle}>

@@ -2,24 +2,35 @@ import React, { useState } from 'react'
 import { fmt } from '../utils/format.js'
 
 const STATUS_COLOR = {
-  'Nuevo': { bg:'#dcfce7', color:'#15803d' },
+  'Nuevo':      { bg:'#dcfce7', color:'#15803d' },
   'Recuperado': { bg:'#dbeafe', color:'#1d4ed8' },
-  'Activo': { bg:'#f0fdf4', color:'#166534' },
-  'Perdido': { bg:'#fee2e2', color:'#b91c1c' },
+  'Activo':     { bg:'#f0fdf4', color:'#166534' },
+  'Perdido':    { bg:'#fee2e2', color:'#b91c1c' },
+  'Sin venta':  { bg:'#fef9c3', color:'#a16207' },
 }
 const RIESGO_COLOR = {
-  'Alto': { bg:'#fee2e2', color:'#b91c1c' },
-  'Medio': { bg:'#fef9c3', color:'#a16207' },
-  'Bajo': { bg:'#dcfce7', color:'#15803d' },
+  'Alto':      { bg:'#fee2e2', color:'#b91c1c' },
+  'Medio':     { bg:'#fef9c3', color:'#a16207' },
+  'Bajo':      { bg:'#dcfce7', color:'#15803d' },
   'Sin datos': { bg:'#f1f5f9', color:'#64748b' }
 }
 
-export default function TablaClientes({ clientes }) {
+function effectiveStatus(c) {
+  if (c.status === 'Perdido') return 'Perdido'
+  if (!c.ultima_compra || c.dias_sin_compra >= 120) return 'Perdido'
+  if ((c.ventas_2026 ?? 0) === 0) return 'Sin venta'
+  return c.status
+}
+
+export default function TablaClientes({ clientes, filtros }) {
   const [search, setSearch] = useState('')
+  const [statusFilter, setStatusFilter] = useState('todos')
   const [sortCol, setSortCol] = useState('ventas_2026')
   const [sortDir, setSortDir] = useState(-1)
   const [page, setPage] = useState(0)
   const PER_PAGE = 20
+
+  const es2025 = filtros?.año === '2025'
 
   const sort = (col) => {
     if (sortCol === col) setSortDir(d => -d)
@@ -29,6 +40,7 @@ export default function TablaClientes({ clientes }) {
 
   const filtered = clientes
     .filter(c => `${c.cliente_nombre} ${c.agente}`.toLowerCase().includes(search.toLowerCase()))
+    .filter(c => statusFilter === 'todos' || effectiveStatus(c) === statusFilter)
     .sort((a, b) => {
       const va = a[sortCol] ?? -Infinity
       const vb = b[sortCol] ?? -Infinity
@@ -38,6 +50,13 @@ export default function TablaClientes({ clientes }) {
   const total = filtered.length
   const paged = filtered.slice(page * PER_PAGE, (page + 1) * PER_PAGE)
   const totalPages = Math.ceil(total / PER_PAGE)
+
+  // Conteo por status para los badges
+  const counts = clientes.reduce((acc, c) => {
+    const s = effectiveStatus(c)
+    acc[s] = (acc[s] || 0) + 1
+    return acc
+  }, {})
 
   const exportCSV = () => {
     const cols = ['cliente_nombre','agente','status','ventas_2026','ventas_2025','variacion','tickets','ticket_promedio','ultima_compra','dias_sin_compra','riesgo']
@@ -52,17 +71,44 @@ export default function TablaClientes({ clientes }) {
   })
   const td = { padding:'6px 10px', fontSize:11, color:'#334155', borderBottom:'1px solid #f1f5f9', whiteSpace:'nowrap' }
 
+  const STATUSES = ['Activo','Nuevo','Recuperado','Perdido','Sin venta']
+
   return (
     <div style={{ background:'#fff',borderRadius:10,border:'1.5px solid #e2e8f0',boxShadow:'0 1px 4px rgba(0,0,0,.05)',overflow:'hidden' }}>
       <div style={{ background:'#0f1f3d',padding:'12px 16px',display:'flex',alignItems:'center',gap:12,flexWrap:'wrap' }}>
         <span style={{ fontSize:12,fontWeight:700,color:'#fff',textTransform:'uppercase',letterSpacing:'.5px' }}>👤 Detalle de Clientes</span>
         <span style={{ fontSize:11,color:'rgba(255,255,255,.5)' }}>{total} clientes</span>
+
+        {/* Filtro rápido por estatus */}
+        <div style={{ display:'flex', gap:4, flexWrap:'wrap' }}>
+          {['todos', ...STATUSES].map(s => {
+            const cnt = s === 'todos' ? clientes.length : (counts[s] || 0)
+            const active = statusFilter === s
+            const statusBg = s === 'Perdido' ? '#b91c1c' : s === 'Sin venta' ? '#a16207' : s === 'Nuevo' ? '#15803d' : s === 'Recuperado' ? '#1d4ed8' : s === 'Activo' ? '#166534' : '#1a6cf0'
+            return (
+              <button key={s} onClick={() => { setStatusFilter(s); setPage(0) }} style={{
+                padding:'3px 9px', borderRadius:10, fontSize:10, fontWeight:700, cursor:'pointer', border:'none',
+                background: active ? (s === 'todos' ? '#1a6cf0' : statusBg) : 'rgba(255,255,255,.12)',
+                color: active ? '#fff' : 'rgba(255,255,255,.6)',
+                transition:'all .15s'
+              }}>
+                {s === 'todos' ? 'Todos' : s} {cnt > 0 ? `(${cnt})` : ''}
+              </button>
+            )
+          })}
+        </div>
+
         <input
           placeholder="Buscar cliente o agente..."
           value={search}
           onChange={e => { setSearch(e.target.value); setPage(0) }}
           style={{ padding:'5px 10px',borderRadius:6,border:'1px solid rgba(255,255,255,.2)',background:'rgba(255,255,255,.1)',color:'#fff',fontSize:12,outline:'none',width:200 }}
         />
+        {filtros?.meses?.length > 0 && (
+          <span style={{ fontSize:10, color:'rgba(255,255,255,.5)', fontStyle:'italic' }}>
+            * Tabla muestra totales anuales · filtro de mes en gráficas
+          </span>
+        )}
         <button onClick={exportCSV} style={{ marginLeft:'auto',padding:'5px 12px',borderRadius:6,border:'1px solid rgba(255,255,255,.2)',background:'rgba(255,255,255,.1)',color:'#fff',fontSize:11,fontWeight:600,cursor:'pointer' }}>
           ⬇️ Exportar CSV
         </button>
@@ -71,8 +117,20 @@ export default function TablaClientes({ clientes }) {
         <table style={{ width:'100%',borderCollapse:'collapse' }}>
           <thead>
             <tr style={{ background:'#0f1f3d' }}>
-              {[['cliente_nombre','Cliente'],['agente','Agente'],['status','Estatus'],['ventas_2026','Venta 2026'],['ventas_2025','Venta 2025'],['variacion','Var. %'],['tickets','Tickets'],['ticket_promedio','Tkt. Prom.'],['ultima_compra','Últ. Compra'],['dias_sin_compra','Días sin compra'],['riesgo','Riesgo']].map(([col, label]) => (
-                <th key={col} style={thStyle(col)} onClick={() => sort(col)}>
+              {[
+                ['cliente_nombre','Cliente'],
+                ['agente','Agente'],
+                ['status','Estatus'],
+                es2025 ? ['ventas_2025','Venta 2025'] : ['ventas_2026','Venta 2026'],
+                es2025 ? ['ventas_2026','Venta 2026'] : ['ventas_2025','Venta 2025'],
+                ['variacion','Var. %'],
+                ['tickets','Tickets'],
+                ['ticket_promedio','Tkt. Prom.'],
+                ['ultima_compra','Últ. Compra'],
+                ['dias_sin_compra','Días sin compra'],
+                ['riesgo','Riesgo']
+              ].map(([col, label]) => (
+                <th key={col+label} style={thStyle(col)} onClick={() => sort(col)}>
                   {label}{sortCol === col ? (sortDir > 0 ? ' ↑' : ' ↓') : ''}
                 </th>
               ))}
@@ -80,17 +138,20 @@ export default function TablaClientes({ clientes }) {
           </thead>
           <tbody>
             {paged.map((c, i) => {
-              const sc = STATUS_COLOR[c.status] || STATUS_COLOR['Activo']
+              const st = effectiveStatus(c)
+              const sc = STATUS_COLOR[st] || STATUS_COLOR['Activo']
               const rc = RIESGO_COLOR[c.riesgo] || RIESGO_COLOR['Sin datos']
+              const v1 = es2025 ? c.ventas_2025 : c.ventas_2026
+              const v2 = es2025 ? c.ventas_2026 : c.ventas_2025
               return (
                 <tr key={c.cliente_nombre + i} style={{ background: i % 2 === 0 ? '#fff' : '#f8fafc' }}>
                   <td style={{ ...td, fontWeight:600, maxWidth:220, overflow:'hidden', textOverflow:'ellipsis' }}>{c.cliente_nombre}</td>
                   <td style={{ ...td, fontSize:10 }}>{c.agente}</td>
                   <td style={td}>
-                    <span style={{ background:sc.bg,color:sc.color,padding:'2px 7px',borderRadius:10,fontSize:10,fontWeight:700 }}>{c.status}</span>
+                    <span style={{ background:sc.bg,color:sc.color,padding:'2px 7px',borderRadius:10,fontSize:10,fontWeight:700 }}>{st}</span>
                   </td>
-                  <td style={{ ...td, fontWeight:600 }}>{fmt.moneda(c.ventas_2026)}</td>
-                  <td style={td}>{fmt.moneda(c.ventas_2025)}</td>
+                  <td style={{ ...td, fontWeight:600 }}>{fmt.moneda(v1)}</td>
+                  <td style={td}>{fmt.moneda(v2)}</td>
                   <td style={{ ...td, color: c.variacion > 0 ? '#15803d' : c.variacion < 0 ? '#b91c1c' : '#64748b', fontWeight:600 }}>
                     {c.variacion != null ? `${c.variacion >= 0 ? '+' : ''}${c.variacion.toFixed(1)}%` : '—'}
                   </td>
