@@ -1,0 +1,71 @@
+.vend-block {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: 10px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+.vend-hdr {
+  background: var(--surface);
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: background .12s;
+}
+.vend-hdr:hover { background: var(--surface2); }
+.vend-body {
+  padding: 16px 20px;
+  background: var(--surface2);
+  border-top: 1px solid var(--border);
+}
+
+/* Steps */
+.vstep {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  cursor: pointer;
+  background: var(--surface);
+  transition: all .15s;
+}
+.vstep:hover  { border-color: var(--accent); color: var(--accent); }
+.vstep.active { background: var(--accent-light); color: var(--accent-text); border-color: var(--accent); }
+.vstep.done   { background: var(--success-light); color: var(--success); border-color: var(--success); }
+
+/* KPI rows */
+.kpi-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+  color: var(--text2);
+}
+.kpi-row:last-child { border-bottom: none; }
+.kpi-btn {
+  padding: 3px 12px;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  cursor: pointer;
+  font-size: 14px;
+  transition: all .12s;
+}
+.kpi-btn:hover { background: var(--surface2); }
+.kpi-btn.si { background: var(--success-light); border-color: var(--success); }
+.kpi-btn.no { background: var(--danger-light);  border-color: var(--danger); }
+
+/* Acción card dentro del flujo */
+.accion-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px;
+  margin-bottom: 10px;
+  background: var(--surface);
+}

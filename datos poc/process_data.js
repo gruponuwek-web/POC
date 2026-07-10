@@ -247,11 +247,15 @@ function buildKPIAgente(ventas2026, ventas2025, metas, cartera, clientesNR) {
   // Último mes de compra por cliente: combinado 2026 (mes 1-12) y 2025 (mes -11 a 0, donde dic2025=0)
   const mesMaxAg = ventas2026.length ? Math.max(...ventas2026.map(v => v.mes_num)) : 0;
   const mesCortePerdidoAg = mesMaxAg - 4;
-  const ultimoMesAg = {}; // agente → cliente → último mes (2026: 1-12, 2025: mes-12 → dic=-0... ene=-11)
+  const ultimoMesAg = {}; // agente → cliente → último mes (2026: 1-12, 2025: mes-12 → dic=0... ene=-11)
+  const ultimoMesGlobal = {}; // cliente → último mes global (misma escala, todos los agentes)
   ventas2026.forEach(v => {
+    if (v.solo_presencia) return; // solo visita, no compra real
+    if (!AGENTES_COMERCIALES.has(v.agente_nombre)) return;
     const ag = v.agente_nombre; const k = v.cliente_num || v.cliente_nombre;
     if (!ultimoMesAg[ag]) ultimoMesAg[ag] = {};
     if (ultimoMesAg[ag][k] === undefined || v.mes_num > ultimoMesAg[ag][k]) ultimoMesAg[ag][k] = v.mes_num;
+    if (ultimoMesGlobal[k] === undefined || v.mes_num > ultimoMesGlobal[k]) ultimoMesGlobal[k] = v.mes_num;
   });
   ventas2025.forEach(v => {
     if (!AGENTES_COMERCIALES.has(v.agente_nombre)) return;
@@ -259,6 +263,7 @@ function buildKPIAgente(ventas2026, ventas2025, metas, cartera, clientesNR) {
     const mesRel = v.mes_num - 12; // dic2025=0, nov=-1, ... ene=-11
     if (!ultimoMesAg[ag]) ultimoMesAg[ag] = {};
     if (ultimoMesAg[ag][k] === undefined || mesRel > ultimoMesAg[ag][k]) ultimoMesAg[ag][k] = mesRel;
+    if (ultimoMesGlobal[k] === undefined || mesRel > ultimoMesGlobal[k]) ultimoMesGlobal[k] = mesRel;
   });
   // Referencia por agente: cartera asignada + clientes de 2025 de ese agente
   const cli2025ByAgent = {};
@@ -290,10 +295,11 @@ function buildKPIAgente(ventas2026, ventas2025, metas, cartera, clientesNR) {
     // cliente en riesgo: último mes compra (2026 o 2025-relativo) <= corte
     const perdidosAg = [...refClientes].filter(c => { const u = uMes[c]; return u === undefined || u <= mesCortePerdidoAg; }).length;
     // perdidos_al_mes[mes] = clientes que cruzaron el umbral de 4 meses SIN compra exactamente ese mes
+    // Usa último mes GLOBAL (cualquier agente) para coincidir con la tabla de clientes
     const perdidos_al_mes = {};
     for (let m = 1; m <= 12; m++) {
       const exacto = m - 4;
-      perdidos_al_mes[m] = [...refClientes].filter(c => { const u = uMes[c]; return u !== undefined && u === exacto; }).length;
+      perdidos_al_mes[m] = [...refClientes].filter(c => { const u = ultimoMesGlobal[c]; return u !== undefined && u === exacto; }).length;
     }
     // perdidos_al_mes_2025: meses 5-12 de 2025 (sin datos 2024 no podemos calcular 1-4)
     const uMes25 = ultimoMes25Ag[a.agente] || {};
@@ -362,13 +368,14 @@ function buildClienteTable(ventas2026, ventas2025, cartera, clientesNR) {
     const key = v.cliente_num || v.cliente_nombre;
     if (!byClient[key]) byClient[key] = {
       cliente_num: v.cliente_num, cliente_nombre: v.cliente_nombre, agente: v.agente_nombre,
-      ventas_2026: 0, costo_2026: 0, tickets_2026: new Set(),
+      ventas_2026: 0, costo_2026: 0, tickets_2026: new Set(), meses_activos_2026: new Set(),
       ultima_compra_2026: null, ultima_compra_2025: null
     };
     byClient[key].ventas_2026 += v.importe;
     byClient[key].costo_2026  += v.costo;
     if (!v.solo_presencia) {
       byClient[key].tickets_2026.add(v.folio_key);
+      byClient[key].meses_activos_2026.add(v.mes_num);
       const fd = new Date(v.fecha);
       if (!byClient[key].ultima_compra_2026 || fd > new Date(byClient[key].ultima_compra_2026))
         byClient[key].ultima_compra_2026 = v.fecha;
@@ -378,19 +385,22 @@ function buildClienteTable(ventas2026, ventas2025, cartera, clientesNR) {
   // ── Paso 2: acumular datos de 2025 (última compra + ventas totales) ─────────
   const v25ventas = {};
   const v25ultima = {};
+  const v25meses = {};
   ventas2025.forEach(v => {
     const key = v.cliente_num || v.cliente_nombre;
     v25ventas[key] = (v25ventas[key] || 0) + v.importe;
     if (!v.solo_presencia) {
       const fd = new Date(v.fecha);
       if (!v25ultima[key] || fd > new Date(v25ultima[key])) v25ultima[key] = v.fecha;
+      if (!v25meses[key]) v25meses[key] = new Set();
+      v25meses[key].add(v.mes_num);
     }
   });
 
   // ── Paso 3: agregar clientes de 2025 que no aparecen en 2026 ────────────────
   const clienteRef = (num, nombre, agente) => ({
     cliente_num: num, cliente_nombre: nombre, agente,
-    ventas_2026: 0, costo_2026: 0, tickets_2026: new Set(),
+    ventas_2026: 0, costo_2026: 0, tickets_2026: new Set(), meses_activos_2026: new Set(),
     ultima_compra_2026: null, ultima_compra_2025: null
   });
   ventas2025.forEach(v => {
@@ -430,13 +440,16 @@ function buildClienteTable(ventas2026, ventas2025, cartera, clientesNR) {
     if (id && nuevosValidados.has(id)) status = 'Nuevo';
     else if (id && recupValidados.has(id)) status = 'Recuperado';
     else if (!v25cli && !id) status = 'Nuevo';
+    const origen = status; // preservar antes de sobreescribir con Perdido
     // Perdido = sin compra en ninguno de los dos años en los últimos 4 meses
     if (!ultima_compra || diasUltima >= DIAS_PERDIDO) status = 'Perdido';
     return {
-      cliente_num: c.cliente_num, cliente_nombre: c.cliente_nombre, agente: c.agente, status,
+      cliente_num: c.cliente_num, cliente_nombre: c.cliente_nombre, agente: c.agente, status, origen,
       ventas_2026: c.ventas_2026, ventas_2025: v25cli,
       variacion: v25cli > 0 ? ((c.ventas_2026 - v25cli) / v25cli * 100) : null,
       tickets: tks, ticket_promedio: tks > 0 ? c.ventas_2026 / tks : 0,
+      meses_activos_2026: c.meses_activos_2026.size,
+      meses_activos_2025: v25meses[key] ? v25meses[key].size : 0,
       ultima_compra, dias_sin_compra: diasUltima,
       ultima_compra_2026: c.ultima_compra_2026,
       riesgo: diasUltima !== null ? (diasUltima >= 120 ? 'Alto' : diasUltima >= 60 ? 'Medio' : 'Bajo') : 'Sin datos'

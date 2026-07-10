@@ -134,13 +134,31 @@ export default function App() {
       : kpiAgentes.reduce((s, a) => s + (a.clientes_recuperados_2025 || 0), 0)
     const totalNuevos = es2025 ? nuevos2025 : filtros.año === 'todos' ? nuevos2026 + nuevos2025 : nuevos2026
     const totalRecup  = es2025 ? recup2025  : filtros.año === 'todos' ? recup2026  + recup2025  : recup2026
-    // Perdidos: sin compra en los últimos 120 días — respeta filtros año/mes/agente
+    // Perdidos: siempre desde clientesBase (clientes únicos) — evita doble conteo por agente
     const _esPerdido = c => c.status === 'Perdido' || !c.ultima_compra || c.dias_sin_compra >= 120
-    const totalPerdidos = filtros.meses.length > 0
-      ? kpiAgentes.reduce((s, a) => s + filtros.meses.reduce((sm, m) => sm + ((es2025 ? a.perdidos_al_mes_2025 : a.perdidos_al_mes)?.[m] || 0), 0), 0)
-      : filtros.año === '2025'
-        ? clientesBase.filter(c => _esPerdido(c) && !c.ultima_compra_2026).length
-        : clientesBase.filter(_esPerdido).length
+    const mesesDisp = data.resumen.meses_disponibles || [1,2,3,4,5,6,7]
+    const relMesKPI = (fecha) => { const d = new Date(fecha); return (d.getFullYear() - 2026) * 12 + (d.getMonth() + 1) }
+    let totalPerdidos
+    if (filtros.año === 'todos' && filtros.meses.length === 0) {
+      totalPerdidos = clientesBase.filter(_esPerdido).length
+    } else if (filtros.meses.length > 0) {
+      totalPerdidos = clientesBase.filter(c => {
+        if (!_esPerdido(c) || !c.ultima_compra) return false
+        const rm = relMesKPI(c.ultima_compra)
+        return filtros.meses.some(m => rm === m - 4)
+      }).length
+    } else if (filtros.año === '2025') {
+      totalPerdidos = clientesBase.filter(c => _esPerdido(c) && !c.ultima_compra_2026).length
+    } else {
+      // año='2026': clientes cuya ultima_compra cae en el rango de meses disponibles
+      const minRel = Math.min(...mesesDisp) - 4
+      const maxRel = Math.max(...mesesDisp) - 4
+      totalPerdidos = clientesBase.filter(c => {
+        if (!_esPerdido(c) || !c.ultima_compra) return false
+        const rm = relMesKPI(c.ultima_compra)
+        return rm >= minRel && rm <= maxRel
+      }).length
+    }
 
     // Cumplimiento justo: solo agentes con meta asignada
     const agentesConMeta = kpiAgentes.filter(a => a.meta > 0)
@@ -271,13 +289,14 @@ export default function App() {
             <ChartClientesNP kpi2026={dataFiltrada.kpi2026} clientesNR={data.clientes_nr} nrPorMes={dataFiltrada.nrPorMes} filtros={filtros} año={dataFiltrada.año} />
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.6fr', gap: 16, marginBottom: 16 }}>
-            <ChartClientesPerdidos kpiAgentes={dataFiltrada.kpiAgentes} año={filtros.año} filtros={filtros}
+            <ChartClientesPerdidos kpiAgentes={dataFiltrada.kpiAgentes} clientes={dataFiltrada.clientes} año={filtros.año} filtros={filtros}
               mesesConDatos={filtros.año === '2025'
                 ? dataFiltrada.kpi2025.map(m => m.mes_num)
                 : dataFiltrada.kpi2026.map(m => m.mes_num)}
               mesSel={mesPerdidoSel}
               onMesClick={(m) => setMesPerdidoSel(prev => prev === m ? null : m)} />
-            <TablaClientesPerdidos clientes={dataFiltrada.clientes} filtros={filtros} compact={true} mesFiltro={mesPerdidoSel} onClearMes={() => setMesPerdidoSel(null)} />
+            <TablaClientesPerdidos clientes={dataFiltrada.clientes} filtros={filtros} compact={true} mesFiltro={mesPerdidoSel} onClearMes={() => setMesPerdidoSel(null)}
+              mesesConDatos={filtros.año === '2025' ? dataFiltrada.kpi2025.map(m => m.mes_num) : dataFiltrada.kpi2026.map(m => m.mes_num)} />
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
@@ -297,14 +316,20 @@ export default function App() {
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
             <AlertasPanel alertas={dataFiltrada.alertas} />
-            <LecturaTactica hallazgos={data.lectura_tactica} resumen={dataFiltrada.resumen} />
+            <LecturaTactica resumen={dataFiltrada.resumen} filtros={filtros} />
           </div>
 
           <CalidadDatos data={data} />
         </main>
       )}
 
-      {activeModule === 'wbr' && <ProximamentePage titulo="WBR — Weekly Business Review" icono="📅" />}
+      {activeModule === 'wbr' && (
+        <iframe
+          src="/wbr/index.html"
+          style={{ width: '100%', height: 'calc(100vh - 56px)', border: 'none', display: 'block' }}
+          title="WBR Portal"
+        />
+      )}
       {activeModule === 'scorecard' && <ProximamentePage titulo="Balanced Scorecard" icono="⚖️" />}
     </div>
   )
