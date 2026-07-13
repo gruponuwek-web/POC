@@ -143,6 +143,38 @@ function buildClientesSobre3000(ventas) {
   return result;
 }
 
+// ── Ticket promedio de clientes nuevos por mes ────────────────────────────────
+// Cruza clientesNR (status=Nuevo, añoActual) con ventas del mismo mes.
+// Match primario por cliente_num; fallback por cliente_nombre para los que no tienen ID.
+function buildTicketPromedioNuevos(ventasActual, clientesNR, añoActual) {
+  // Paso 1: agrupar clientes nuevos por mes — IDs y nombres por separado
+  const nuevosPorMes = {};
+  clientesNR.filter(c => c.año === añoActual && c.status === 'Nuevo').forEach(c => {
+    const id  = (c.cliente_num || '').trim();
+    const nom = c.cliente_nombre || '';
+    if (!id && !nom) return;
+    if (!nuevosPorMes[c.mes_num]) nuevosPorMes[c.mes_num] = { ids: new Set(), nombres: new Set() };
+    if (id) nuevosPorMes[c.mes_num].ids.add(id);
+    else    nuevosPorMes[c.mes_num].nombres.add(nom);
+  });
+
+  // Paso 2: para cada mes, calcular ticket promedio de esos clientes en ventas
+  const result = {};
+  Object.entries(nuevosPorMes).forEach(([mes, { ids, nombres }]) => {
+    const mesNum = parseInt(mes);
+    const lineas = ventasActual.filter(v => {
+      if (v.mes_num !== mesNum || v.solo_presencia) return false;
+      if (v.cliente_num && ids.has(v.cliente_num)) return true;
+      if (!v.cliente_num && nombres.has(v.cliente_nombre)) return true;
+      return false;
+    });
+    const totalVentas = lineas.reduce((s, v) => s + v.importe, 0);
+    const numTickets  = new Set(lineas.map(v => v.folio_key)).size;
+    if (numTickets > 0) result[mesNum] = Math.round(totalVentas / numTickets);
+  });
+  return result;
+}
+
 // ── KPI mensual ───────────────────────────────────────────────────────────────
 function buildKPIMensual(ventas, año) {
   const byMes = {};
@@ -746,6 +778,7 @@ async function main() {
 
   const clientes_sobre_3000_por_mes      = buildClientesSobre3000(ventas2026c);
   const clientes_sobre_3000_por_mes_2025 = buildClientesSobre3000(ventas2025c);
+  const ticket_promedio_nuevos_por_mes   = buildTicketPromedioNuevos(ventas2026c, clientesNR, AÑO_ACTUAL);
 
   const output = {
     resumen, agentes, metas,
@@ -756,6 +789,7 @@ async function main() {
     clientes_nr_por_agente,
     clientes_sobre_3000_por_mes,
     clientes_sobre_3000_por_mes_2025,
+    ticket_promedio_nuevos_por_mes,
   };
 
   const outFile = path.join(outDir, 'dashboard_data.json');
