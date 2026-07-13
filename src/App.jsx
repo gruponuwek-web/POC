@@ -30,7 +30,7 @@ export default function App() {
   })
 
   useEffect(() => {
-    fetch('/data/dashboard_data.json')
+    fetch(import.meta.env.BASE_URL + 'data/dashboard_data.json')
       .then(r => r.json())
       .then(d => { setData(d); setLoading(false) })
       .catch(() => setLoading(false))
@@ -325,7 +325,7 @@ export default function App() {
 
       {activeModule === 'wbr' && (
         <iframe
-          src="/wbr/index.html"
+          src={import.meta.env.BASE_URL + 'wbr/index.html'}
           style={{ width: '100%', height: 'calc(100vh - 56px)', border: 'none', display: 'block' }}
           title="WBR Portal"
         />
