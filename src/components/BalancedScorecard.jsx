@@ -213,15 +213,43 @@ export default function BalancedScorecard({ data }) {
     }
   }, [data, mes])
 
+  // ── KPIs reales: Estrategia de venta por productos ──────────────
+  const productosLive = useMemo(() => {
+    if (!data) return null
+    const fila = data.estrat_ventas_productos?.[mes]
+    if (!fila) return null
+    const M    = data.bsc_metas || {}
+    const m3a  = M['3.1a']?.meta     ?? 10
+    const m3b  = M['3.1b']?.meta_pct ?? 20
+
+    // % venta con promo: usamos ventas reales del mes para el denominador
+    const ventasMes = data.kpi_mensual_actual?.find(m => m.mes_num === mes)?.ventas || 0
+    const pctPromo  = ventasMes > 0 ? (fila.venta_con_promo / ventasMes) * 100 : null
+
+    return {
+      '3.1a': {
+        actual: fila.promos_aplicadas > 0 ? String(fila.promos_aplicadas) : null,
+        meta:   String(m3a),
+        ratio:  fila.promos_aplicadas > 0 ? (fila.promos_aplicadas / m3a) * 100 : null,
+      },
+      '3.1b': {
+        actual: pctPromo !== null ? pctPromo.toFixed(1) + '%' : null,
+        meta:   m3b + '%',
+        ratio:  pctPromo !== null ? (pctPromo / m3b) * 100 : null,
+      },
+    }
+  }, [data, mes])
+
   // ── Fusionar estructura estática con datos reales ───────────────
   const perspectivas = useMemo(() => {
-    if (!ventasLive) return PERSPECTIVAS
+    const liveMap = { ventas: ventasLive, productos: productosLive }
     return PERSPECTIVAS.map(p => {
-      if (p.id !== 'ventas') return p
+      const live = liveMap[p.id]
+      if (!live) return p
       return {
         ...p,
         kpis: p.kpis.map(k => {
-          const live = ventasLive[k.cod]
+          const live = liveMap[p.id]?.[k.cod]
           if (!live) return k
           // Si hay fuente live para este KPI, sus valores mandan (null = sin dato)
           return {
@@ -233,7 +261,7 @@ export default function BalancedScorecard({ data }) {
         }),
       }
     })
-  }, [ventasLive])
+  }, [ventasLive, productosLive])
 
   const allKpis    = useMemo(() => perspectivas.flatMap(p => p.kpis), [perspectivas])
   const totalPeso  = allKpis.reduce((s, k) => s + k.peso, 0)

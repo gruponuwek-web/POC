@@ -17,15 +17,18 @@ const BSC_METAS = {
   '2.1e': { meta:    3000   },   // ticket promedio de clientes nuevos ($)
   '2.1f': { meta:     840   },   // tickets únicos atendidos (#)
   // 2.1b: la meta viene de la suma de metas por agente (hoja "metas") — no se configura aquí
+  '3.1a': { meta:      10   },   // promociones aplicadas por mes (#)
+  '3.1b': { meta_pct:  20   },   // % de venta proveniente de promociones
 };
 
 const SHEETS = {
   // Al pasar a 2027: mover el ID de ventasActual → ventasAnterior y agregar el ID de ventas 2027
   ventasAnterior: { id: '1R0LRR6bUkWdxSffs49_wJBMwmSyhjLKGpDELRjws1ac', range: 'A:AZ' },
   ventasActual:   { id: '1RQfTkYvOL_sGbPcMjEUEmbJmmWqWJbaxC-T0nW6umbI', range: 'A:AZ' },
-  metas:          { id: '1F9vgcHfA20dIm6caUZmH756fgSn562lCqoC0GdqgNRc', range: 'metas!A:Z' },
-  cartera:        { id: '1F9vgcHfA20dIm6caUZmH756fgSn562lCqoC0GdqgNRc', range: 'cartera!A:Z' },
-  clientesNR:     { id: '1F9vgcHfA20dIm6caUZmH756fgSn562lCqoC0GdqgNRc', range: 'clientes_nuevos_recuperados!A:Z' },
+  metas:              { id: '1F9vgcHfA20dIm6caUZmH756fgSn562lCqoC0GdqgNRc', range: 'metas!A:Z' },
+  cartera:            { id: '1F9vgcHfA20dIm6caUZmH756fgSn562lCqoC0GdqgNRc', range: 'cartera!A:Z' },
+  clientesNR:         { id: '1F9vgcHfA20dIm6caUZmH756fgSn562lCqoC0GdqgNRc', range: 'clientes_nuevos_recuperados!A:Z' },
+  estratVentasProductos: { id: '1F9vgcHfA20dIm6caUZmH756fgSn562lCqoC0GdqgNRc', range: 'Estrate_Ventas_Productos!A:Z' },
 };
 
 const outDir = path.join(__dirname, '..', 'src', 'data');
@@ -588,15 +591,16 @@ async function main() {
   const sheets = google.sheets({ version: 'v4', auth });
 
   console.log('📥 Descargando datos de Google Sheets...');
-  const [rawAnterior, rawActual, rawMetas, rawCartera, rawCliNR] = await Promise.all([
-    getSheetData(sheets, SHEETS.ventasAnterior.id, SHEETS.ventasAnterior.range),
-    getSheetData(sheets, SHEETS.ventasActual.id,   SHEETS.ventasActual.range),
-    getSheetData(sheets, SHEETS.metas.id, SHEETS.metas.range),
-    getSheetData(sheets, SHEETS.cartera.id, SHEETS.cartera.range),
-    getSheetData(sheets, SHEETS.clientesNR.id, SHEETS.clientesNR.range),
+  const [rawAnterior, rawActual, rawMetas, rawCartera, rawCliNR, rawEstratProd] = await Promise.all([
+    getSheetData(sheets, SHEETS.ventasAnterior.id,       SHEETS.ventasAnterior.range),
+    getSheetData(sheets, SHEETS.ventasActual.id,         SHEETS.ventasActual.range),
+    getSheetData(sheets, SHEETS.metas.id,                SHEETS.metas.range),
+    getSheetData(sheets, SHEETS.cartera.id,              SHEETS.cartera.range),
+    getSheetData(sheets, SHEETS.clientesNR.id,           SHEETS.clientesNR.range),
+    getSheetData(sheets, SHEETS.estratVentasProductos.id, SHEETS.estratVentasProductos.range),
   ]);
 
-  console.log(`✅ Datos: ${AÑO_ANTERIOR}=${rawAnterior.length} | ${AÑO_ACTUAL}=${rawActual.length} | metas=${rawMetas.length} | cartera=${rawCartera.length} | cliNR=${rawCliNR.length}`);
+  console.log(`✅ Datos: ${AÑO_ANTERIOR}=${rawAnterior.length} | ${AÑO_ACTUAL}=${rawActual.length} | metas=${rawMetas.length} | cartera=${rawCartera.length} | cliNR=${rawCliNR.length} | estratProd=${rawEstratProd.length}`);
 
   console.log('⚙️  Procesando ventas...');
   const ventas2025 = processVentas(rawAnterior, AÑO_ANTERIOR);
@@ -628,6 +632,23 @@ async function main() {
       año: parseInt(r['Año_a']) || 0, mes_num: parseInt(r['Mes_a']) || 0,
       agente_nombre: normAgent(r['Agente']), monto: parseNum(r['Monto']), status: (r['Status_Cli'] || '').trim()
     }));
+
+  // ── Estrategia ventas por productos — parsear filas de la hoja ───────────────
+  const estratVentasProductos = rawEstratProd
+    .filter(r => r['Mes_num'] && r['Año'])
+    .map(r => ({
+      mes_num:          parseInt(r['Mes_num']) || 0,
+      año:              parseInt(r['Año'])     || 0,
+      promos_aplicadas: parseNum(r['Promos_Aplicadas']) || 0,
+      venta_con_promo:  parseNum(r['Venta_Con_Promo'])  || 0,
+    }))
+    .filter(r => r.mes_num > 0 && r.año > 0);
+
+  // Indexar por mes para el año actual
+  const estratProdPorMes = {};
+  estratVentasProductos.filter(r => r.año === AÑO_ACTUAL).forEach(r => {
+    estratProdPorMes[r.mes_num] = r;
+  });
 
   const ventas2025c = ventas2025.filter(v => AGENTES_COMERCIALES.has(v.agente_nombre));
   const ventas2026c = ventas2026.filter(v => AGENTES_COMERCIALES.has(v.agente_nombre));
@@ -801,6 +822,7 @@ async function main() {
     clientes_sobre_3000_por_mes_2025,
     ticket_promedio_nuevos_por_mes,
     bsc_metas: BSC_METAS,
+    estrat_ventas_productos: estratProdPorMes,
   };
 
   const outFile = path.join(outDir, 'dashboard_data.json');

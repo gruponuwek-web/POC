@@ -26369,6 +26369,86 @@
     },
     "2.1f": {
       "meta": 840
+    },
+    "3.1a": {
+      "meta": 10
+    },
+    "3.1b": {
+      "meta_pct": 20
+    }
+  },
+  "estrat_ventas_productos": {
+    "1": {
+      "mes_num": 1,
+      "año": 2026,
+      "promos_aplicadas": 5,
+      "venta_con_promo": 150000
+    },
+    "2": {
+      "mes_num": 2,
+      "año": 2026,
+      "promos_aplicadas": 8,
+      "venta_con_promo": 230000
+    },
+    "3": {
+      "mes_num": 3,
+      "año": 2026,
+      "promos_aplicadas": 6,
+      "venta_con_promo": 195000
+    },
+    "4": {
+      "mes_num": 4,
+      "año": 2026,
+      "promos_aplicadas": 7,
+      "venta_con_promo": 236667
+    },
+    "5": {
+      "mes_num": 5,
+      "año": 2026,
+      "promos_aplicadas": 8,
+      "venta_con_promo": 259167
+    },
+    "6": {
+      "mes_num": 6,
+      "año": 2026,
+      "promos_aplicadas": 8,
+      "venta_con_promo": 281667
+    },
+    "7": {
+      "mes_num": 7,
+      "año": 2026,
+      "promos_aplicadas": 9,
+      "venta_con_promo": 304167
+    },
+    "8": {
+      "mes_num": 8,
+      "año": 2026,
+      "promos_aplicadas": 0,
+      "venta_con_promo": 0
+    },
+    "9": {
+      "mes_num": 9,
+      "año": 2026,
+      "promos_aplicadas": 0,
+      "venta_con_promo": 0
+    },
+    "10": {
+      "mes_num": 10,
+      "año": 2026,
+      "promos_aplicadas": 0,
+      "venta_con_promo": 0
+    },
+    "11": {
+      "mes_num": 11,
+      "año": 2026,
+      "promos_aplicadas": 0,
+      "venta_con_promo": 0
+    },
+    "12": {
+      "mes_num": 12,
+      "año": 2026,
+      "promos_aplicadas": 0,
+      "venta_con_promo": 0
     }
   }
 }
