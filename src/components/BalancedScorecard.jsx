@@ -161,20 +161,29 @@ export default function BalancedScorecard({ data }) {
     const m25 = data.kpi_mensual_anterior?.find(m => m.mes_num === mes)
     if (!m26) return null
 
-    const ventas26    = m26.ventas || 0
-    const ventas25    = m25?.ventas || 0
-    const metaMes     = data.kpi_agentes?.reduce((s, a) => s + (a.meta_por_mes?.[mes] || 0), 0) || 0
-    const ticketProm  = m26.ticket_promedio || 0
-    const tickets     = m26.tickets || 0
+    const ventas26   = m26.ventas || 0
+    const ventas25   = m25?.ventas || 0
+    const metaMes    = data.kpi_agentes?.reduce((s, a) => s + (a.meta_por_mes?.[mes] || 0), 0) || 0
+    const ticketProm = m26.ticket_promedio || 0
+    const tickets    = m26.tickets || 0
     const crecimiento = ventas25 > 0 ? (ventas26 - ventas25) / ventas25 * 100 : null
 
-    const cliSobre3000   = data.clientes_sobre_3000_por_mes?.[mes] ?? null
-    const ticketNuevos   = data.ticket_promedio_nuevos_por_mes?.[mes] ?? null
+    const cliSobre3000 = data.clientes_sobre_3000_por_mes?.[mes] ?? null
+    const ticketNuevos = data.ticket_promedio_nuevos_por_mes?.[mes] ?? null
+
+    // Metas configurables desde el JSON (process_data.js → BSC_METAS)
+    const M = data.bsc_metas || {}
+    const m2a = M['2.1a']?.meta_pct ?? 15
+    const m2c = M['2.1c']?.meta     ?? 600
+    const m2d = M['2.1d']?.meta     ?? 95
+    const m2e = M['2.1e']?.meta     ?? 3000
+    const m2f = M['2.1f']?.meta     ?? 840
 
     return {
       '2.1a': {
         actual: crecimiento !== null ? crecimiento.toFixed(2) + '%' : null,
-        ratio:  crecimiento !== null ? (crecimiento / 15) * 100 : null,
+        meta:   m2a + '%',
+        ratio:  crecimiento !== null ? (crecimiento / m2a) * 100 : null,
       },
       '2.1b': {
         actual: fmt$(ventas26),
@@ -183,19 +192,23 @@ export default function BalancedScorecard({ data }) {
       },
       '2.1c': {
         actual: fmt$(ticketProm),
-        ratio:  ticketProm > 0 ? (ticketProm / 600) * 100 : null,
+        meta:   fmt$(m2c),
+        ratio:  ticketProm > 0 ? (ticketProm / m2c) * 100 : null,
       },
       '2.1d': {
         actual: cliSobre3000 !== null ? String(cliSobre3000) : null,
-        ratio:  cliSobre3000 !== null ? (cliSobre3000 / 95) * 100 : null,
+        meta:   String(m2d),
+        ratio:  cliSobre3000 !== null ? (cliSobre3000 / m2d) * 100 : null,
       },
       '2.1e': {
         actual: ticketNuevos !== null ? fmt$(ticketNuevos) : null,
-        ratio:  ticketNuevos !== null ? (ticketNuevos / 3000) * 100 : null,
+        meta:   fmt$(m2e),
+        ratio:  ticketNuevos !== null ? (ticketNuevos / m2e) * 100 : null,
       },
       '2.1f': {
         actual: tickets > 0 ? String(tickets) : null,
-        ratio:  tickets > 0 ? (tickets / 840) * 100 : null,
+        meta:   String(m2f),
+        ratio:  tickets > 0 ? (tickets / m2f) * 100 : null,
       },
     }
   }, [data, mes])

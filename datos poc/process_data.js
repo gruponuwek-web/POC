@@ -9,6 +9,16 @@ const CREDENTIALS_PATH = path.join(__dirname, 'credentials.json');
 const AÑO_ACTUAL   = 2026;  // año en curso (ventas activas)
 const AÑO_ANTERIOR = 2025;  // año previo para comparación YoY
 
+// ── Metas BSC — revisar y ajustar cada año nuevo ─────────────────────────────
+const BSC_METAS = {
+  '2.1a': { meta_pct:  15   },   // crecimiento YoY mínimo esperado (%)
+  '2.1c': { meta:     600   },   // ticket promedio ($)
+  '2.1d': { meta:      95   },   // clientes con compra acumulada > $3,000 (#)
+  '2.1e': { meta:    3000   },   // ticket promedio de clientes nuevos ($)
+  '2.1f': { meta:     840   },   // tickets únicos atendidos (#)
+  // 2.1b: la meta viene de la suma de metas por agente (hoja "metas") — no se configura aquí
+};
+
 const SHEETS = {
   // Al pasar a 2027: mover el ID de ventasActual → ventasAnterior y agregar el ID de ventas 2027
   ventasAnterior: { id: '1R0LRR6bUkWdxSffs49_wJBMwmSyhjLKGpDELRjws1ac', range: 'A:AZ' },
@@ -790,6 +800,7 @@ async function main() {
     clientes_sobre_3000_por_mes,
     clientes_sobre_3000_por_mes_2025,
     ticket_promedio_nuevos_por_mes,
+    bsc_metas: BSC_METAS,
   };
 
   const outFile = path.join(outDir, 'dashboard_data.json');
