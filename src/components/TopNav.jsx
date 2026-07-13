@@ -4,7 +4,7 @@ export default function TopNav({ activeModule, onModule, lastUpdate }) {
   const tabs = [
     { id: 'dashboard', label: '📊 Dashboard Táctico', active: true },
     { id: 'wbr', label: '📅 WBR' },
-    { id: 'scorecard', label: '⚖️ Balanced Scorecard', soon: true },
+    { id: 'scorecard', label: '⚖️ Balanced Scorecard' },
   ]
 
   return (

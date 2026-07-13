@@ -15,6 +15,7 @@ import AlertasPanel from './components/AlertasPanel.jsx'
 import LecturaTactica from './components/LecturaTactica.jsx'
 import CalidadDatos from './components/CalidadDatos.jsx'
 import TablaClientesPerdidos from './components/TablaClientesPerdidos.jsx'
+import BalancedScorecard from './components/BalancedScorecard.jsx'
 
 export default function App() {
   const [data, setData] = useState(null)
@@ -330,7 +331,7 @@ export default function App() {
           title="WBR Portal"
         />
       )}
-      {activeModule === 'scorecard' && <ProximamentePage titulo="Balanced Scorecard" icono="⚖️" />}
+      {activeModule === 'scorecard' && <BalancedScorecard />}
     </div>
   )
 }
