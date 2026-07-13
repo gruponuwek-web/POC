@@ -145,10 +145,13 @@ export default function BalancedScorecard({ data }) {
   const [mes, setMes] = useState(3)
   const [expandida, setExpandida] = useState(null)
 
-  // Auto-seleccionar el último mes disponible en los datos
+  // Auto-seleccionar el mes actual; si aún no tiene datos, el último disponible
   useEffect(() => {
     const meses = data?.resumen?.meses_disponibles
-    if (meses?.length) setMes(meses[meses.length - 1])
+    if (!meses?.length) return
+    const mesActual = new Date().getMonth() + 1          // 1–12
+    const target = meses.includes(mesActual) ? mesActual : meses[meses.length - 1]
+    setMes(target)
   }, [data])
 
   // ── Calcular KPIs reales de "Incrementar ventas" desde dashboard_data ──
