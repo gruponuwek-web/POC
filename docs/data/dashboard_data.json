@@ -1,6 +1,8 @@
 {
   "resumen": {
     "año": 2026,
+    "año_actual": 2026,
+    "año_anterior": 2025,
     "ultima_actualizacion": "2026-07-13",
     "meses_disponibles": [
       1,
@@ -840,7 +842,93 @@
       "equipo": "COMERCIAL"
     }
   ],
-  "kpi_mensual_2025": [
+  "kpi_mensual_actual": [
+    {
+      "mes_num": 1,
+      "mes_nombre": "Enero",
+      "año": 2026,
+      "ventas": 3944608.407799983,
+      "costo": 3089780.6167400023,
+      "tickets": 855,
+      "clientes": 298,
+      "margen": 854827.7910599806,
+      "margen_pct": 21.67078966240762,
+      "ticket_promedio": 4613.577085146178
+    },
+    {
+      "mes_num": 2,
+      "mes_nombre": "Febrero",
+      "año": 2026,
+      "ventas": 3225312.440299989,
+      "costo": 2497685.2872640123,
+      "tickets": 702,
+      "clientes": 281,
+      "margen": 727627.1530359769,
+      "margen_pct": 22.559896645805257,
+      "ticket_promedio": 4594.4621656695
+    },
+    {
+      "mes_num": 3,
+      "mes_nombre": "Marzo",
+      "año": 2026,
+      "ventas": 4431966.480299987,
+      "costo": 3506241.842568005,
+      "tickets": 809,
+      "clientes": 301,
+      "margen": 925724.6377319819,
+      "margen_pct": 20.88744673153129,
+      "ticket_promedio": 5478.3269224968935
+    },
+    {
+      "mes_num": 4,
+      "mes_nombre": "Abril",
+      "año": 2026,
+      "ventas": 3956063.4964999906,
+      "costo": 3111915.9814679916,
+      "tickets": 803,
+      "clientes": 304,
+      "margen": 844147.515031999,
+      "margen_pct": 21.338067899537847,
+      "ticket_promedio": 4926.60460336238
+    },
+    {
+      "mes_num": 5,
+      "mes_nombre": "Mayo",
+      "año": 2026,
+      "ventas": 4537338.218899997,
+      "costo": 3635884.5949519984,
+      "tickets": 771,
+      "clientes": 306,
+      "margen": 901453.6239479985,
+      "margen_pct": 19.867454892232857,
+      "ticket_promedio": 5885.00417496757
+    },
+    {
+      "mes_num": 6,
+      "mes_nombre": "Junio",
+      "año": 2026,
+      "ventas": 4045782.7500999966,
+      "costo": 3189043.192638007,
+      "tickets": 792,
+      "clientes": 310,
+      "margen": 856739.5574619896,
+      "margen_pct": 21.176113755510332,
+      "ticket_promedio": 5108.311553156561
+    },
+    {
+      "mes_num": 7,
+      "mes_nombre": "Julio",
+      "año": 2026,
+      "ventas": 1556062.8714000005,
+      "costo": 1235127.8429980015,
+      "tickets": 284,
+      "clientes": 178,
+      "margen": 320935.02840199904,
+      "margen_pct": 20.624811137177996,
+      "ticket_promedio": 5479.094617605636
+    }
+  ],
+  "kpi_mensual_anterior": [
     {
       "mes_num": 1,
       "mes_nombre": "Enero",
@@ -984,92 +1072,6 @@
       "margen": 771121.860634001,
       "margen_pct": 21.616421869763762,
       "ticket_promedio": 5591.373823354223
-    }
-  ],
-  "kpi_mensual_2026": [
-    {
-      "mes_num": 1,
-      "mes_nombre": "Enero",
-      "año": 2026,
-      "ventas": 3944608.407799983,
-      "costo": 3089780.6167400023,
-      "tickets": 855,
-      "clientes": 298,
-      "margen": 854827.7910599806,
-      "margen_pct": 21.67078966240762,
-      "ticket_promedio": 4613.577085146178
-    },
-    {
-      "mes_num": 2,
-      "mes_nombre": "Febrero",
-      "año": 2026,
-      "ventas": 3225312.440299989,
-      "costo": 2497685.2872640123,
-      "tickets": 702,
-      "clientes": 281,
-      "margen": 727627.1530359769,
-      "margen_pct": 22.559896645805257,
-      "ticket_promedio": 4594.4621656695
-    },
-    {
-      "mes_num": 3,
-      "mes_nombre": "Marzo",
-      "año": 2026,
-      "ventas": 4431966.480299987,
-      "costo": 3506241.842568005,
-      "tickets": 809,
-      "clientes": 301,
-      "margen": 925724.6377319819,
-      "margen_pct": 20.88744673153129,
-      "ticket_promedio": 5478.3269224968935
-    },
-    {
-      "mes_num": 4,
-      "mes_nombre": "Abril",
-      "año": 2026,
-      "ventas": 3956063.4964999906,
-      "costo": 3111915.9814679916,
-      "tickets": 803,
-      "clientes": 304,
-      "margen": 844147.515031999,
-      "margen_pct": 21.338067899537847,
-      "ticket_promedio": 4926.60460336238
-    },
-    {
-      "mes_num": 5,
-      "mes_nombre": "Mayo",
-      "año": 2026,
-      "ventas": 4537338.218899997,
-      "costo": 3635884.5949519984,
-      "tickets": 771,
-      "clientes": 306,
-      "margen": 901453.6239479985,
-      "margen_pct": 19.867454892232857,
-      "ticket_promedio": 5885.00417496757
-    },
-    {
-      "mes_num": 6,
-      "mes_nombre": "Junio",
-      "año": 2026,
-      "ventas": 4045782.7500999966,
-      "costo": 3189043.192638007,
-      "tickets": 792,
-      "clientes": 310,
-      "margen": 856739.5574619896,
-      "margen_pct": 21.176113755510332,
-      "ticket_promedio": 5108.311553156561
-    },
-    {
-      "mes_num": 7,
-      "mes_nombre": "Julio",
-      "año": 2026,
-      "ventas": 1556062.8714000005,
-      "costo": 1235127.8429980015,
-      "tickets": 284,
-      "clientes": 178,
-      "margen": 320935.02840199904,
-      "margen_pct": 20.624811137177996,
-      "ticket_promedio": 5479.094617605636
     }
   ],
   "kpi_agentes": [

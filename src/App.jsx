@@ -43,8 +43,8 @@ export default function App() {
     const mesMaxDatos = Math.max(...(data.resumen.meses_disponibles || [7]))
     const mesCortePerdido = mesMaxDatos - 4
     let kpiAgentes = data.kpi_agentes
-    let kpi2026 = data.kpi_mensual_2026
-    let kpi2025 = data.kpi_mensual_2025
+    let kpi2026 = data.kpi_mensual_actual
+    let kpi2025 = data.kpi_mensual_anterior
     let clientes = data.tabla_clientes
     let alertas = data.alertas
 

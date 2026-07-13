@@ -5,12 +5,17 @@ const { google } = require('googleapis');
 // ── Configuración Google Sheets ──────────────────────────────────────────────
 const CREDENTIALS_PATH = path.join(__dirname, 'credentials.json');
 
+// ── Años de comparación ── cambiar estas 2 constantes cada año nuevo ──────────
+const AÑO_ACTUAL   = 2026;  // año en curso (ventas activas)
+const AÑO_ANTERIOR = 2025;  // año previo para comparación YoY
+
 const SHEETS = {
-  ventas2025: { id: '1R0LRR6bUkWdxSffs49_wJBMwmSyhjLKGpDELRjws1ac', range: 'A:AZ' },
-  ventas2026: { id: '1RQfTkYvOL_sGbPcMjEUEmbJmmWqWJbaxC-T0nW6umbI', range: 'A:AZ' },
-  metas:      { id: '1F9vgcHfA20dIm6caUZmH756fgSn562lCqoC0GdqgNRc', range: 'metas!A:Z' },
-  cartera:    { id: '1F9vgcHfA20dIm6caUZmH756fgSn562lCqoC0GdqgNRc', range: 'cartera!A:Z' },
-  clientesNR: { id: '1F9vgcHfA20dIm6caUZmH756fgSn562lCqoC0GdqgNRc', range: 'clientes_nuevos_recuperados!A:Z' },
+  // Al pasar a 2027: mover el ID de ventasActual → ventasAnterior y agregar el ID de ventas 2027
+  ventasAnterior: { id: '1R0LRR6bUkWdxSffs49_wJBMwmSyhjLKGpDELRjws1ac', range: 'A:AZ' },
+  ventasActual:   { id: '1RQfTkYvOL_sGbPcMjEUEmbJmmWqWJbaxC-T0nW6umbI', range: 'A:AZ' },
+  metas:          { id: '1F9vgcHfA20dIm6caUZmH756fgSn562lCqoC0GdqgNRc', range: 'metas!A:Z' },
+  cartera:        { id: '1F9vgcHfA20dIm6caUZmH756fgSn562lCqoC0GdqgNRc', range: 'cartera!A:Z' },
+  clientesNR:     { id: '1F9vgcHfA20dIm6caUZmH756fgSn562lCqoC0GdqgNRc', range: 'clientes_nuevos_recuperados!A:Z' },
 };
 
 const outDir = path.join(__dirname, '..', 'src', 'data');
@@ -184,7 +189,7 @@ function buildKPIAgente(ventas2026, ventas2025, metas, cartera, clientesNR) {
 
   const mesesConVentas = new Set(ventas2026.map(v => v.mes_num));
   const metaPorMes = {};
-  metas.filter(m => m.año === 2026 && mesesConVentas.has(m.mes_num)).forEach(m => {
+  metas.filter(m => m.año === AÑO_ACTUAL && mesesConVentas.has(m.mes_num)).forEach(m => {
     const ag = m.agente_nombre;
     if (!byAgent[ag]) byAgent[ag] = { agente: ag, ventas: 0, costo: 0, tickets: new Set(), clientes: new Set(), meta: 0 };
     byAgent[ag].meta += m.meta;
@@ -243,14 +248,14 @@ function buildKPIAgente(ventas2026, ventas2025, metas, cartera, clientesNR) {
     if (!id) return;
     const st = c.status;
     const mes = c.mes_num;
-    if (c.año === 2026) {
+    if (c.año === AÑO_ACTUAL) {
       if (!v26IDs.has(id)) return;
       const ag = v26AgPorId[id];
       if (!ag) return;
       const en25 = v25IDs.has(id);
       if (st === 'Nuevo'      && !en25) { nuevosByAgent[ag] = (nuevosByAgent[ag] || 0) + 1; if (mes) _addMes(nuevosPorMesByAgent, ag, mes); }
       if (st === 'Recuperado' &&  en25) { recupByAgent[ag]  = (recupByAgent[ag]  || 0) + 1; if (mes) _addMes(recupPorMesByAgent,  ag, mes); }
-    } else if (c.año === 2025) {
+    } else if (c.año === AÑO_ANTERIOR) {
       if (!v25IDs.has(id)) return;
       const ag = v25AgPorId[id];
       if (!ag) return;
@@ -434,11 +439,11 @@ function buildClienteTable(ventas2026, ventas2025, cartera, clientesNR) {
   const _tv25IDs = new Set(ventas2025.filter(v => v.cliente_num).map(v => v.cliente_num));
   const nuevosValidados = new Set(clientesNR.filter(c => {
     const id = (c.cliente_num || '').trim();
-    return c.año === 2026 && c.status === 'Nuevo' && id && _tv26IDs.has(id) && !_tv25IDs.has(id);
+    return c.año === AÑO_ACTUAL && c.status === 'Nuevo' && id && _tv26IDs.has(id) && !_tv25IDs.has(id);
   }).map(c => (c.cliente_num || '').trim()));
   const recupValidados = new Set(clientesNR.filter(c => {
     const id = (c.cliente_num || '').trim();
-    return c.año === 2026 && c.status === 'Recuperado' && id && _tv26IDs.has(id) && _tv25IDs.has(id);
+    return c.año === AÑO_ACTUAL && c.status === 'Recuperado' && id && _tv26IDs.has(id) && _tv25IDs.has(id);
   }).map(c => (c.cliente_num || '').trim()));
 
   const today = new Date();
@@ -541,19 +546,19 @@ async function main() {
   const sheets = google.sheets({ version: 'v4', auth });
 
   console.log('📥 Descargando datos de Google Sheets...');
-  const [raw2025, raw2026, rawMetas, rawCartera, rawCliNR] = await Promise.all([
-    getSheetData(sheets, SHEETS.ventas2025.id, SHEETS.ventas2025.range),
-    getSheetData(sheets, SHEETS.ventas2026.id, SHEETS.ventas2026.range),
+  const [rawAnterior, rawActual, rawMetas, rawCartera, rawCliNR] = await Promise.all([
+    getSheetData(sheets, SHEETS.ventasAnterior.id, SHEETS.ventasAnterior.range),
+    getSheetData(sheets, SHEETS.ventasActual.id,   SHEETS.ventasActual.range),
     getSheetData(sheets, SHEETS.metas.id, SHEETS.metas.range),
     getSheetData(sheets, SHEETS.cartera.id, SHEETS.cartera.range),
     getSheetData(sheets, SHEETS.clientesNR.id, SHEETS.clientesNR.range),
   ]);
 
-  console.log(`✅ Datos: 2025=${raw2025.length} | 2026=${raw2026.length} | metas=${rawMetas.length} | cartera=${rawCartera.length} | cliNR=${rawCliNR.length}`);
+  console.log(`✅ Datos: ${AÑO_ANTERIOR}=${rawAnterior.length} | ${AÑO_ACTUAL}=${rawActual.length} | metas=${rawMetas.length} | cartera=${rawCartera.length} | cliNR=${rawCliNR.length}`);
 
   console.log('⚙️  Procesando ventas...');
-  const ventas2025 = processVentas(raw2025, 2025);
-  const ventas2026 = processVentas(raw2026, 2026);
+  const ventas2025 = processVentas(rawAnterior, AÑO_ANTERIOR);
+  const ventas2026 = processVentas(rawActual,   AÑO_ACTUAL);
 
   const MONTH_MAP = { 'enero':1,'febrero':2,'marzo':3,'abril':4,'mayo':5,'junio':6,'julio':7,'agosto':8,'septiembre':9,'octubre':10,'noviembre':11,'diciembre':12 };
 
@@ -564,7 +569,7 @@ async function main() {
       const mesStr = (r['MEs_num'] || r['Mes_num'] || r['Mes'] || '').toLowerCase().trim();
       const mesNum = MONTH_MAP[mesStr] || parseInt(mesStr) || 0;
       const fechaRaw = parseDate(r['Fecha']);
-      const año = fechaRaw ? fechaRaw.getFullYear() : 2026;
+      const año = fechaRaw ? fechaRaw.getFullYear() : AÑO_ACTUAL;
       return { id: `M${i+1}`, agente_nombre: agNorm, año, mes_num: mesNum, mes_nombre: MESES_ES[mesNum-1] || mesStr, meta: parseNum(r['Meta']), equipo: r['Equipo'] || 'COMERCIAL' };
     })
     .filter(m => m.mes_num > 0 && m.meta > 0);
@@ -602,7 +607,7 @@ async function main() {
   const _g25IDs = new Set(ventas2025c.filter(v => v.cliente_num).map(v => v.cliente_num));
   const nuevosPorMes2026 = {};
   const recupPorMes2026  = {};
-  clientesNR.filter(c => c.año === 2026 && c.mes_num > 0).forEach(c => {
+  clientesNR.filter(c => c.año === AÑO_ACTUAL && c.mes_num > 0).forEach(c => {
     const id = (c.cliente_num || '').trim();
     if (!id) return;
     const en26 = _g26IDs.has(id), en25 = _g25IDs.has(id);
@@ -611,9 +616,9 @@ async function main() {
   });
   const nrValidados2026 = []; // ya procesado arriba directamente en los objetos por mes
 
-  // NR 2025: solo cruce contra ventas2025 (no tenemos 2024)
-  const _r24IDs = new Set(); const _r24Nom = new Set(); // sin datos 2024
-  const nrValidados2025 = clientesNR.filter(c => c.año === 2025 && c.mes_num > 0 &&
+  // NR año anterior: solo cruce contra ventas del año anterior (no tenemos datos del año anterior-1)
+  const _r24IDs = new Set(); const _r24Nom = new Set(); // sin datos del año previo al anterior
+  const nrValidados2025 = clientesNR.filter(c => c.año === AÑO_ANTERIOR && c.mes_num > 0 &&
     _enV(c, _r25IDs, _r25Nom)
   );
 
@@ -650,14 +655,14 @@ async function main() {
   const _ag26PorId = {}, _ag25PorId = {};
   ventas2026c.forEach(v => { if (v.cliente_num && !_ag26PorId[v.cliente_num]) _ag26PorId[v.cliente_num] = v.agente_nombre; });
   ventas2025c.forEach(v => { if (v.cliente_num && !_ag25PorId[v.cliente_num]) _ag25PorId[v.cliente_num] = v.agente_nombre; });
-  clientesNR.filter(c => c.año === 2026 && c.mes_num > 0).forEach(c => {
+  clientesNR.filter(c => c.año === AÑO_ACTUAL && c.mes_num > 0).forEach(c => {
     const id = (c.cliente_num || '').trim(); if (!id) return;
     const en26 = _g26IDs.has(id), en25 = _g25IDs.has(id);
     const ag = _ag26PorId[id]; if (!ag) return;
     if (c.status === 'Nuevo'      && en26 && !en25) _addNRag(ag, c.mes_num, 'nuevos_2026');
     if (c.status === 'Recuperado' && en26 &&  en25) _addNRag(ag, c.mes_num, 'recup_2026');
   });
-  clientesNR.filter(c => c.año === 2025 && c.mes_num > 0).forEach(c => {
+  clientesNR.filter(c => c.año === AÑO_ANTERIOR && c.mes_num > 0).forEach(c => {
     const id = (c.cliente_num || '').trim(); if (!id) return;
     const en25 = _g25IDs.has(id);
     const ag = _ag25PorId[id]; if (!ag || !en25) return;
@@ -673,8 +678,8 @@ async function main() {
   const totalVenta2026 = ventas2026c.reduce((s, v) => s + v.importe, 0);
   const totalCosto2026 = ventas2026c.reduce((s, v) => s + v.costo, 0);
   const mesesConVentas2026 = new Set(ventas2026c.map(v => v.mes_num));
-  const totalMeta2026 = metas.filter(m => m.año === 2026 && mesesConVentas2026.has(m.mes_num)).reduce((s, m) => s + m.meta, 0);
-  const agentesConMeta = new Set(metas.filter(m => m.año === 2026).map(m => m.agente_nombre));
+  const totalMeta2026 = metas.filter(m => m.año === AÑO_ACTUAL && mesesConVentas2026.has(m.mes_num)).reduce((s, m) => s + m.meta, 0);
+  const agentesConMeta = new Set(metas.filter(m => m.año === AÑO_ACTUAL).map(m => m.agente_nombre));
   const ventaAgentesConMeta = ventas2026c.filter(v => agentesConMeta.has(v.agente_nombre)).reduce((s, v) => s + v.importe, 0);
   const totalTickets2026 = new Set(ventas2026c.map(v => v.folio_key)).size;
   const totalClientes2026 = new Set(ventas2026c.map(v => v.cliente_num || v.cliente_nombre)).size;
@@ -682,10 +687,10 @@ async function main() {
   // Cruce por ID — igual que buildKPIAgente: si el ID está en ventas se valida
   const _v26IDs  = new Set(ventas2026c.filter(v => v.cliente_num).map(v => v.cliente_num));
   const _v25IDs  = new Set(ventas2025c.filter(v => v.cliente_num).map(v => v.cliente_num));
-  const totalNuevos2026 = clientesNR.filter(c => { const id=(c.cliente_num||'').trim(); return c.año===2026 && c.status==='Nuevo' && id && _v26IDs.has(id) && !_v25IDs.has(id); }).length;
-  const totalRecup2026  = clientesNR.filter(c => { const id=(c.cliente_num||'').trim(); return c.año===2026 && c.status==='Recuperado' && id && _v26IDs.has(id) && _v25IDs.has(id); }).length;
-  const totalNuevos2025 = clientesNR.filter(c => { const id=(c.cliente_num||'').trim(); return c.año===2025 && c.status==='Nuevo' && id && _v25IDs.has(id); }).length;
-  const totalRecup2025  = clientesNR.filter(c => { const id=(c.cliente_num||'').trim(); return c.año===2025 && c.status==='Recuperado' && id && _v25IDs.has(id); }).length;
+  const totalNuevos2026 = clientesNR.filter(c => { const id=(c.cliente_num||'').trim(); return c.año===AÑO_ACTUAL && c.status==='Nuevo' && id && _v26IDs.has(id) && !_v25IDs.has(id); }).length;
+  const totalRecup2026  = clientesNR.filter(c => { const id=(c.cliente_num||'').trim(); return c.año===AÑO_ACTUAL && c.status==='Recuperado' && id && _v26IDs.has(id) && _v25IDs.has(id); }).length;
+  const totalNuevos2025 = clientesNR.filter(c => { const id=(c.cliente_num||'').trim(); return c.año===AÑO_ANTERIOR && c.status==='Nuevo' && id && _v25IDs.has(id); }).length;
+  const totalRecup2025  = clientesNR.filter(c => { const id=(c.cliente_num||'').trim(); return c.año===AÑO_ANTERIOR && c.status==='Recuperado' && id && _v25IDs.has(id); }).length;
   const totalVenta2025c = ventas2025c.reduce((s, v) => s + v.importe, 0);
   const totalVenta2025_mismo_periodo = ventas2025c.filter(v => mesesConVentas2026.has(v.mes_num)).reduce((s, v) => s + v.importe, 0);
   const mesesDisponibles2026 = [...mesesConVentas2026].sort();
@@ -701,7 +706,9 @@ async function main() {
 
   const mesesNombres = mesesDisponibles2026.map(m => MESES_ES[m-1]);
   const resumen = {
-    año: 2026,
+    año: AÑO_ACTUAL,
+    año_actual: AÑO_ACTUAL,
+    año_anterior: AÑO_ANTERIOR,
     ultima_actualizacion: new Date().toISOString().split('T')[0],
     meses_disponibles: mesesDisponibles2026,
     meses_nombres: mesesNombres,
@@ -741,7 +748,8 @@ async function main() {
   const clientes_sobre_3000_por_mes_2025 = buildClientesSobre3000(ventas2025c);
 
   const output = {
-    resumen, agentes, metas, kpi_mensual_2025: kpi2025, kpi_mensual_2026: kpi2026,
+    resumen, agentes, metas,
+    kpi_mensual_actual: kpi2026, kpi_mensual_anterior: kpi2025,
     kpi_agentes: kpiAgentes, tabla_clientes: tablaClientes,
     alertas, lectura_tactica: lecturaTactica, cartera_detalle: cartera, clientes_nr: clientesNR,
     clientes_nr_por_mes,

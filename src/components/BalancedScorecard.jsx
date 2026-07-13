@@ -154,8 +154,8 @@ export default function BalancedScorecard({ data }) {
   // ── Calcular KPIs reales de "Incrementar ventas" desde dashboard_data ──
   const ventasLive = useMemo(() => {
     if (!data) return null
-    const m26 = data.kpi_mensual_2026?.find(m => m.mes_num === mes)
-    const m25 = data.kpi_mensual_2025?.find(m => m.mes_num === mes)
+    const m26 = data.kpi_mensual_actual?.find(m => m.mes_num === mes)
+    const m25 = data.kpi_mensual_anterior?.find(m => m.mes_num === mes)
     if (!m26) return null
 
     const ventas26    = m26.ventas || 0
@@ -246,7 +246,7 @@ export default function BalancedScorecard({ data }) {
           <select value={mes} onChange={e => setMes(Number(e.target.value))}
             style={{ padding:'7px 14px', borderRadius:8, border:'1.5px solid #e2e8f0', fontSize:13, color:'#1e293b', background:'#fff', cursor:'pointer', fontWeight:600 }}>
             {MESES.map((m, i) => {
-              const tieneData = data?.kpi_mensual_2026?.some(k => k.mes_num === i + 1)
+              const tieneData = data?.kpi_mensual_actual?.some(k => k.mes_num === i + 1)
               return <option key={i} value={i+1}>{m}{tieneData ? '' : ' (sin datos)'}</option>
             })}
           </select>
@@ -493,7 +493,7 @@ export default function BalancedScorecard({ data }) {
               {/* Total final */}
               <tr style={{ background:'#0f1f3d' }}>
                 <td colSpan={6} style={{ padding:'13px 18px', textAlign:'right', color:'rgba(255,255,255,.6)', fontWeight:600, fontSize:12, letterSpacing:'.5px' }}>
-                  SCORE TOTAL BALANCED SCORECARD · {MESES[mes - 1].toUpperCase()} 2026
+                  SCORE TOTAL BALANCED SCORECARD · {MESES[mes - 1].toUpperCase()} {data?.resumen?.año_actual || ''}
                 </td>
                 <td style={{ padding:'13px 10px', textAlign:'center' }}>
                   <span style={{ color:'#fff', fontWeight:700, fontSize:13,
@@ -516,7 +516,7 @@ export default function BalancedScorecard({ data }) {
       </div>
 
       <p style={{ marginTop:10, fontSize:11, color:'#94a3b8', textAlign:'right' }}>
-        * "Incrementar ventas": datos reales desde Google Sheets (ventas 2025 / 2026). Resto de perspectivas: datos de muestra pendientes de conexión.
+        * "Incrementar ventas": datos reales desde Google Sheets (ventas {data?.resumen?.año_anterior} / {data?.resumen?.año_actual}). Resto de perspectivas: datos de muestra pendientes de conexión.
       </p>
     </div>
   )
