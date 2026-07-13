@@ -202,10 +202,11 @@ export default function BalancedScorecard({ data }) {
         kpis: p.kpis.map(k => {
           const live = ventasLive[k.cod]
           if (!live) return k
+          // Si hay fuente live para este KPI, sus valores mandan (null = sin dato)
           return {
             ...k,
-            actual: live.actual ?? k.actual,
-            ratio:  live.ratio  ?? k.ratio,
+            actual: live.actual,
+            ratio:  live.ratio,
             ...(live.meta ? { meta: live.meta } : {}),
           }
         }),
