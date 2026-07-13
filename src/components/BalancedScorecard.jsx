@@ -165,6 +165,8 @@ export default function BalancedScorecard({ data }) {
     const tickets     = m26.tickets || 0
     const crecimiento = ventas25 > 0 ? (ventas26 - ventas25) / ventas25 * 100 : null
 
+    const cliSobre3000 = data.clientes_sobre_3000_por_mes?.[mes] ?? null
+
     return {
       '2.1a': {
         actual: crecimiento !== null ? crecimiento.toFixed(2) + '%' : null,
@@ -178,6 +180,10 @@ export default function BalancedScorecard({ data }) {
       '2.1c': {
         actual: fmt$(ticketProm),
         ratio:  ticketProm > 0 ? (ticketProm / 600) * 100 : null,
+      },
+      '2.1d': {
+        actual: cliSobre3000 !== null ? String(cliSobre3000) : null,
+        ratio:  cliSobre3000 !== null ? (cliSobre3000 / 95) * 100 : null,
       },
       '2.1f': {
         actual: tickets > 0 ? String(tickets) : null,

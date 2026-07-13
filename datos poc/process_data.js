@@ -122,6 +122,22 @@ function processVentas(rows, año) {
   return result;
 }
 
+// ── Clientes con ticket acumulado > $3,000 por mes ───────────────────────────
+function buildClientesSobre3000(ventas) {
+  const byMesCli = {};
+  ventas.forEach(v => {
+    if (v.solo_presencia) return;
+    const cli = v.cliente_num || v.cliente_nombre;
+    if (!byMesCli[v.mes_num]) byMesCli[v.mes_num] = {};
+    byMesCli[v.mes_num][cli] = (byMesCli[v.mes_num][cli] || 0) + v.importe;
+  });
+  const result = {};
+  Object.entries(byMesCli).forEach(([mes, clis]) => {
+    result[parseInt(mes)] = Object.values(clis).filter(v => v > 3000).length;
+  });
+  return result;
+}
+
 // ── KPI mensual ───────────────────────────────────────────────────────────────
 function buildKPIMensual(ventas, año) {
   const byMes = {};
@@ -721,12 +737,17 @@ async function main() {
 
   const agentes = [...AGENTES_COMERCIALES].sort().map((nombre, i) => ({ id: `AG${String(i+1).padStart(3,'0')}`, nombre, equipo: 'COMERCIAL' }));
 
+  const clientes_sobre_3000_por_mes      = buildClientesSobre3000(ventas2026c);
+  const clientes_sobre_3000_por_mes_2025 = buildClientesSobre3000(ventas2025c);
+
   const output = {
     resumen, agentes, metas, kpi_mensual_2025: kpi2025, kpi_mensual_2026: kpi2026,
     kpi_agentes: kpiAgentes, tabla_clientes: tablaClientes,
     alertas, lectura_tactica: lecturaTactica, cartera_detalle: cartera, clientes_nr: clientesNR,
     clientes_nr_por_mes,
-    clientes_nr_por_agente
+    clientes_nr_por_agente,
+    clientes_sobre_3000_por_mes,
+    clientes_sobre_3000_por_mes_2025,
   };
 
   const outFile = path.join(outDir, 'dashboard_data.json');
