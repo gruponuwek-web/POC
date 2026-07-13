@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 
 const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre']
 
@@ -139,23 +139,86 @@ function MiniBar({ value, max=100, color }) {
 }
 
 // ── Componente principal ─────────────────────────────────────────
-const ALL_KPIS = PERSPECTIVAS.flatMap(p => p.kpis)
+const fmt$ = n => n ? '$' + Math.round(n).toLocaleString('es-MX') : null
 
-export default function BalancedScorecard() {
+export default function BalancedScorecard({ data }) {
   const [mes, setMes] = useState(3)
   const [expandida, setExpandida] = useState(null)
 
-  const totalPeso  = ALL_KPIS.reduce((s, k) => s + k.peso, 0)
-  const totalCal   = ALL_KPIS.reduce((s, k) => s + calKpi(k), 0)
+  // Auto-seleccionar el último mes disponible en los datos
+  useEffect(() => {
+    const meses = data?.resumen?.meses_disponibles
+    if (meses?.length) setMes(meses[meses.length - 1])
+  }, [data])
+
+  // ── Calcular KPIs reales de "Incrementar ventas" desde dashboard_data ──
+  const ventasLive = useMemo(() => {
+    if (!data) return null
+    const m26 = data.kpi_mensual_2026?.find(m => m.mes_num === mes)
+    const m25 = data.kpi_mensual_2025?.find(m => m.mes_num === mes)
+    if (!m26) return null
+
+    const ventas26    = m26.ventas || 0
+    const ventas25    = m25?.ventas || 0
+    const metaMes     = data.kpi_agentes?.reduce((s, a) => s + (a.meta_por_mes?.[mes] || 0), 0) || 0
+    const ticketProm  = m26.ticket_promedio || 0
+    const tickets     = m26.tickets || 0
+    const crecimiento = ventas25 > 0 ? (ventas26 - ventas25) / ventas25 * 100 : null
+
+    return {
+      '2.1a': {
+        actual: crecimiento !== null ? crecimiento.toFixed(2) + '%' : null,
+        ratio:  crecimiento !== null ? (crecimiento / 15) * 100 : null,
+      },
+      '2.1b': {
+        actual: fmt$(ventas26),
+        meta:   metaMes > 0 ? fmt$(metaMes) : null,
+        ratio:  metaMes > 0 ? (ventas26 / metaMes) * 100 : null,
+      },
+      '2.1c': {
+        actual: fmt$(ticketProm),
+        ratio:  ticketProm > 0 ? (ticketProm / 600) * 100 : null,
+      },
+      '2.1f': {
+        actual: tickets > 0 ? String(tickets) : null,
+        ratio:  tickets > 0 ? (tickets / 840) * 100 : null,
+      },
+    }
+  }, [data, mes])
+
+  // ── Fusionar estructura estática con datos reales ───────────────
+  const perspectivas = useMemo(() => {
+    if (!ventasLive) return PERSPECTIVAS
+    return PERSPECTIVAS.map(p => {
+      if (p.id !== 'ventas') return p
+      return {
+        ...p,
+        kpis: p.kpis.map(k => {
+          const live = ventasLive[k.cod]
+          if (!live) return k
+          return {
+            ...k,
+            actual: live.actual ?? k.actual,
+            ratio:  live.ratio  ?? k.ratio,
+            ...(live.meta ? { meta: live.meta } : {}),
+          }
+        }),
+      }
+    })
+  }, [ventasLive])
+
+  const allKpis    = useMemo(() => perspectivas.flatMap(p => p.kpis), [perspectivas])
+  const totalPeso  = allKpis.reduce((s, k) => s + k.peso, 0)
+  const totalCal   = allKpis.reduce((s, k) => s + calKpi(k), 0)
   const totalScore = totalPeso > 0 ? (totalCal / totalPeso) * 100 : 0
 
-  const enMeta       = ALL_KPIS.filter(k => k.ratio !== null && k.ratio >= 100).length
-  const enSeguim     = ALL_KPIS.filter(k => k.ratio !== null && k.ratio >= 70 && k.ratio < 100).length
-  const enAlerta     = ALL_KPIS.filter(k => k.ratio === null || k.ratio < 70).length
-  const scoreColor   = totalScore >= 80 ? '#22c55e' : totalScore >= 55 ? '#f59e0b' : '#ef4444'
+  const enMeta   = allKpis.filter(k => k.ratio !== null && k.ratio >= 100).length
+  const enSeguim = allKpis.filter(k => k.ratio !== null && k.ratio >= 70 && k.ratio < 100).length
+  const enAlerta = allKpis.filter(k => k.ratio === null || k.ratio < 70).length
+  const scoreColor = totalScore >= 80 ? '#22c55e' : totalScore >= 55 ? '#f59e0b' : '#ef4444'
 
   // KPIs críticos para panel de atención
-  const criticos = PERSPECTIVAS.flatMap(p =>
+  const criticos = perspectivas.flatMap(p =>
     p.kpis.filter(k => statusOf(k.ratio) === 'alerta' || statusOf(k.ratio) === 'sin-dato')
       .map(k => ({ ...k, perspNombre: p.nombre, perspColor: p.hdrColor }))
   ).slice(0, 5)
@@ -168,14 +231,17 @@ export default function BalancedScorecard() {
         <div>
           <h2 style={{ margin:0, fontSize:22, fontWeight:800, color:'#0f1f3d', letterSpacing:'-.3px' }}>⚖️ Balanced Scorecard</h2>
           <p style={{ margin:'3px 0 0', color:'#64748b', fontSize:12.5 }}>
-            Desempeño comercial por perspectiva · Datos de ejemplo — se conectarán a Google Sheets
+            Desempeño comercial por perspectiva · Perspectiva <strong style={{color:'#0f1f3d'}}>Incrementar ventas</strong> conectada a Google Sheets — resto en proceso
           </p>
         </div>
         <div style={{ display:'flex', gap:8, alignItems:'center' }}>
           <label style={{ fontSize:12, color:'#64748b', fontWeight:600 }}>Mes</label>
           <select value={mes} onChange={e => setMes(Number(e.target.value))}
             style={{ padding:'7px 14px', borderRadius:8, border:'1.5px solid #e2e8f0', fontSize:13, color:'#1e293b', background:'#fff', cursor:'pointer', fontWeight:600 }}>
-            {MESES.map((m, i) => <option key={i} value={i+1}>{m}</option>)}
+            {MESES.map((m, i) => {
+              const tieneData = data?.kpi_mensual_2026?.some(k => k.mes_num === i + 1)
+              return <option key={i} value={i+1}>{m}{tieneData ? '' : ' (sin datos)'}</option>
+            })}
           </select>
         </div>
       </div>
@@ -202,7 +268,7 @@ export default function BalancedScorecard() {
 
         {/* Cards por perspectiva */}
         <div style={{ display:'flex', flexDirection:'column', gap:8 }}>
-          {PERSPECTIVAS.map(p => {
+          {perspectivas.map(p => {
             const score = perspScore(p)
             const color = score >= 80 ? '#22c55e' : score >= 55 ? '#f59e0b' : '#ef4444'
             const kpisOk  = p.kpis.filter(k => k.ratio !== null && k.ratio >= 100).length
@@ -285,7 +351,7 @@ export default function BalancedScorecard() {
         <div style={{ overflowX:'auto' }}>
           <table style={{ width:'100%', borderCollapse:'collapse', fontSize:13 }}>
             <tbody>
-              {PERSPECTIVAS.map(persp => {
+              {perspectivas.map(persp => {
                 const pScore   = perspScore(persp)
                 const pCal     = persp.kpis.reduce((s, k) => s + calKpi(k), 0)
                 const pPeso    = persp.kpis.reduce((s, k) => s + k.peso, 0)
@@ -443,7 +509,7 @@ export default function BalancedScorecard() {
       </div>
 
       <p style={{ marginTop:10, fontSize:11, color:'#94a3b8', textAlign:'right' }}>
-        * Datos de ejemplo para validación de estructura. Los valores reales se conectarán a Google Sheets en la siguiente fase.
+        * "Incrementar ventas": datos reales desde Google Sheets (ventas 2025 / 2026). Resto de perspectivas: datos de muestra pendientes de conexión.
       </p>
     </div>
   )

@@ -331,7 +331,7 @@ export default function App() {
           title="WBR Portal"
         />
       )}
-      {activeModule === 'scorecard' && <BalancedScorecard />}
+      {activeModule === 'scorecard' && <BalancedScorecard data={data} />}
     </div>
   )
 }
