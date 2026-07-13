@@ -19,6 +19,9 @@ const BSC_METAS = {
   // 2.1b: la meta viene de la suma de metas por agente (hoja "metas") — no se configura aquí
   '3.1a': { meta:      10   },   // promociones aplicadas por mes (#)
   '3.1b': { meta_pct:  20   },   // % de venta proveniente de promociones
+  '4.1a': { meta:       9   },   // clientes perdidos por mes (# — menos es mejor)
+  '4.2a': { meta_pct:  55   },   // cobertura de cartera total por mes (%)
+  '4.3a': { meta:      25   },   // clientes nuevos por mes (#)
 };
 
 const SHEETS = {

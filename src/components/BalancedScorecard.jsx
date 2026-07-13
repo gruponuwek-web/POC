@@ -240,9 +240,53 @@ export default function BalancedScorecard({ data }) {
     }
   }, [data, mes])
 
+  // ── KPIs reales: Incrementar clientes ─────────────────────────
+  const clientesLive = useMemo(() => {
+    if (!data) return null
+    const añoActual = data.resumen?.año_actual
+    const nrMes    = data.clientes_nr_por_mes?.find(m => m.mes_num === mes)
+    const kMes     = data.kpi_mensual_actual?.find(m => m.mes_num === mes)
+    const cartera  = data.resumen?.cartera_total || 0
+    const M        = data.bsc_metas || {}
+
+    const nuevos    = nrMes?.[`nuevos_${añoActual}`] ?? null
+    const recup     = nrMes?.[`recup_${añoActual}`]  ?? null
+    const clientes  = kMes?.clientes ?? null
+    const cobertura = cartera > 0 && clientes !== null ? (clientes / cartera) * 100 : null
+    const perdidos  = data.kpi_agentes?.reduce((s, a) => s + (a.perdidos_al_mes?.[mes] || 0), 0) ?? null
+
+    const m4_1a = M['4.1a']?.meta     ?? 9
+    const m4_2a = M['4.2a']?.meta_pct ?? 55
+    const m4_3a = M['4.3a']?.meta     ?? 25
+
+    return {
+      '4.1a': {
+        actual: perdidos !== null ? String(perdidos) : null,
+        meta:   String(m4_1a),
+        // inversa: menos es mejor → 100 si cumple, proporcional si no
+        ratio:  perdidos !== null ? (perdidos <= m4_1a ? 100 : (m4_1a / perdidos) * 100) : null,
+      },
+      '4.2a': {
+        actual: cobertura !== null ? cobertura.toFixed(1) + '%' : null,
+        meta:   m4_2a + '%',
+        ratio:  cobertura !== null ? (cobertura / m4_2a) * 100 : null,
+      },
+      '4.3a': {
+        actual: nuevos !== null ? String(nuevos) : null,
+        meta:   String(m4_3a),
+        ratio:  nuevos !== null ? (nuevos / m4_3a) * 100 : null,
+      },
+      '4.3b': {
+        actual: recup !== null ? String(recup) : null,
+        meta:   null,
+        ratio:  null,
+      },
+    }
+  }, [data, mes])
+
   // ── Fusionar estructura estática con datos reales ───────────────
   const perspectivas = useMemo(() => {
-    const liveMap = { ventas: ventasLive, productos: productosLive }
+    const liveMap = { ventas: ventasLive, productos: productosLive, clientes: clientesLive }
     return PERSPECTIVAS.map(p => {
       const live = liveMap[p.id]
       if (!live) return p
@@ -261,7 +305,7 @@ export default function BalancedScorecard({ data }) {
         }),
       }
     })
-  }, [ventasLive, productosLive])
+  }, [ventasLive, productosLive, clientesLive])
 
   const allKpis    = useMemo(() => perspectivas.flatMap(p => p.kpis), [perspectivas])
   const totalPeso  = allKpis.reduce((s, k) => s + k.peso, 0)
@@ -565,7 +609,7 @@ export default function BalancedScorecard({ data }) {
       </div>
 
       <p style={{ marginTop:10, fontSize:11, color:'#94a3b8', textAlign:'right' }}>
-        * "Incrementar ventas": datos reales desde Google Sheets (ventas {data?.resumen?.año_anterior} / {data?.resumen?.año_actual}). Resto de perspectivas: datos de muestra pendientes de conexión.
+        * "Incrementar ventas", "Estrategia productos" e "Incrementar clientes" (4.2a, 4.3a, 4.3b): datos reales desde Google Sheets. Resto de perspectivas: pendientes de conexión.
       </p>
     </div>
   )
