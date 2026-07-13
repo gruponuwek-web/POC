@@ -17,8 +17,8 @@ function resetCalificar() {
   const sesFecha  = document.getElementById('sesFecha')
   const sesSemana = document.getElementById('sesSemana')
 
-  sesFecha.value = new Date().toISOString().split('T')[0]
-  sesSemana.value = calcSemana(sesFecha.value)
+  if (!sesFecha.value) sesFecha.value = new Date().toISOString().split('T')[0]
+  if (!sesSemana.value) sesSemana.value = calcSemana(sesFecha.value)
   sesFecha.addEventListener('change', () => {
     sesSemana.value = calcSemana(sesFecha.value)
   })
@@ -27,15 +27,21 @@ function resetCalificar() {
     sesIdEl.value = sesionActiva.id
     document.getElementById('vendedoresContainer').innerHTML = ''
     renderVendedores()
-    showFloatingBtn()
     document.getElementById('concluirBtnWrap').style.display = ''
     document.querySelector('[onclick*="tab-nueva"]')?.click()
   } else {
-    const maxId = state.calificaciones.reduce((max, c) => {
-      const n = parseInt(String(c.ID_Sesion || '').replace(/\D/g, ''))
-      return isNaN(n) ? max : Math.max(max, n)
-    }, 0)
-    sesIdEl.value = 'SES' + String(maxId + 1).padStart(3, '0')
+    // ID calculado en loadAll con datos ya cargados; solo limpiar si está vacío
+    if (!sesIdEl.value) {
+      const todasSesiones = [
+        ...state.calificaciones.map(c => c.ID_Sesion),
+        ...state.ausencias.map(a => a.ID_Sesion)
+      ]
+      const maxId = todasSesiones.reduce((max, sid) => {
+        const n = parseInt(String(sid || '').replace(/\D/g, ''))
+        return isNaN(n) ? max : Math.max(max, n)
+      }, 0)
+      sesIdEl.value = 'SES' + String(maxId + 1).padStart(3, '0')
+    }
     document.getElementById('vendedoresContainer').innerHTML = ''
   }
 
@@ -51,7 +57,6 @@ function crearSesion() {
 
   sesionActiva = { id, fecha, semana }
   localStorage.setItem('wbr_sesion_activa', JSON.stringify(sesionActiva))
-  showFloatingBtn()
   renderVendedores()
   document.getElementById('concluirBtnWrap').style.display = ''
   toast('Sesión ' + id + ' iniciada')
@@ -86,36 +91,113 @@ function confirmarConcluir() {
   toast('Sesión concluida correctamente')
 }
 
+// ── AUSENCIA ─────────────────────────────────────────────
+
+async function toggleAusente(vid, vendedor, rol) {
+  const panelAus  = document.getElementById('panel-ausente-' + vid)
+  const panelFlujo = document.getElementById('panel-flujo-' + vid)
+  const btn       = document.getElementById('btnAus-' + vid)
+  const steps     = document.getElementById('steps-' + vid)
+  const av        = document.getElementById('av-' + vid)
+  const body      = document.getElementById('vb-body-' + vid)
+
+  const ahoraAusente = panelAus.style.display === 'none'
+
+  panelAus.style.display   = ahoraAusente ? '' : 'none'
+  panelFlujo.style.display = ahoraAusente ? 'none' : ''
+  steps.style.opacity      = ahoraAusente ? '0.3' : '1'
+  steps.style.pointerEvents = ahoraAusente ? 'none' : ''
+  av.style.opacity         = ahoraAusente ? '0.5' : '1'
+  btn.innerHTML            = `<i class="ti ti-user${ahoraAusente ? '-off' : ''}"></i> ${ahoraAusente ? 'Presente' : 'No asistió'}`
+  btn.style.background     = ahoraAusente ? 'var(--danger)' : ''
+  btn.style.color          = ahoraAusente ? '#fff' : ''
+  btn.style.borderColor    = ahoraAusente ? 'var(--danger)' : ''
+
+  if (body.style.display === 'none') body.style.display = ''
+
+  if (!ahoraAusente && sesionActiva) {
+    await post('deleteAusencia', { id_sesion: sesionActiva.id, vendedor })
+    toast(vendedor.split(' ')[0] + ' — marcado como presente')
+  }
+}
+
+async function seleccionarRazon(vid, vendedor, rol, btn, razon) {
+  btn.closest('div').querySelectorAll('.razon-btn').forEach(b => b.classList.remove('active'))
+  btn.classList.add('active')
+
+  if (!sesionActiva) return toast('Primero inicia la sesión', 'error')
+  const res = await post('saveAusencia', {
+    id_sesion: sesionActiva.id, fecha: sesionActiva.fecha,
+    semana: sesionActiva.semana, vendedor, razon
+  })
+  if (res.success) toast(vendedor.split(' ')[0] + ' — ausencia registrada: ' + razon)
+  else toast('Error: ' + res.error, 'error')
+}
+
 // ── FLUJO POR VENDEDOR ────────────────────────────────────
 
 function renderVendedores() {
   const cont = document.getElementById('vendedoresContainer')
   if (!cont) return
   const vendedores = state.equipo.filter(m => m.Rol !== 'Coordinador')
+  const RAZONES_AUSENCIA = [
+    'Vacaciones',
+    'Incapacidad / Enfermedad',
+    'Visita de campo / Comisión',
+    'Ausencia injustificada'
+  ]
+
   cont.innerHTML = vendedores.map((v, i) => {
     const vid = 'v' + i
+    const ausExist = sesionActiva
+      ? (state.ausencias || []).find(a => a.ID_Sesion === sesionActiva.id && a.Vendedor === v.Nombre)
+      : null
+    const ausente = !!ausExist
+    const razonExist = ausExist?.Razon || ''
+
     return `
     <div class="vend-block" id="vb-${vid}">
       <div class="vend-hdr" onclick="toggleVendedor('${vid}')">
         <div style="display:flex;align-items:center;gap:10px">
-          <div class="avatar">${initials(v.Nombre)}</div>
+          <div class="avatar" id="av-${vid}" style="${ausente?'background:var(--muted);opacity:.6':''}">${initials(v.Nombre)}</div>
           <div>
             <div style="font-size:13px;font-weight:600">${v.Nombre}</div>
             <div style="font-size:11px;color:var(--muted)">${v.Rol}</div>
           </div>
           <span id="pct-${vid}" class="pill" style="display:none"></span>
+          ${ausente ? `<span class="pill pill-red" style="font-size:10px">Ausente · ${razonExist}</span>` : ''}
         </div>
-        <div style="display:flex;gap:6px;align-items:center">
-          <div class="vstep" id="step-kpis-${vid}" onclick="event.stopPropagation();switchVStep('${vid}','kpis')">KPIs</div>
-          <div class="vstep" id="step-desc-${vid}" onclick="event.stopPropagation();switchVStep('${vid}','desc')">Descubrimiento</div>
-          <div class="vstep" id="step-acc-${vid}" onclick="event.stopPropagation();switchVStep('${vid}','acc')">Acciones</div>
+        <div style="display:flex;gap:6px;align-items:center" onclick="event.stopPropagation()">
+          <button class="btn btn-sm ${ausente?'btn-danger-active':''}" id="btnAus-${vid}"
+            style="font-size:11px;padding:3px 10px;${ausente?'background:var(--danger);color:#fff;border-color:var(--danger)':''}"
+            onclick="toggleAusente('${vid}','${v.Nombre}','${v.Rol}')">
+            <i class="ti ti-user-off"></i> ${ausente?'Presente':'No asistió'}
+          </button>
+          <div id="steps-${vid}" style="display:flex;gap:6px;${ausente?'opacity:.3;pointer-events:none':''}">
+            <div class="vstep" id="step-kpis-${vid}" onclick="switchVStep('${vid}','kpis')">KPIs</div>
+            <div class="vstep" id="step-desc-${vid}" onclick="switchVStep('${vid}','desc')">Descubrimiento</div>
+            <div class="vstep" id="step-acc-${vid}" onclick="switchVStep('${vid}','acc')">Acciones</div>
+          </div>
           <i class="ti ti-chevron-down" id="arrow-${vid}" style="font-size:14px;color:var(--muted);transition:.2s"></i>
         </div>
       </div>
       <div class="vend-body" id="vb-body-${vid}" style="display:none">
-        ${panelKpis(vid, v)}
-        ${panelDesc(vid, v)}
-        ${panelAcc(vid, v)}
+        <div id="panel-ausente-${vid}" style="${ausente?'':'display:none'}padding:16px;background:#fef2f2;border-radius:8px;margin-bottom:12px">
+          <div style="font-size:12px;font-weight:600;color:var(--danger);margin-bottom:8px">
+            <i class="ti ti-user-off"></i> Razón de ausencia
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            ${RAZONES_AUSENCIA.map(r => `
+              <button class="razon-btn${razonExist===r?' active':''}" onclick="seleccionarRazon('${vid}','${v.Nombre}','${v.Rol}',this,'${r}')">
+                ${r}
+              </button>`).join('')}
+          </div>
+        </div>
+        <div id="panel-flujo-${vid}" style="${ausente?'display:none':''}">
+          ${panelKpis(vid, v)}
+          ${panelDesc(vid, v)}
+          ${panelAcc(vid, v)}
+        </div>
       </div>
     </div>`
   }).join('')
@@ -310,8 +392,20 @@ async function guardarAccionesVendedor(vid, vendedor) {
     toast('Sin acciones registradas para ' + vendedor)
     return
   }
-  for (let ci = 0; ci < cards.length; ci++) {
-    const card = cards[ci]
+  const cardsValidas = Array.from(cards).filter(card => {
+    const desc = card.querySelectorAll('input')[0]?.value?.trim()
+    return desc && desc.length > 0
+  })
+
+  if (!cardsValidas.length) {
+    document.getElementById('step-acc-' + vid)?.classList.add('done')
+    setTimeout(() => toggleVendedor(vid), 400)
+    toast('Sin acciones con descripción para ' + vendedor)
+    return
+  }
+
+  for (let ci = 0; ci < cardsValidas.length; ci++) {
+    const card = cardsValidas[ci]
     const inputs  = card.querySelectorAll('input')
     const selects = card.querySelectorAll('select')
     const ta      = card.querySelector('textarea')
@@ -326,7 +420,7 @@ async function guardarAccionesVendedor(vid, vendedor) {
       fecha_compromiso: inputs[3]?.value,
       descripcion_libre: ta?.value,
       acompanamiento: COORD,
-      primer_del_lote: ci === 0   // señal para que el backend borre previas antes de insertar
+      primer_del_lote: ci === 0
     })
   }
   document.getElementById('step-acc-' + vid)?.classList.add('done')

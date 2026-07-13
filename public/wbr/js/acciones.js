@@ -1,4 +1,5 @@
 let _segAccionId = null
+let _borrarAccionId = null
 
 function renderAcciones() {
   const vendedor = document.getElementById('acFiltroVendedor')?.value || ''
@@ -29,10 +30,15 @@ function renderAcciones() {
       <td>${fmtDate(a.Fecha_Compromiso)}</td>
       <td>${a.Acompanamiento || '—'}</td>
       <td>${badgeEst(a.Estatus)}</td>
-      <td>${a.Estatus !== 'Cerrado'
-        ? `<button class="btn btn-sm" onclick="openSeguimientoModal('${a.ID_Accion}')">+ Seg.</button>`
-        : '—'
-      }</td>
+      <td style="white-space:nowrap">
+        ${a.Estatus !== 'Cerrado'
+          ? `<button class="btn btn-sm" onclick="openSeguimientoModal('${a.ID_Accion}')">+ Seg.</button>`
+          : '—'
+        }
+        <button class="btn btn-sm" style="margin-left:4px;color:var(--danger);border-color:var(--danger)" onclick="pedirBorrarAccion('${a.ID_Accion}')" title="Eliminar acción">
+          <i class="ti ti-trash"></i>
+        </button>
+      </td>
     </tr>`).join('')
 }
 
@@ -78,6 +84,29 @@ async function guardarAccion() {
     toast('Acción registrada')
   } else {
     toast('Error: ' + res.error, 'error')
+  }
+}
+
+// ── ELIMINAR ACCIÓN ───────────────────────────────────────
+
+function pedirBorrarAccion(id) {
+  _borrarAccionId = id
+  const acc = state.acciones.find(a => a.ID_Accion === id)
+  document.getElementById('borrarAccionDesc').textContent = acc?.Descripcion || id
+  openModal('modalBorrarAccion')
+}
+
+async function confirmarBorrarAccion() {
+  if (!_borrarAccionId) return
+  closeModal('modalBorrarAccion')
+  const res = await post('deleteAccion', { id_accion: _borrarAccionId })
+  if (res.success) {
+    await loadAll()
+    renderAcciones()
+    toast('Acción eliminada')
+    _borrarAccionId = null
+  } else {
+    toast('Error: ' + (res.error || 'No se pudo eliminar'), 'error')
   }
 }
 

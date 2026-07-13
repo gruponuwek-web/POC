@@ -5,9 +5,18 @@ let state = {
   calificaciones: [],
   acciones: [],
   seguimiento: [],
-  descubrimientos: []
+  descubrimientos: [],
+  ausencias: [],
+  sesionesMBR: [],
+  compromisos: []
 }
 let sesionActiva = null
+
+function calcSemana(fechaStr) {
+  const d = new Date(fechaStr)
+  const inicio = new Date(d.getFullYear(), 0, 1)
+  return Math.ceil(((d - inicio) / 86400000 + inicio.getDay() + 1) / 7)
+}
 
 // ── HTTP ──────────────────────────────────────────────────
 
@@ -47,10 +56,11 @@ function navigate(el, page) {
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'))
   document.getElementById('page-' + page).classList.add('active')
   el.classList.add('active')
-  if (page === 'dashboard')  renderDashboard()
-  if (page === 'calificar')  resetCalificar()
-  if (page === 'acciones')   renderAcciones()
-  if (page === 'agenda')     renderAgenda()
+  if (page === 'dashboard')   renderDashboard()
+  if (page === 'calificar')   resetCalificar()
+  if (page === 'acciones')    renderAcciones()
+  if (page === 'agenda')      renderAgenda()
+  if (page === 'compromisos') resetCompromisos()
 }
 
 function switchTab(el, tabId) {
@@ -107,14 +117,17 @@ function fmtDate(d) {
 
 async function loadAll() {
   try {
-    const [equipo, kpis, clasifs, califs, acciones, seg, descs] = await Promise.all([
+    const [equipo, kpis, clasifs, califs, acciones, seg, descs, ausencias, sesionesMBR, compromisos] = await Promise.all([
       api('getEquipo'),
       api('getKPIs'),
       api('getClasificaciones'),
       api('getCalificaciones'),
       api('getPlanAcciones'),
       api('getSeguimiento'),
-      api('getDescubrimientos')
+      api('getDescubrimientos'),
+      api('getAusencias'),
+      api('getSesionesMBR'),
+      api('getCompromisos')
     ])
     state.equipo          = equipo
     state.kpis            = kpis
@@ -123,15 +136,38 @@ async function loadAll() {
     state.acciones        = acciones
     state.seguimiento     = seg
     state.descubrimientos = descs
+    state.ausencias       = ausencias
+    state.sesionesMBR     = sesionesMBR
+    state.compromisos     = compromisos
 
     const saved = localStorage.getItem('wbr_sesion_activa')
     if (saved) {
       sesionActiva = JSON.parse(saved)
-      showFloatingBtn()
     }
 
     populateSelects()
     renderDashboard()
+
+    // Poner fecha de hoy y calcular siguiente ID de sesión con datos ya cargados
+    const fechaEl = document.getElementById('sesFecha')
+    if (fechaEl) {
+      if (!fechaEl.value) fechaEl.value = new Date().toISOString().split('T')[0]
+      const semEl = document.getElementById('sesSemana')
+      if (semEl && !semEl.value) semEl.value = calcSemana(fechaEl.value)
+    }
+    const sesIdEl = document.getElementById('sesId')
+    if (sesIdEl && !sesionActiva) {
+      // Obtener IDs únicos de sesiones de calificaciones Y ausencias
+      const todasSesiones = [
+        ...state.calificaciones.map(c => c.ID_Sesion),
+        ...state.ausencias.map(a => a.ID_Sesion)
+      ]
+      const maxId = todasSesiones.reduce((max, sid) => {
+        const n = parseInt(String(sid || '').replace(/\D/g, ''))
+        return isNaN(n) ? max : Math.max(max, n)
+      }, 0)
+      sesIdEl.value = 'SES' + String(maxId + 1).padStart(3, '0')
+    }
   } catch(e) {
     toast('Error al cargar datos: ' + e.message, 'error')
   }

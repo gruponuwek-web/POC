@@ -225,6 +225,7 @@ nav { padding: 10px 0; flex: 1; }
 .btn-primary:hover { background: #1d4ed8; }
 .btn-sm { padding: 4px 10px; font-size: 12px; }
 .btn-icon { padding: 6px 8px; }
+.dash-filtro-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
 
 /* ── FORM ── */
 .form-group { margin-bottom: 14px; }
@@ -332,6 +333,21 @@ select { cursor: pointer; }
 }
 #floatingWBR.show { display: flex; }
 
+/* ── RAZONES AUSENCIA ── */
+.razon-btn {
+  padding: 5px 14px;
+  border-radius: 20px;
+  border: 1.5px solid #fca5a5;
+  background: #fff;
+  color: #b91c1c;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .15s, color .15s;
+}
+.razon-btn:hover { background: #fef2f2; }
+.razon-btn.active { background: #ef4444; color: #fff; border-color: #ef4444; }
+
 /* ── TUMBA BURROS ── */
 .tumba {
   background: var(--accent-light);
@@ -372,4 +388,170 @@ select { cursor: pointer; }
   .grid2 { grid-template-columns: 1fr; }
   .sidebar { width: 60px; }
   .nav-item span, .sidebar-logo .sub, .sidebar-logo .name, .sidebar-user .uname, .sidebar-user .urol { display: none; }
+}
+
+/* ── COMPROMISOS MBR ────────────────────────────────────── */
+
+.mbr-vendor-strip {
+  display: flex;
+  overflow-x: auto;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  margin-bottom: 16px;
+}
+.mbr-vendor-tab {
+  display: flex; align-items: center; gap: 7px;
+  padding: 11px 15px; font-size: 12px; font-weight: 600;
+  color: var(--text2); cursor: pointer; white-space: nowrap;
+  border-bottom: 2.5px solid transparent;
+  transition: color .15s, border-color .15s;
+}
+.mbr-vendor-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+.mbr-chip {
+  font-size: 10px; padding: 1px 7px; border-radius: 20px;
+  background: #dbeafe; color: #2563eb; font-weight: 700;
+}
+
+.mbr-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.mbr-card {
+  border-radius: 12px; border: 1px solid var(--border);
+  background: var(--surface); overflow: hidden;
+}
+.mbr-card-head {
+  padding: 11px 14px; display: flex; align-items: center; gap: 10px;
+  border-bottom: 1px solid var(--border);
+}
+.mbr-head-icon { font-size: 17px; }
+.mbr-head-label { font-size: 10px; font-weight: 800; letter-spacing: .6px; text-transform: uppercase; }
+.mbr-head-sub   { font-size: 10px; color: var(--text2); margin-top: 1px; }
+.mbr-head-score { margin-left: auto; font-size: 12px; font-weight: 800; font-variant-numeric: tabular-nums; }
+
+.mbr-card-prospeccion .mbr-card-head { background: #eff6ff; border-color: #dbeafe; }
+.mbr-card-prospeccion .mbr-head-label,
+.mbr-card-prospeccion .mbr-head-score { color: #2563eb; }
+.mbr-card-bcg .mbr-card-head { background: #fffbeb; border-color: #fde68a; }
+.mbr-card-bcg .mbr-head-label,
+.mbr-card-bcg .mbr-head-score { color: #d97706; }
+.mbr-card-recuperacion .mbr-card-head { background: #f0fdf4; border-color: #bbf7d0; }
+.mbr-card-recuperacion .mbr-head-label,
+.mbr-card-recuperacion .mbr-head-score { color: #16a34a; }
+
+/* items */
+.mbr-item {
+  display: grid;
+  grid-template-columns: 1fr auto auto auto;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px 8px 14px;
+  border-bottom: 1px solid var(--border);
+  transition: background .12s;
+}
+.mbr-item:last-child { border-bottom: none; }
+.mbr-item.cumplido   { background: #dcfce7; }
+.mbr-item.no-cumplido { background: #fee2e2; }
+
+.mbr-name-input {
+  font-size: 12.5px; font-weight: 500; font-family: inherit;
+  color: var(--text); background: transparent; border: none;
+  border-bottom: 1.5px dashed transparent;
+  padding: 2px 4px 2px 0; width: 100%; min-width: 0;
+  transition: border-color .15s;
+}
+.mbr-name-input:hover { border-bottom-color: var(--muted); }
+.mbr-name-input:focus { outline: none; border-bottom-color: var(--accent); background: rgba(37,99,235,.04); }
+
+.mbr-monto-cell { display: flex; align-items: center; gap: 3px; }
+.mbr-peso { font-size: 10px; color: var(--muted); font-weight: 600; }
+.mbr-monto-cell input {
+  width: 68px; padding: 4px 6px; border-radius: 6px;
+  border: 1.5px solid var(--border); background: var(--bg);
+  color: var(--text); font-size: 11px; font-family: inherit;
+  font-variant-numeric: tabular-nums; text-align: right;
+  transition: border-color .15s;
+}
+.mbr-monto-cell input:focus { outline: none; border-color: var(--accent); }
+.mbr-item.cumplido   .mbr-monto-cell input { border-color: #86efac; }
+.mbr-item.no-cumplido .mbr-monto-cell input { border-color: #fca5a5; opacity: .6; }
+
+/* toggle */
+.mbr-toggle-wrap { display: flex; align-items: center; gap: 6px; }
+.mbr-toggle { position: relative; width: 38px; height: 20px; cursor: pointer; flex-shrink: 0; }
+.mbr-toggle input { opacity: 0; width: 0; height: 0; }
+.mbr-slider {
+  position: absolute; inset: 0; border-radius: 99px;
+  background: #fee2e2; border: 1.5px solid #fca5a5;
+  transition: background .2s, border-color .2s;
+}
+.mbr-slider:before {
+  content: ''; position: absolute; width: 12px; height: 12px;
+  left: 3px; top: 50%; transform: translateY(-50%);
+  border-radius: 50%; background: #b91c1c;
+  transition: transform .2s, background .2s;
+}
+.mbr-toggle input:checked + .mbr-slider { background: #dcfce7; border-color: #86efac; }
+.mbr-toggle input:checked + .mbr-slider:before { transform: translateY(-50%) translateX(17px); background: #15803d; }
+.mbr-toggle-lbl { font-size: 10px; font-weight: 700; min-width: 58px; }
+.mbr-toggle-lbl.si { color: #15803d; }
+.mbr-toggle-lbl.no { color: #b91c1c; }
+
+/* del btn */
+.mbr-del-btn {
+  width: 26px; height: 26px; border-radius: 6px; border: none;
+  background: transparent; color: var(--muted); cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; opacity: 0;
+  transition: background .12s, color .12s, opacity .15s;
+}
+.mbr-item:hover .mbr-del-btn { opacity: 1; }
+.mbr-del-btn:hover { background: #fee2e2; color: var(--danger); }
+
+/* section total */
+.mbr-section-total {
+  padding: 8px 14px; border-top: 1.5px dashed var(--border);
+  display: flex; justify-content: space-between; align-items: center; font-size: 11px;
+}
+.mbr-total-lbl { color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .4px; }
+.mbr-total-val { font-weight: 800; font-size: 13px; font-variant-numeric: tabular-nums; color: var(--accent); }
+.mbr-card-bcg .mbr-total-val { color: #d97706; }
+.mbr-card-recuperacion .mbr-total-val { color: #16a34a; }
+
+/* add row */
+.mbr-add-row { padding: 8px 14px; }
+.mbr-add-row button {
+  font-size: 11px; font-weight: 600; color: var(--text2); background: none;
+  border: 1.5px dashed var(--border); border-radius: 7px; padding: 5px 10px;
+  cursor: pointer; width: 100%; font-family: inherit; transition: color .12s, border-color .12s;
+}
+.mbr-add-row button:hover { color: var(--accent); border-color: var(--accent); }
+
+/* score bar */
+.mbr-score-bar {
+  background: #0f1f3d; border-radius: 12px; padding: 14px 20px;
+  display: flex; align-items: center; gap: 18px; flex-wrap: wrap;
+  margin-top: 2px;
+}
+.mbr-score-main { display: flex; align-items: baseline; gap: 3px; }
+.mbr-score-num  { font-size: 34px; font-weight: 800; color: #fff; font-variant-numeric: tabular-nums; line-height: 1; }
+.mbr-score-den  { font-size: 16px; font-weight: 600; color: rgba(255,255,255,.4); }
+.mbr-score-progress { flex: 1; min-width: 130px; }
+.mbr-bar-track  { height: 6px; border-radius: 99px; background: rgba(255,255,255,.12); overflow: hidden; }
+.mbr-bar-fill   { height: 100%; border-radius: 99px; background: linear-gradient(90deg,#22c55e,#4ade80); transition: width .4s; }
+.mbr-score-detail { display: flex; gap: 16px; }
+.mbr-stat-val { font-size: 14px; font-weight: 800; color: #fff; font-variant-numeric: tabular-nums; }
+.mbr-stat-lbl { font-size: 10px; color: rgba(255,255,255,.4); text-transform: uppercase; letter-spacing: .4px; margin-top: 1px; }
+.mbr-monto-total {
+  display: flex; flex-direction: column; align-items: flex-end;
+  border-left: 1px solid rgba(255,255,255,.12); padding-left: 16px;
+}
+.mbr-monto-val { font-size: 18px; font-weight: 800; color: #4ade80; font-variant-numeric: tabular-nums; }
+.mbr-monto-lbl { font-size: 10px; color: rgba(255,255,255,.45); text-transform: uppercase; letter-spacing: .5px; margin-top: 2px; }
+
+@media (max-width: 900px) {
+  .mbr-grid { grid-template-columns: 1fr; }
 }

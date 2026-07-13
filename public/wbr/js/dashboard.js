@@ -7,7 +7,7 @@ function getFiltroFecha() {
   }
 }
 
-function setFiltroRapido(tipo) {
+function setFiltroRapido(tipo, btn) {
   const hoy = new Date()
   let ini, fin = hoy.toISOString().split('T')[0]
   if (tipo === 'semana') {
@@ -20,13 +20,22 @@ function setFiltroRapido(tipo) {
   }
   document.getElementById('dashFechaInicio').value = ini
   document.getElementById('dashFechaFin').value = fin
+  _setActiveFiltroBtn(btn)
   renderDashboard()
 }
 
 function clearFiltroFecha() {
   document.getElementById('dashFechaInicio').value = ''
   document.getElementById('dashFechaFin').value = ''
+  const sel = document.getElementById('filtroVendedor')
+  if (sel) sel.value = ''
+  _setActiveFiltroBtn(null)
   renderDashboard()
+}
+
+function _setActiveFiltroBtn(activeBtn) {
+  document.querySelectorAll('.dash-filtro-btn').forEach(b => b.classList.remove('active'))
+  if (activeBtn) activeBtn.classList.add('active')
 }
 
 function filtrarPorFecha(items, campo) {
@@ -69,6 +78,7 @@ function renderDashboard() {
   renderEquipoList(califs, acciones)
   renderPrioChart(acciones)
   renderUltimasAcciones(acciones)
+  renderMBRDashboard()
 }
 
 function renderEquipoList(califs, acciones) {
@@ -120,6 +130,98 @@ function renderPrioChart(acciones) {
         <div class="bar-fill" style="width:${Math.round(p.val/maxV*100)}%;background:${p.color}"></div>
       </div>
     </div>`).join('')
+}
+
+function renderMBRDashboard() {
+  const kpisEl   = document.getElementById('mbrDashKpis')
+  const contentEl = document.getElementById('mbrDashContent')
+  if (!kpisEl || !contentEl) return
+
+  const { ini, fin } = getFiltroFecha()
+  const vendedor = document.getElementById('filtroVendedor')?.value || ''
+
+  // Filtrar sesiones MBR por rango de fecha
+  const sesiones = state.sesionesMBR.filter(s => {
+    const d = String(s.Fecha || '').split('T')[0]
+    if (ini && d < ini) return false
+    if (fin && d > fin) return false
+    return true
+  })
+
+  const sesIds = new Set(sesiones.map(s => String(s.ID_Sesion)))
+
+  // Compromisos de esas sesiones
+  const comp = state.compromisos.filter(c =>
+    sesIds.has(String(c.ID_Sesion)) &&
+    (!vendedor || c.Vendedor === vendedor)
+  )
+
+  const total    = comp.length
+  const cumplidos = comp.filter(c => c.Cumplido === 'TRUE' || c.Cumplido === true).length
+  const monto    = comp.reduce((s, c) => s + parseFloat(c.Monto || 0), 0)
+  const pct      = total > 0 ? Math.round(cumplidos / total * 100) : 0
+
+  // KPI chips
+  const fmtM = n => '$' + Number(n).toLocaleString('es-MX')
+  kpisEl.innerHTML = [
+    { label: 'Sesiones MBR', val: sesiones.length, color: 'var(--accent)' },
+    { label: 'Compromisos',  val: total,            color: 'var(--text2)' },
+    { label: 'Cumplidos',    val: `${cumplidos}/${total}`, color: pct >= 80 ? 'var(--success)' : pct >= 50 ? 'var(--warning)' : 'var(--danger)' },
+    { label: 'Monto total',  val: fmtM(monto),      color: '#16a34a' },
+  ].map(k => `
+    <div style="text-align:center;padding:6px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;min-width:90px">
+      <div style="font-size:15px;font-weight:800;color:${k.color};font-variant-numeric:tabular-nums">${k.val}</div>
+      <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-top:2px">${k.label}</div>
+    </div>`).join('')
+
+  // Sin datos
+  if (!sesiones.length) {
+    contentEl.innerHTML = `<div style="text-align:center;padding:28px;color:var(--muted);font-size:13px">Sin sesiones MBR en el período seleccionado</div>`
+    return
+  }
+
+  // Tabla por agente
+  const vendedores = state.equipo.filter(m => m.Rol !== 'Coordinador' && (!vendedor || m.Nombre === vendedor))
+  const SECS = ['Prospeccion','BCG','Recuperacion']
+
+  contentEl.innerHTML = `<div style="overflow-x:auto">
+    <table class="tbl">
+      <thead><tr>
+        <th>Agente</th>
+        <th style="text-align:center">Prospección</th>
+        <th style="text-align:center">BCG</th>
+        <th style="text-align:center">Recuperación</th>
+        <th style="text-align:center">Score</th>
+        <th style="text-align:right">Monto</th>
+      </tr></thead>
+      <tbody>
+        ${vendedores.map(v => {
+          const vc = comp.filter(c => c.Vendedor === v.Nombre)
+          const secScore = sec => {
+            const s = vc.filter(c => c.Seccion === sec)
+            const ok = s.filter(c => c.Cumplido === 'TRUE' || c.Cumplido === true).length
+            return s.length ? `${ok}/${s.length}` : '—'
+          }
+          const totalV   = vc.length
+          const cumpV    = vc.filter(c => c.Cumplido === 'TRUE' || c.Cumplido === true).length
+          const pctV     = totalV > 0 ? Math.round(cumpV / totalV * 100) : null
+          const montoV   = vc.reduce((s, c) => s + parseFloat(c.Monto || 0), 0)
+          const cls      = pctV === null ? 'muted' : pctV >= 80 ? 'green' : pctV >= 50 ? 'yellow' : 'red'
+          return `<tr>
+            <td>
+              <div style="display:flex;align-items:center;gap:8px">
+                <div class="avatar" style="width:28px;height:28px;font-size:10px;flex-shrink:0">${initials(v.Nombre)}</div>
+                <span>${v.Nombre}</span>
+              </div>
+            </td>
+            ${SECS.map(s => `<td style="text-align:center;font-size:12px;font-weight:600">${secScore(s)}</td>`).join('')}
+            <td style="text-align:center">${pctV !== null ? `<span class="pill pill-${cls}">${pctV}%</span>` : '<span style="color:var(--muted)">—</span>'}</td>
+            <td style="text-align:right;font-weight:700;font-variant-numeric:tabular-nums">${montoV > 0 ? fmtM(montoV) : '—'}</td>
+          </tr>`
+        }).join('')}
+      </tbody>
+    </table>
+  </div>`
 }
 
 function renderUltimasAcciones(acciones) {
