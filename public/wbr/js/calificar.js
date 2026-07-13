@@ -1,5 +1,5 @@
 const TUMBA = {
-  kpis: 'KPIs: Marca ✅ o ❌ en cada indicador según el desempeño del agente en esta semana.',
+  kpis: 'KPIs: Activa el toggle en cada indicador que el agente cumplió esta semana.',
   desc: 'Descubrimiento: Registra el hallazgo principal de la visita — oportunidad, obstáculo o compromiso clave.',
   acc:  'Acciones: Agrega los compromisos concretos que el agente asumió en esta sesión.'
 }
@@ -215,14 +215,30 @@ function panelKpis(vid, v) {
   if (calExist?.KPIs) {
     try { kpisExist = JSON.parse(calExist.KPIs) } catch(e) {}
   }
+  // Fallback: leer columnas individuales KPI_1, KPI_2, …
+  if (!kpisExist.length && calExist) {
+    kpisExist = kpisRol.map((_, i) => {
+      const v2 = calExist['KPI_' + (i + 1)]
+      return v2 === true || v2 === 'true' || v2 === 'TRUE' || v2 === 1
+    })
+  }
   const rows = kpisRol.map((kpi, i) => {
-    const val = kpisExist[i]
+    const val      = kpisExist[i]
+    const cumplido = val === true
+    const touched  = kpisExist.length > 0
     return `
     <div class="kpi-row" id="kpirow-${vid}-${i}">
-      <span>${kpi}</span>
-      <div style="display:flex;gap:6px">
-        <button class="kpi-btn${val === true ? ' si' : ''}" onclick="toggleKpi(this,'si','${vid}','${i}')">✅</button>
-        <button class="kpi-btn${val === false && kpisExist.length ? ' no' : ''}" onclick="toggleKpi(this,'no','${vid}','${i}')">❌</button>
+      <span class="kpi-label">${kpi}</span>
+      <div class="kpi-toggle-wrap">
+        <label class="mbr-toggle">
+          <input type="checkbox" id="kpitog-${vid}-${i}"
+            ${cumplido ? 'checked' : ''}
+            onchange="onKpiToggle(this,'${vid}','${i}')">
+          <span class="mbr-slider"></span>
+        </label>
+        <span class="mbr-toggle-lbl ${touched ? (cumplido ? 'si' : 'no') : ''}" id="kpilbl-${vid}-${i}">
+          ${touched ? (cumplido ? 'Cumplió' : 'No cumplió') : 'Sin calificar'}
+        </span>
       </div>
     </div>`
   }).join('')
@@ -324,10 +340,16 @@ function switchVStep(vid, step) {
   if (panel) panel.style.display = ''
 }
 
-function toggleKpi(btn, val, vid, idx) {
-  const row = document.getElementById('kpirow-' + vid + '-' + idx)
-  row.querySelectorAll('.kpi-btn').forEach(b => b.classList.remove('si','no'))
-  btn.classList.add(val)
+function onKpiToggle(inp, vid, idx) {
+  const lbl = document.getElementById('kpilbl-' + vid + '-' + idx)
+  if (!lbl) return
+  if (inp.checked) {
+    lbl.textContent = 'Cumplió'
+    lbl.className = 'mbr-toggle-lbl si'
+  } else {
+    lbl.textContent = 'No cumplió'
+    lbl.className = 'mbr-toggle-lbl no'
+  }
 }
 
 // ── GUARDAR PASOS ─────────────────────────────────────────
@@ -336,9 +358,8 @@ async function guardarKpisYseguir(vid, vendedor, rol) {
   if (!sesionActiva) return toast('Primero crea la sesión', 'error')
   const kpisRol = state.kpis[rol] || []
   const kpis = kpisRol.map((_, i) => {
-    const row = document.getElementById('kpirow-' + vid + '-' + i)
-    const si  = row?.querySelector('.kpi-btn.si')
-    return !!si
+    const tog = document.getElementById('kpitog-' + vid + '-' + i)
+    return tog ? tog.checked : false
   })
   const res = await post('saveCalificacion', {
     id_sesion: sesionActiva.id,

@@ -183,25 +183,37 @@
         <i class="ti ti-plus"></i> Nueva acción
       </button>
     </div>
-    <div class="filtros">
-      <select id="acFiltroVendedor" onchange="renderAcciones()"><option value="">Todos los agentes</option></select>
-      <select id="acFiltroEstatus" onchange="renderAcciones()">
+    <div class="filtros" style="flex-wrap:wrap;gap:8px">
+      <select id="acFiltroVendedor" onchange="_acFiltrar()"><option value="">Todos los agentes</option></select>
+      <select id="acFiltroEstatus" onchange="_acFiltrar()">
         <option value="">Todos los estatus</option>
         <option>Pendiente</option>
         <option>En proceso</option>
         <option>Cerrado</option>
       </select>
-      <select id="acFiltroPrio" onchange="renderAcciones()">
+      <select id="acFiltroPrio" onchange="_acFiltrar()">
         <option value="">Todas las prioridades</option>
         <option>Alta</option>
         <option>Media</option>
         <option>Baja</option>
       </select>
+      <div style="display:flex;align-items:center;gap:6px">
+        <label style="font-size:12px;color:var(--muted);white-space:nowrap">Desde</label>
+        <input type="date" id="acFechaIni" style="width:140px" onchange="_acFiltrar()">
+      </div>
+      <div style="display:flex;align-items:center;gap:6px">
+        <label style="font-size:12px;color:var(--muted);white-space:nowrap">Hasta</label>
+        <input type="date" id="acFechaFin" style="width:140px" onchange="_acFiltrar()">
+      </div>
+      <button class="btn btn-sm" onclick="clearFiltrosAcciones()" style="white-space:nowrap">
+        <i class="ti ti-x"></i> Limpiar
+      </button>
     </div>
     <div class="card" style="overflow-x:auto">
-      <table class="tbl" id="tablaAcciones" style="min-width:750px">
+      <table class="tbl" id="tablaAcciones" style="min-width:800px">
         <thead>
           <tr>
+            <th style="width:36px;text-align:center">#</th>
             <th>Agente</th><th>Clasificación</th><th>Prioridad</th>
             <th>Acción</th><th>Cliente</th><th>Compromiso</th>
             <th>Acompañamiento</th><th>Estatus</th><th></th>
@@ -209,6 +221,18 @@
         </thead>
         <tbody id="accionesBody"></tbody>
       </table>
+    </div>
+    <div id="acPaginacion" style="display:flex;justify-content:space-between;align-items:center;padding:10px 4px;margin-top:4px">
+      <span id="acPagInfo" style="font-size:12px;color:var(--muted)"></span>
+      <div style="display:flex;align-items:center;gap:6px">
+        <span style="font-size:12px;color:var(--muted)">Filas:</span>
+        <select id="acPageSize" onchange="_acCambiarTamano()" style="width:70px;font-size:12px;padding:3px 6px">
+          <option value="10">10</option>
+          <option value="25">25</option>
+          <option value="50">50</option>
+        </select>
+        <div id="acPagBtns" style="display:flex;gap:4px"></div>
+      </div>
     </div>
   </div>
 

@@ -1,27 +1,65 @@
 let _segAccionId = null
 let _borrarAccionId = null
+let _acPage = 1
+let _acPageSize = 10
+
+function _acFiltrar() { _acPage = 1; renderAcciones() }
+
+function _acCambiarTamano() {
+  _acPageSize = parseInt(document.getElementById('acPageSize').value) || 10
+  _acPage = 1
+  renderAcciones()
+}
+
+function clearFiltrosAcciones() {
+  document.getElementById('acFiltroVendedor').value = ''
+  document.getElementById('acFiltroEstatus').value  = ''
+  document.getElementById('acFiltroPrio').value     = ''
+  document.getElementById('acFechaIni').value       = ''
+  document.getElementById('acFechaFin').value       = ''
+  _acPage = 1
+  renderAcciones()
+}
 
 function renderAcciones() {
-  const vendedor = document.getElementById('acFiltroVendedor')?.value || ''
-  const estatus  = document.getElementById('acFiltroEstatus')?.value  || ''
-  const prio     = document.getElementById('acFiltroPrio')?.value     || ''
+  const vendedor  = document.getElementById('acFiltroVendedor')?.value || ''
+  const estatus   = document.getElementById('acFiltroEstatus')?.value  || ''
+  const prio      = document.getElementById('acFiltroPrio')?.value     || ''
+  const fechaIni  = document.getElementById('acFechaIni')?.value       || ''
+  const fechaFin  = document.getElementById('acFechaFin')?.value       || ''
 
-  const lista = state.acciones.filter(a =>
-    (!vendedor || a.Vendedor === vendedor) &&
-    (!estatus  || a.Estatus === estatus) &&
-    (!prio     || a.Prioridad === prio)
-  )
+  const lista = state.acciones.filter(a => {
+    if (vendedor && a.Vendedor !== vendedor) return false
+    if (estatus  && a.Estatus  !== estatus)  return false
+    if (prio     && a.Prioridad !== prio)    return false
+    if (fechaIni || fechaFin) {
+      const d = a.Fecha_Compromiso ? String(a.Fecha_Compromiso).split('T')[0] : null
+      if (!d) return false
+      if (fechaIni && d < fechaIni) return false
+      if (fechaFin && d > fechaFin) return false
+    }
+    return true
+  })
+
+  const total      = lista.length
+  const totalPages = Math.max(1, Math.ceil(total / _acPageSize))
+  if (_acPage > totalPages) _acPage = totalPages
+
+  const desde  = (_acPage - 1) * _acPageSize
+  const pagina = lista.slice(desde, desde + _acPageSize)
 
   const tbody = document.getElementById('accionesBody')
   if (!tbody) return
 
-  if (!lista.length) {
-    tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;color:var(--muted);padding:24px">Sin acciones para los filtros seleccionados.</td></tr>`
+  if (!pagina.length) {
+    tbody.innerHTML = `<tr><td colspan="10" style="text-align:center;color:var(--muted);padding:24px">Sin acciones para los filtros seleccionados.</td></tr>`
+    _renderAcPaginacion(0, 1)
     return
   }
 
-  tbody.innerHTML = lista.map(a => `
+  tbody.innerHTML = pagina.map((a, i) => `
     <tr>
+      <td style="text-align:center;color:var(--muted);font-size:12px;font-variant-numeric:tabular-nums;font-weight:600">${desde + i + 1}</td>
       <td>${a.Vendedor || '—'}</td>
       <td>${a.Clasificacion || '—'}</td>
       <td>${badgePrio(a.Prioridad)}</td>
@@ -40,7 +78,43 @@ function renderAcciones() {
         </button>
       </td>
     </tr>`).join('')
+
+  _renderAcPaginacion(total, totalPages)
 }
+
+function _renderAcPaginacion(total, totalPages) {
+  const info = document.getElementById('acPagInfo')
+  const btns = document.getElementById('acPagBtns')
+  if (!info || !btns) return
+
+  if (total === 0) { info.textContent = '0 registros'; btns.innerHTML = ''; return }
+
+  const desde = (_acPage - 1) * _acPageSize + 1
+  const hasta = Math.min(_acPage * _acPageSize, total)
+  info.textContent = `${desde}–${hasta} de ${total} registro${total !== 1 ? 's' : ''}`
+
+  if (totalPages <= 1) { btns.innerHTML = ''; return }
+
+  // Page window: show up to 5 page buttons
+  let start = Math.max(1, _acPage - 2)
+  let end   = Math.min(totalPages, start + 4)
+  if (end - start < 4) start = Math.max(1, end - 4)
+
+  const pageBtn = (label, p, active, disabled) =>
+    `<button class="btn btn-sm${active ? ' btn-primary' : ''}" onclick="_acGoto(${p})" ${disabled ? 'disabled' : ''}
+      style="min-width:30px;padding:3px 8px;font-size:12px">${label}</button>`
+
+  const parts = []
+  parts.push(pageBtn('‹', _acPage - 1, false, _acPage === 1))
+  if (start > 1) { parts.push(pageBtn('1', 1, false, false)); if (start > 2) parts.push('<span style="padding:0 2px;color:var(--muted);line-height:28px">…</span>') }
+  for (let p = start; p <= end; p++) parts.push(pageBtn(p, p, p === _acPage, false))
+  if (end < totalPages) { if (end < totalPages - 1) parts.push('<span style="padding:0 2px;color:var(--muted);line-height:28px">…</span>'); parts.push(pageBtn(totalPages, totalPages, false, false)) }
+  parts.push(pageBtn('›', _acPage + 1, false, _acPage === totalPages))
+
+  btns.innerHTML = parts.join('')
+}
+
+function _acGoto(p) { _acPage = p; renderAcciones() }
 
 function openModalAccion() {
   populateSelects()
