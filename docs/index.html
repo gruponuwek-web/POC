@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WBR Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/calendar.css">
+  <link rel="stylesheet" href="css/vendedor-flow.css">
+  <link rel="stylesheet" href="css/export.css">
+</head>
+<body>
+
+<!-- ── SIDEBAR ── -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="name"><i class="ti ti-chart-line"></i> WBR Portal</div>
+    <div class="sub">Weekly Business Review</div>
+  </div>
+  <nav>
+    <div class="nav-item active" onclick="navigate(this,'dashboard')">
+      <i class="ti ti-layout-dashboard"></i><span>Dashboard</span>
+    </div>
+    <div class="nav-item" onclick="navigate(this,'compromisos')">
+      <i class="ti ti-target"></i><span>Compromisos MBR</span>
+    </div>
+    <div class="nav-item" onclick="navigate(this,'calificar')">
+      <i class="ti ti-clipboard-check"></i><span>Calificar WBR</span>
+    </div>
+    <div class="nav-item" onclick="navigate(this,'acciones')">
+      <i class="ti ti-checklist"></i><span>Acciones</span>
+    </div>
+    <div class="nav-item" onclick="navigate(this,'agenda')">
+      <i class="ti ti-calendar"></i><span>Agenda</span>
+    </div>
+  </nav>
+  <div class="sidebar-user">
+    <div class="avatar">DV</div>
+    <div>
+      <div class="uname">Davi</div>
+      <div class="urol">Coordinador WBR</div>
+    </div>
+  </div>
+</aside>
+
+<!-- ── MAIN ── -->
+<main class="main">
+
+  <!-- DASHBOARD -->
+  <div id="page-dashboard" class="page active">
+    <div class="page-header">
+      <div class="page-title">Dashboard</div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-sm dash-filtro-btn" onclick="setFiltroRapido('semana',this)">Esta semana</button>
+        <button class="btn btn-sm dash-filtro-btn" onclick="setFiltroRapido('mes',this)">Este mes</button>
+        <button class="btn btn-sm dash-filtro-btn" onclick="setFiltroRapido('trimestre',this)">Trimestre</button>
+        <button class="btn btn-sm" onclick="clearFiltroFecha()"><i class="ti ti-x"></i> Limpiar</button>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:10px;margin-bottom:20px;align-items:center">
+      <label style="font-size:12px;color:var(--muted)">Del</label>
+      <input type="date" id="dashFechaInicio" style="width:150px" onchange="renderDashboard()">
+      <label style="font-size:12px;color:var(--muted)">Al</label>
+      <input type="date" id="dashFechaFin" style="width:150px" onchange="renderDashboard()">
+      <select id="filtroVendedor" style="width:180px" onchange="renderDashboard()">
+        <option value="">Todos los agentes</option>
+      </select>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-label">Sesiones WBR</div>
+        <div class="stat-value" id="statSesiones">—</div>
+        <div class="stat-sub" id="statSesionesSub"></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Acciones pendientes</div>
+        <div class="stat-value" id="statPendientes" style="color:var(--warning)">—</div>
+        <div class="stat-sub" id="statPendientesSub"></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Acciones cerradas</div>
+        <div class="stat-value" id="statCerradas" style="color:var(--success)">—</div>
+        <div class="stat-sub" id="statCerradasSub"></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">KPI promedio equipo</div>
+        <div class="stat-value" id="statKpi">—</div>
+        <div class="stat-sub">% cumplimiento</div>
+      </div>
+    </div>
+
+    <div class="grid2" style="margin-bottom:16px">
+      <div class="card">
+        <div class="card-title">Equipo</div>
+        <div id="equipoList"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Acciones por prioridad</div>
+        <div id="prioChart"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Últimas acciones</div>
+      <table class="tbl">
+        <thead><tr><th>Agente</th><th>Acción</th><th>Cliente</th><th>Compromiso</th><th>Prioridad</th><th>Estatus</th></tr></thead>
+        <tbody id="ultimasAcciones"></tbody>
+      </table>
+    </div>
+
+    <div class="card" style="margin-top:16px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+        <div class="card-title" style="margin:0">Compromisos MBR</div>
+        <div id="mbrDashKpis" style="display:flex;gap:10px"></div>
+      </div>
+      <div id="mbrDashContent"></div>
+    </div>
+  </div>
+
+  <!-- CALIFICAR -->
+  <div id="page-calificar" class="page">
+    <div class="page-header">
+      <div class="page-title">Calificar WBR</div>
+    </div>
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab(this,'tab-nueva')">Nueva sesión</div>
+      <div class="tab" onclick="switchTab(this,'tab-historial')">Historial de sesiones</div>
+    </div>
+
+    <!-- TAB NUEVA SESIÓN -->
+    <div id="tab-nueva" class="tab-panel active">
+      <div class="card" style="margin-bottom:16px">
+        <div class="card-title">Datos de la sesión</div>
+        <div style="display:flex;gap:14px;flex-wrap:wrap">
+          <div class="form-group" style="margin:0;flex:1;min-width:100px">
+            <label class="form-label">ID Sesión</label>
+            <input type="text" id="sesId" placeholder="SES001" readonly style="background:#f8fafc;color:var(--muted);cursor:default">
+          </div>
+          <div class="form-group" style="margin:0;flex:1;min-width:120px">
+            <label class="form-label">Fecha</label>
+            <input type="date" id="sesFecha">
+          </div>
+          <div class="form-group" style="margin:0;flex:1;min-width:80px">
+            <label class="form-label">Semana</label>
+            <input type="text" id="sesSemana" placeholder="28">
+          </div>
+          <div style="display:flex;align-items:flex-end">
+            <button class="btn btn-primary" onclick="crearSesion()">
+              <i class="ti ti-play"></i> Iniciar sesión
+            </button>
+          </div>
+        </div>
+      </div>
+      <div id="vendedoresContainer"></div>
+
+      <div id="concluirBtnWrap" style="display:none;margin-top:24px;padding:24px 20px;background:linear-gradient(135deg,#f0fdf4 0%,#dcfce7 100%);border:1.5px solid #86efac;border-radius:14px;text-align:center">
+        <div style="display:flex;align-items:center;justify-content:center;gap:8px;font-size:13px;color:#15803d;font-weight:600;margin-bottom:16px">
+          <i class="ti ti-circle-check-filled" style="font-size:18px"></i>
+          Todos los agentes registrados — puedes concluir la sesión
+        </div>
+        <button onclick="concluirWBR()" style="display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#16a34a 0%,#15803d 100%);color:#fff;border:none;border-radius:10px;padding:12px 32px;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 4px 14px rgba(22,163,74,.35);transition:transform .15s,box-shadow .15s" onmouseover="this.style.transform='translateY(-1px)';this.style.boxShadow='0 6px 18px rgba(22,163,74,.45)'" onmouseout="this.style.transform='';this.style.boxShadow='0 4px 14px rgba(22,163,74,.35)'">
+          <i class="ti ti-device-floppy" style="font-size:16px"></i> Guardar y cerrar sesión
+        </button>
+      </div>
+    </div>
+
+    <!-- TAB HISTORIAL -->
+    <div id="tab-historial" class="tab-panel">
+      <div id="historialContent"></div>
+    </div>
+  </div>
+
+  <!-- ACCIONES -->
+  <div id="page-acciones" class="page">
+    <div class="page-header">
+      <div class="page-title">Plan de acciones</div>
+      <button class="btn btn-primary" onclick="openModalAccion()">
+        <i class="ti ti-plus"></i> Nueva acción
+      </button>
+    </div>
+    <div class="filtros" style="flex-wrap:wrap;gap:8px">
+      <select id="acFiltroVendedor" onchange="_acFiltrar()"><option value="">Todos los agentes</option></select>
+      <select id="acFiltroEstatus" onchange="_acFiltrar()">
+        <option value="">Todos los estatus</option>
+        <option>Pendiente</option>
+        <option>En proceso</option>
+        <option>Cerrado</option>
+      </select>
+      <select id="acFiltroPrio" onchange="_acFiltrar()">
+        <option value="">Todas las prioridades</option>
+        <option>Alta</option>
+        <option>Media</option>
+        <option>Baja</option>
+      </select>
+      <div style="display:flex;align-items:center;gap:6px">
+        <label style="font-size:12px;color:var(--muted);white-space:nowrap">Desde</label>
+        <input type="date" id="acFechaIni" style="width:140px" onchange="_acFiltrar()">
+      </div>
+      <div style="display:flex;align-items:center;gap:6px">
+        <label style="font-size:12px;color:var(--muted);white-space:nowrap">Hasta</label>
+        <input type="date" id="acFechaFin" style="width:140px" onchange="_acFiltrar()">
+      </div>
+      <button class="btn btn-sm" onclick="clearFiltrosAcciones()" style="white-space:nowrap">
+        <i class="ti ti-x"></i> Limpiar
+      </button>
+    </div>
+    <div class="card" style="overflow-x:auto">
+      <table class="tbl" id="tablaAcciones" style="min-width:800px">
+        <thead>
+          <tr>
+            <th style="width:36px;text-align:center">#</th>
+            <th>Agente</th><th>Clasificación</th><th>Prioridad</th>
+            <th>Acción</th><th>Cliente</th><th>Compromiso</th>
+            <th>Acompañamiento</th><th>Estatus</th><th></th>
+          </tr>
+        </thead>
+        <tbody id="accionesBody"></tbody>
+      </table>
+    </div>
+    <div id="acPaginacion" style="display:flex;justify-content:space-between;align-items:center;padding:10px 4px;margin-top:4px">
+      <span id="acPagInfo" style="font-size:12px;color:var(--muted)"></span>
+      <div style="display:flex;align-items:center;gap:6px">
+        <span style="font-size:12px;color:var(--muted)">Filas:</span>
+        <select id="acPageSize" onchange="_acCambiarTamano()" style="width:70px;font-size:12px;padding:3px 6px">
+          <option value="10">10</option>
+          <option value="25">25</option>
+          <option value="50">50</option>
+        </select>
+        <div id="acPagBtns" style="display:flex;gap:4px"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMPROMISOS MBR -->
+  <div id="page-compromisos" class="page">
+    <div class="page-header">
+      <div class="page-title">Compromisos MBR</div>
+    </div>
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab(this,'mbr-nueva')">Nueva sesión</div>
+      <div class="tab" onclick="switchTab(this,'mbr-historial');renderHistorialMBR()">Historial de sesiones</div>
+    </div>
+
+    <!-- TAB NUEVA SESIÓN -->
+    <div id="mbr-nueva" class="tab-panel active">
+      <div class="card" style="margin-bottom:16px">
+        <div class="card-title">Datos de la sesión MBR</div>
+        <div style="display:flex;gap:14px;flex-wrap:wrap">
+          <div class="form-group" style="margin:0;flex:1;min-width:100px">
+            <label class="form-label">ID Sesión</label>
+            <input type="text" id="mbrSesId" readonly style="background:#f8fafc;color:var(--muted);cursor:default">
+          </div>
+          <div class="form-group" style="margin:0;flex:1;min-width:120px">
+            <label class="form-label">Fecha</label>
+            <input type="date" id="mbrFecha" onchange="mbrOnFechaChange()">
+          </div>
+          <div class="form-group" style="margin:0;flex:1;min-width:80px">
+            <label class="form-label">Semana</label>
+            <input type="text" id="mbrSemana" readonly style="background:#f8fafc;color:var(--muted);cursor:default">
+          </div>
+          <div style="display:flex;align-items:flex-end">
+            <button class="btn btn-primary" id="btnIniciarMBR" onclick="iniciarSesionMBR()">
+              <i class="ti ti-play"></i> Iniciar sesión
+            </button>
+          </div>
+        </div>
+      </div>
+      <div id="mbrVendorFlow" style="display:none">
+        <div id="mbrVendorTabs" class="mbr-vendor-strip"></div>
+        <div id="mbrContent"></div>
+      </div>
+    </div>
+
+    <!-- TAB HISTORIAL -->
+    <div id="mbr-historial" class="tab-panel">
+      <div id="mbrHistorialContent"></div>
+    </div>
+  </div>
+
+  <!-- AGENDA -->
+  <div id="page-agenda" class="page">
+    <div class="page-header">
+      <div class="page-title" id="calTitulo">Agenda</div>
+      <div style="display:flex;gap:6px">
+        <button class="btn btn-sm active" id="btnVistaMes" onclick="setVista('mes',this)">Mes</button>
+        <button class="btn btn-sm" id="btnVistaSem" onclick="setVista('semana',this)">Semana</button>
+        <button class="btn btn-sm" onclick="irHoy()">Hoy</button>
+        <button class="btn btn-sm btn-icon" onclick="navFecha(-1)"><i class="ti ti-chevron-left"></i></button>
+        <button class="btn btn-sm btn-icon" onclick="navFecha(1)"><i class="ti ti-chevron-right"></i></button>
+      </div>
+    </div>
+    <div class="filtros">
+      <select id="calFiltroVendedor" onchange="renderCalendario()"><option value="">Todos los agentes</option></select>
+      <select id="calFiltroEstatus" onchange="renderCalendario()">
+        <option value="">Todos los estatus</option>
+        <option>Pendiente</option>
+        <option>En proceso</option>
+        <option>Cerrado</option>
+      </select>
+    </div>
+    <div id="calContainer"></div>
+    <div id="calDetalle" style="margin-top:14px"></div>
+  </div>
+
+</main>
+
+<!-- ── MODAL NUEVA ACCIÓN ── -->
+<div class="modal-overlay" id="modalAccion">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Nueva acción</div>
+      <button class="modal-close" onclick="closeModal('modalAccion')">×</button>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Sesión</label>
+      <select id="mSesionId"></select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Agente</label>
+      <select id="mVendedor"></select>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div class="form-group">
+        <label class="form-label">Clasificación</label>
+        <select id="mClasif">
+          <option>Prospección</option>
+          <option>Fidelización</option>
+          <option>BCG</option>
+          <option>Recuperación</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Prioridad</label>
+        <select id="mPrio">
+          <option>Alta</option>
+          <option>Media</option>
+          <option>Baja</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Descripción de la acción</label>
+      <input type="text" id="mDesc" placeholder="Ej: Seguimiento cotización">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Detalle libre</label>
+      <textarea id="mDescLibre" rows="2" placeholder="Contexto adicional…"></textarea>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div class="form-group">
+        <label class="form-label">Cliente</label>
+        <input type="text" id="mCliente">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Resultado esperado</label>
+        <input type="text" id="mResultado">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Acompañamiento</label>
+        <input type="text" id="mAcompa" value="Davi">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Fecha compromiso</label>
+        <input type="date" id="mFecha">
+      </div>
+    </div>
+    <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:4px">
+      <button class="btn" onclick="closeModal('modalAccion')">Cancelar</button>
+      <button class="btn btn-primary" id="btnGuardarAccion" onclick="guardarAccion()">
+        <i class="ti ti-device-floppy"></i> Guardar acción
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ── MODAL SEGUIMIENTO ── -->
+<div class="modal-overlay" id="modalSeguimiento">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Registrar seguimiento</div>
+      <button class="modal-close" onclick="closeModal('modalSeguimiento')">×</button>
+    </div>
+    <div id="segAccionInfo" style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:12px;margin-bottom:16px;font-size:13px;color:var(--text2)"></div>
+    <div id="segHistorial" style="margin-bottom:16px"></div>
+    <div class="form-group">
+      <label class="form-label">Fecha</label>
+      <input type="date" id="segFecha">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Notas</label>
+      <textarea id="segNotas" rows="3" placeholder="¿Qué ocurrió en este seguimiento?"></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Nuevo estatus</label>
+      <select id="segEstatus">
+        <option>Pendiente</option>
+        <option>En proceso</option>
+        <option>Cerrado</option>
+      </select>
+    </div>
+    <div style="display:flex;justify-content:flex-end;gap:10px">
+      <button class="btn" onclick="closeModal('modalSeguimiento')">Cancelar</button>
+      <button class="btn btn-primary" id="btnGuardarSeg" onclick="guardarSeguimiento()">
+        <i class="ti ti-device-floppy"></i> Guardar
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ── MODAL BORRAR ACCIÓN ── -->
+<div class="modal-overlay" id="modalBorrarAccion">
+  <div class="modal" style="max-width:400px;text-align:center">
+    <div style="font-size:48px;margin-bottom:12px">🗑️</div>
+    <div class="modal-title" style="justify-content:center;margin-bottom:8px">Eliminar acción</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:24px">
+      ¿Eliminar la acción: <strong id="borrarAccionDesc"></strong>?<br>
+      También se borrarán sus seguimientos.<br>
+      <span style="color:var(--danger);font-weight:600">Esta acción no se puede deshacer.</span>
+    </p>
+    <div style="display:flex;gap:10px;justify-content:center">
+      <button class="btn" onclick="closeModal('modalBorrarAccion')">Cancelar</button>
+      <button class="btn btn-primary" style="background:var(--danger);border-color:var(--danger)" onclick="confirmarBorrarAccion()">
+        <i class="ti ti-trash"></i> Sí, eliminar
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ── MODAL BORRAR SESIÓN ── -->
+<div class="modal-overlay" id="modalBorrarSesion">
+  <div class="modal" style="max-width:400px;text-align:center">
+    <div style="font-size:48px;margin-bottom:12px">🗑️</div>
+    <div class="modal-title" style="justify-content:center;margin-bottom:8px">Eliminar sesión</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:24px">
+      ¿Eliminar la sesión <strong id="borrarSesId"></strong>?<br>
+      Se borrarán sus calificaciones, descubrimientos y acciones.<br>
+      <span style="color:var(--danger);font-weight:600">Esta acción no se puede deshacer.</span>
+    </p>
+    <div style="display:flex;gap:10px;justify-content:center">
+      <button class="btn" onclick="closeModal('modalBorrarSesion')">Cancelar</button>
+      <button class="btn btn-primary" style="background:var(--danger);border-color:var(--danger)" onclick="confirmarBorrarSesion()">
+        <i class="ti ti-trash"></i> Sí, eliminar
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ── MODAL CONFIRMAR CONCLUIR ── -->
+<div class="modal-overlay" id="modalConcluir">
+  <div class="modal" style="max-width:400px;text-align:center">
+    <div style="font-size:48px;margin-bottom:12px">✅</div>
+    <div class="modal-title" style="justify-content:center;margin-bottom:8px">Concluir sesión</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:24px">
+      ¿Deseas cerrar la sesión <strong id="concluirSesId"></strong>?<br>
+      Se guardará el estado y se liberará para una nueva sesión.
+    </p>
+    <div style="display:flex;gap:10px;justify-content:center">
+      <button class="btn" onclick="closeModal('modalConcluir')">Cancelar</button>
+      <button class="btn btn-primary" style="background:#15803d;border-color:#15803d" onclick="confirmarConcluir()">
+        <i class="ti ti-check"></i> Sí, concluir
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ── MODAL CERRAR SESIÓN MBR ── -->
+<div class="modal-overlay" id="modalCerrarMBR">
+  <div class="modal" style="max-width:400px;text-align:center">
+    <div style="font-size:48px;margin-bottom:12px">🔒</div>
+    <div class="modal-title" style="justify-content:center;margin-bottom:8px">Cerrar sesión MBR</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:24px">
+      ¿Deseas cerrar esta sesión MBR?<br>
+      Los compromisos ya guardados quedan registrados.
+    </p>
+    <div style="display:flex;gap:10px;justify-content:center">
+      <button class="btn" onclick="closeModal('modalCerrarMBR')">Cancelar</button>
+      <button class="btn btn-primary" style="background:#15803d;border-color:#15803d" onclick="confirmarCerrarMBR()">
+        <i class="ti ti-check"></i> Sí, cerrar
+      </button>
+    </div>
+  </div>
+</div>
+
+<div id="floatingWBR" style="display:none"><span id="floatingLabel"></span></div>
+
+<!-- ── SCRIPTS ── -->
+<script src="js/config.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/dashboard.js"></script>
+<script src="js/calificar.js"></script>
+<script src="js/acciones.js"></script>
+<script src="js/agenda.js"></script>
+<script src="js/compromisos.js"></script>
+<script src="js/minuta.js"></script>
+<script src="js/pdf.js"></script>
+<script>
+  loadAll()
+</script>
+</body>
+</html>

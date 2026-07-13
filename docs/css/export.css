@@ -1,0 +1,6 @@
+@media print {
+  .sidebar, .nav-item, #floatingWBR, button { display: none !important; }
+  .main { overflow: visible !important; }
+  .page { display: block !important; overflow: visible; }
+  body { background: #fff; }
+}
