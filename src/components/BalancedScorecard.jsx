@@ -262,7 +262,12 @@ export default function BalancedScorecard({ data }) {
     const clientesMes = kMes?.clientes ?? null
     const cobertura   = carteraMes > 0 && clientesMes !== null ? (clientesMes / carteraMes) * 100 : null
 
-    const perdidos = data.kpi_agentes?.reduce((s, a) => s + (a.perdidos_al_mes?.[mes] || 0), 0) ?? null
+    // Misma lógica que Dashboard Táctico: clientes cuya última compra fue en mes M-4
+    // relMesKPI convierte fecha a mes relativo (2026→1-12, 2025→-11 a 0)
+    const relMesKPI = (fecha) => { const d = new Date(fecha); return (d.getFullYear() - añoActual) * 12 + (d.getMonth() + 1) }
+    const _esPerdido = c => c.status === 'Perdido' || !c.ultima_compra || c.dias_sin_compra >= 120
+    const targetRm   = mes - 4
+    const perdidos   = data.tabla_clientes?.filter(c => _esPerdido(c) && c.ultima_compra && relMesKPI(c.ultima_compra) === targetRm).length ?? null
 
     const m4_1a = M['4.1a']?.meta     ?? 9
     const m4_2a = M['4.2a']?.meta_pct ?? 55
