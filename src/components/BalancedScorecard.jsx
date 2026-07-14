@@ -253,14 +253,12 @@ export default function BalancedScorecard({ data }) {
     const nuevos  = nrMes?.[`nuevos_${añoActual}`] ?? null
     const recup   = nrMes?.[`recup_${añoActual}`]  ?? null
 
-    // Cobertura mensual: clientes únicos que compraron ESTE mes ÷ cartera del mes
-    // La cartera del mes = cartera inicial + nuevos acumulados hasta ese mes
-    const nuevosHastaMes = data.clientes_nr_por_mes
-      ?.filter(m => m.mes_num <= mes)
-      .reduce((s, m) => s + (m[`nuevos_${añoActual}`] || 0), 0) ?? 0
-    const carteraMes = Math.max(cartera - (data.resumen?.[`clientes_nuevos`] || 0) + nuevosHastaMes, cartera)
-    const clientesMes = kMes?.clientes ?? null
-    const cobertura   = carteraMes > 0 && clientesMes !== null ? (clientesMes / carteraMes) * 100 : null
+    // Cobertura mensual: misma lógica que Dashboard Táctico
+    // Suma de clientes_ids_por_mes[mes].size por agente (igual que totalAtendidos en App.jsx)
+    const totalAtendidosMes = data.kpi_agentes?.reduce((s, a) => {
+      return s + (a.clientes_ids_por_mes?.[mes]?.length || 0)
+    }, 0) ?? null
+    const cobertura = cartera > 0 && totalAtendidosMes !== null ? (totalAtendidosMes / cartera) * 100 : null
 
     // Misma lógica que Dashboard Táctico: clientes cuya última compra fue en mes M-4
     // relMesKPI convierte fecha a mes relativo (2026→1-12, 2025→-11 a 0)
