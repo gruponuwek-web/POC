@@ -325,9 +325,43 @@ export default function BalancedScorecard({ data }) {
     }
   }, [data, mes])
 
+  // ── KPIs reales: Nuevas oportunidades off-line ─────────────────
+  const oportunidadesLive = useMemo(() => {
+    if (!data) return null
+    const fila = data.oportunidades_offline_por_mes?.[mes]
+    if (!fila) return null
+    const M = data.bsc_metas || {}
+    const m7a = M['7.1a']?.meta_pct ?? null
+    const m7b = M['7.1b']?.meta     ?? null
+    const m7c = M['7.1c']?.meta     ?? null
+    const m7d = M['7.1d']?.meta     ?? null
+    return {
+      '7.1a': {
+        actual: fila.tasa_conversion !== null ? fila.tasa_conversion.toFixed(1) + '%' : null,
+        meta:   m7a ? m7a + '%' : null,
+        ratio:  m7a && fila.tasa_conversion !== null ? (fila.tasa_conversion / m7a) * 100 : null,
+      },
+      '7.1b': {
+        actual: fila.cotizaciones > 0 ? String(fila.cotizaciones) : null,
+        meta:   m7b ? String(m7b) : null,
+        ratio:  m7b && fila.cotizaciones > 0 ? (fila.cotizaciones / m7b) * 100 : null,
+      },
+      '7.1c': {
+        actual: fila.visitas > 0 ? String(fila.visitas) : null,
+        meta:   m7c ? String(m7c) : null,
+        ratio:  m7c && fila.visitas > 0 ? (fila.visitas / m7c) * 100 : null,
+      },
+      '7.1d': {
+        actual: fila.leads > 0 ? String(fila.leads) : null,
+        meta:   m7d ? String(m7d) : null,
+        ratio:  m7d && fila.leads > 0 ? (fila.leads / m7d) * 100 : null,
+      },
+    }
+  }, [data, mes])
+
   // ── Fusionar estructura estática con datos reales ───────────────
   const perspectivas = useMemo(() => {
-    const liveMap = { ventas: ventasLive, productos: productosLive, clientes: clientesLive, entregas: entregasLive }
+    const liveMap = { ventas: ventasLive, productos: productosLive, clientes: clientesLive, entregas: entregasLive, oportunidades: oportunidadesLive }
     return PERSPECTIVAS.map(p => {
       const live = liveMap[p.id]
       if (!live) return p
@@ -346,7 +380,7 @@ export default function BalancedScorecard({ data }) {
         }),
       }
     })
-  }, [ventasLive, productosLive, clientesLive, entregasLive])
+  }, [ventasLive, productosLive, clientesLive, entregasLive, oportunidadesLive])
 
   const allKpis    = useMemo(() => perspectivas.flatMap(p => p.kpis), [perspectivas])
   const totalPeso  = allKpis.reduce((s, k) => s + k.peso, 0)
@@ -650,7 +684,7 @@ export default function BalancedScorecard({ data }) {
       </div>
 
       <p style={{ marginTop:10, fontSize:11, color:'#94a3b8', textAlign:'right' }}>
-        * Conectados a Google Sheets: "Incrementar ventas" completo · "Estrategia productos" completo · "Incrementar clientes" (4.1a, 4.1b, 4.2a, 4.2b, 4.3a, 4.3b) · "Calidad entregas" (5.1b). Pendientes: "Nuevas oportunidades off-line".
+        * Todos los KPIs conectados a Google Sheets. Metas pendientes de definir: 4.1b, 5.1b y "Nuevas oportunidades off-line" (7.1a–7.1d).
       </p>
     </div>
   )

@@ -26434,6 +26434,57 @@
     "6": 3,
     "7": 2
   },
+  "oportunidades_offline_por_mes": {
+    "1": {
+      "cotizaciones": 18,
+      "cotizaciones_convertidas": 5,
+      "visitas": 22,
+      "leads": 30,
+      "tasa_conversion": 27.8
+    },
+    "2": {
+      "cotizaciones": 21,
+      "cotizaciones_convertidas": 7,
+      "visitas": 25,
+      "leads": 35,
+      "tasa_conversion": 33.3
+    },
+    "3": {
+      "cotizaciones": 25,
+      "cotizaciones_convertidas": 9,
+      "visitas": 28,
+      "leads": 42,
+      "tasa_conversion": 36
+    },
+    "4": {
+      "cotizaciones": 19,
+      "cotizaciones_convertidas": 6,
+      "visitas": 21,
+      "leads": 38,
+      "tasa_conversion": 31.6
+    },
+    "5": {
+      "cotizaciones": 23,
+      "cotizaciones_convertidas": 8,
+      "visitas": 26,
+      "leads": 44,
+      "tasa_conversion": 34.8
+    },
+    "6": {
+      "cotizaciones": 20,
+      "cotizaciones_convertidas": 7,
+      "visitas": 24,
+      "leads": 39,
+      "tasa_conversion": 35
+    },
+    "7": {
+      "cotizaciones": 15,
+      "cotizaciones_convertidas": 4,
+      "visitas": 18,
+      "leads": 28,
+      "tasa_conversion": 26.7
+    }
+  },
   "bsc_metas": {
     "2.1a": {
       "meta_pct": 15

@@ -35,6 +35,7 @@ const SHEETS = {
   estratVentasProductos: { id: '1F9vgcHfA20dIm6caUZmH756fgSn562lCqoC0GdqgNRc', range: 'Estrate_Ventas_Productos!A:Z' },
   visitasAtencion:       { id: '1F9vgcHfA20dIm6caUZmH756fgSn562lCqoC0GdqgNRc', range: 'visitas_atencion!A:Z' },
   incidencias:           { id: '1F9vgcHfA20dIm6caUZmH756fgSn562lCqoC0GdqgNRc', range: 'incidencias!A:Z' },
+  oportunidadesOffline:  { id: '1F9vgcHfA20dIm6caUZmH756fgSn562lCqoC0GdqgNRc', range: 'oportunidades_offline!A:Z' },
 };
 
 const outDir = path.join(__dirname, '..', 'src', 'data');
@@ -644,18 +645,19 @@ async function main() {
   const sheets = google.sheets({ version: 'v4', auth });
 
   console.log('📥 Descargando datos de Google Sheets...');
-  const [rawAnterior, rawActual, rawMetas, rawCartera, rawCliNR, rawEstratProd, rawVisitas, rawIncidencias] = await Promise.all([
-    getSheetData(sheets, SHEETS.ventasAnterior.id,       SHEETS.ventasAnterior.range),
-    getSheetData(sheets, SHEETS.ventasActual.id,         SHEETS.ventasActual.range),
-    getSheetData(sheets, SHEETS.metas.id,                SHEETS.metas.range),
-    getSheetData(sheets, SHEETS.cartera.id,              SHEETS.cartera.range),
-    getSheetData(sheets, SHEETS.clientesNR.id,           SHEETS.clientesNR.range),
+  const [rawAnterior, rawActual, rawMetas, rawCartera, rawCliNR, rawEstratProd, rawVisitas, rawIncidencias, rawOportunidades] = await Promise.all([
+    getSheetData(sheets, SHEETS.ventasAnterior.id,        SHEETS.ventasAnterior.range),
+    getSheetData(sheets, SHEETS.ventasActual.id,          SHEETS.ventasActual.range),
+    getSheetData(sheets, SHEETS.metas.id,                 SHEETS.metas.range),
+    getSheetData(sheets, SHEETS.cartera.id,               SHEETS.cartera.range),
+    getSheetData(sheets, SHEETS.clientesNR.id,            SHEETS.clientesNR.range),
     getSheetData(sheets, SHEETS.estratVentasProductos.id, SHEETS.estratVentasProductos.range),
-    getSheetData(sheets, SHEETS.visitasAtencion.id,      SHEETS.visitasAtencion.range),
-    getSheetData(sheets, SHEETS.incidencias.id,          SHEETS.incidencias.range),
+    getSheetData(sheets, SHEETS.visitasAtencion.id,       SHEETS.visitasAtencion.range),
+    getSheetData(sheets, SHEETS.incidencias.id,           SHEETS.incidencias.range),
+    getSheetData(sheets, SHEETS.oportunidadesOffline.id,  SHEETS.oportunidadesOffline.range),
   ]);
 
-  console.log(`✅ Datos: ${AÑO_ANTERIOR}=${rawAnterior.length} | ${AÑO_ACTUAL}=${rawActual.length} | metas=${rawMetas.length} | cartera=${rawCartera.length} | cliNR=${rawCliNR.length} | estratProd=${rawEstratProd.length} | visitas=${rawVisitas.length} | incidencias=${rawIncidencias.length}`);
+  console.log(`✅ Datos: ${AÑO_ANTERIOR}=${rawAnterior.length} | ${AÑO_ACTUAL}=${rawActual.length} | metas=${rawMetas.length} | cartera=${rawCartera.length} | cliNR=${rawCliNR.length} | estratProd=${rawEstratProd.length} | visitas=${rawVisitas.length} | incidencias=${rawIncidencias.length} | oport=${rawOportunidades.length}`);
 
   console.log('⚙️  Procesando ventas...');
   const ventas2025 = processVentas(rawAnterior, AÑO_ANTERIOR);
@@ -891,6 +893,24 @@ async function main() {
       if (m > 0) incidencias_por_mes[m] = (incidencias_por_mes[m] || 0) + 1;
     });
 
+  // ── Oportunidades off-line (7.1a–7.1d) ───────────────────────────────────────
+  const oportunidades_offline_por_mes = {};
+  rawOportunidades
+    .filter(r => {
+      const añoFila = parseInt(r['año']) || AÑO_ACTUAL;
+      return añoFila === AÑO_ACTUAL && r['mes_num'];
+    })
+    .forEach(r => {
+      const m = parseInt(r['mes_num']);
+      if (m <= 0) return;
+      const cotiz    = parseNum(r['cotizaciones']);
+      const convert  = parseNum(r['cotizaciones_convertidas']);
+      const visitas  = parseNum(r['visitas']);
+      const leads    = parseNum(r['leads']);
+      const tasa     = cotiz > 0 ? Math.round((convert / cotiz) * 1000) / 10 : null;
+      oportunidades_offline_por_mes[m] = { cotizaciones: cotiz, cotizaciones_convertidas: convert, visitas, leads, tasa_conversion: tasa };
+    });
+
   const output = {
     resumen, agentes, metas,
     kpi_mensual_actual: kpi2026, kpi_mensual_anterior: kpi2025,
@@ -904,6 +924,7 @@ async function main() {
     cobertura_nuevos_por_mes,
     visitas_atencion_por_mes,
     incidencias_por_mes,
+    oportunidades_offline_por_mes,
     bsc_metas: BSC_METAS,
     estrat_ventas_productos: estratProdPorMes,
   };
