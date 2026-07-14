@@ -244,16 +244,25 @@ export default function BalancedScorecard({ data }) {
   const clientesLive = useMemo(() => {
     if (!data) return null
     const añoActual = data.resumen?.año_actual
-    const nrMes    = data.clientes_nr_por_mes?.find(m => m.mes_num === mes)
     const kMes     = data.kpi_mensual_actual?.find(m => m.mes_num === mes)
     const cartera  = data.resumen?.cartera_total || 0
     const M        = data.bsc_metas || {}
 
-    const nuevos    = nrMes?.[`nuevos_${añoActual}`] ?? null
-    const recup     = nrMes?.[`recup_${añoActual}`]  ?? null
-    const clientes  = kMes?.clientes ?? null
-    const cobertura = cartera > 0 && clientes !== null ? (clientes / cartera) * 100 : null
-    const perdidos  = data.kpi_agentes?.reduce((s, a) => s + (a.perdidos_al_mes?.[mes] || 0), 0) ?? null
+    // Datos del mes seleccionado (BSC es snapshot mensual, no acumulado)
+    const nrMes   = data.clientes_nr_por_mes?.find(m => m.mes_num === mes)
+    const nuevos  = nrMes?.[`nuevos_${añoActual}`] ?? null
+    const recup   = nrMes?.[`recup_${añoActual}`]  ?? null
+
+    // Cobertura mensual: clientes únicos que compraron ESTE mes ÷ cartera del mes
+    // La cartera del mes = cartera inicial + nuevos acumulados hasta ese mes
+    const nuevosHastaMes = data.clientes_nr_por_mes
+      ?.filter(m => m.mes_num <= mes)
+      .reduce((s, m) => s + (m[`nuevos_${añoActual}`] || 0), 0) ?? 0
+    const carteraMes = Math.max(cartera - (data.resumen?.[`clientes_nuevos`] || 0) + nuevosHastaMes, cartera)
+    const clientesMes = kMes?.clientes ?? null
+    const cobertura   = carteraMes > 0 && clientesMes !== null ? (clientesMes / carteraMes) * 100 : null
+
+    const perdidos = data.kpi_agentes?.reduce((s, a) => s + (a.perdidos_al_mes?.[mes] || 0), 0) ?? null
 
     const m4_1a = M['4.1a']?.meta     ?? 9
     const m4_2a = M['4.2a']?.meta_pct ?? 55
