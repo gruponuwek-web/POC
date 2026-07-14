@@ -26354,6 +26354,68 @@
     "4": 9670,
     "5": 16324
   },
+  "cobertura_nuevos_por_mes": {
+    "1": {
+      "nuevos_acum": 9,
+      "compraron": 6,
+      "pct": 66.7
+    },
+    "2": {
+      "nuevos_acum": 30,
+      "compraron": 13,
+      "pct": 43.3
+    },
+    "3": {
+      "nuevos_acum": 41,
+      "compraron": 18,
+      "pct": 43.9
+    },
+    "4": {
+      "nuevos_acum": 57,
+      "compraron": 25,
+      "pct": 43.9
+    },
+    "5": {
+      "nuevos_acum": 73,
+      "compraron": 27,
+      "pct": 37
+    },
+    "6": {
+      "nuevos_acum": 73,
+      "compraron": 18,
+      "pct": 24.7
+    },
+    "7": {
+      "nuevos_acum": 73,
+      "compraron": 6,
+      "pct": 8.2
+    },
+    "8": {
+      "nuevos_acum": 73,
+      "compraron": 0,
+      "pct": 0
+    },
+    "9": {
+      "nuevos_acum": 73,
+      "compraron": 0,
+      "pct": 0
+    },
+    "10": {
+      "nuevos_acum": 73,
+      "compraron": 0,
+      "pct": 0
+    },
+    "11": {
+      "nuevos_acum": 73,
+      "compraron": 0,
+      "pct": 0
+    },
+    "12": {
+      "nuevos_acum": 73,
+      "compraron": 0,
+      "pct": 0
+    }
+  },
   "bsc_metas": {
     "2.1a": {
       "meta_pct": 15
@@ -26381,6 +26443,9 @@
     },
     "4.2a": {
       "meta_pct": 55
+    },
+    "4.2b": {
+      "meta_pct": 50
     },
     "4.3a": {
       "meta": 25

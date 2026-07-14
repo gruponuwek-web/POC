@@ -267,8 +267,12 @@ export default function BalancedScorecard({ data }) {
     const targetRm   = mes - 4
     const perdidos   = data.tabla_clientes?.filter(c => _esPerdido(c) && c.ultima_compra && relMesKPI(c.ultima_compra) === targetRm).length ?? null
 
+    // 4.2b: cobertura de nuevos acumulados que compraron en el mes
+    const cobNuevos = data.cobertura_nuevos_por_mes?.[mes]
+
     const m4_1a = M['4.1a']?.meta     ?? 9
     const m4_2a = M['4.2a']?.meta_pct ?? 55
+    const m4_2b = M['4.2b']?.meta_pct ?? 50
     const m4_3a = M['4.3a']?.meta     ?? 25
 
     return {
@@ -282,6 +286,11 @@ export default function BalancedScorecard({ data }) {
         actual: cobertura !== null ? cobertura.toFixed(1) + '%' : null,
         meta:   m4_2a + '%',
         ratio:  cobertura !== null ? (cobertura / m4_2a) * 100 : null,
+      },
+      '4.2b': {
+        actual: cobNuevos ? cobNuevos.pct.toFixed(1) + '%' : null,
+        meta:   m4_2b + '%',
+        ratio:  cobNuevos ? (cobNuevos.pct / m4_2b) * 100 : null,
       },
       '4.3a': {
         actual: nuevos !== null ? String(nuevos) : null,
@@ -621,7 +630,7 @@ export default function BalancedScorecard({ data }) {
       </div>
 
       <p style={{ marginTop:10, fontSize:11, color:'#94a3b8', textAlign:'right' }}>
-        * "Incrementar ventas", "Estrategia productos" e "Incrementar clientes" (4.2a, 4.3a, 4.3b): datos reales desde Google Sheets. Resto de perspectivas: pendientes de conexión.
+        * "Incrementar ventas", "Estrategia productos" e "Incrementar clientes" (4.1a, 4.2a, 4.2b, 4.3a, 4.3b): datos reales desde Google Sheets. Resto de perspectivas: pendientes de conexión.
       </p>
     </div>
   )

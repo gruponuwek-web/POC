@@ -21,6 +21,7 @@ const BSC_METAS = {
   '3.1b': { meta_pct:  20   },   // % de venta proveniente de promociones
   '4.1a': { meta:       9   },   // clientes perdidos por mes (# — menos es mejor)
   '4.2a': { meta_pct:  55   },   // cobertura de cartera total por mes (%)
+  '4.2b': { meta_pct:  50   },   // cobertura de clientes nuevos acumulados (%)
   '4.3a': { meta:      25   },   // clientes nuevos por mes (#)
 };
 
@@ -188,6 +189,53 @@ function buildTicketPromedioNuevos(ventasActual, clientesNR, añoActual) {
     const numTickets  = new Set(lineas.map(v => v.folio_key)).size;
     if (numTickets > 0) result[mesNum] = Math.round(totalVentas / numTickets);
   });
+  return result;
+}
+
+// ── Cobertura de clientes nuevos por mes ─────────────────────────────────────
+// Para cada mes M: cuántos de los nuevos acumulados (meses 1..M) compraron en M
+function buildCoberturaNuevosPorMes(ventasActual, clientesNR, añoActual) {
+  // Preindexar compradores reales por mes
+  const compPorMes = {};
+  ventasActual.filter(v => !v.solo_presencia).forEach(v => {
+    if (!compPorMes[v.mes_num]) compPorMes[v.mes_num] = { ids: new Set(), nombres: new Set() };
+    if (v.cliente_num) compPorMes[v.mes_num].ids.add(v.cliente_num);
+    else if (v.cliente_nombre) compPorMes[v.mes_num].nombres.add(v.cliente_nombre);
+  });
+
+  // Nuevos del año agrupados por mes de registro
+  const nuevosPorMes = {};
+  clientesNR.filter(c => c.año === añoActual && c.status === 'Nuevo').forEach(c => {
+    if (!nuevosPorMes[c.mes_num]) nuevosPorMes[c.mes_num] = [];
+    nuevosPorMes[c.mes_num].push(c);
+  });
+
+  // Iterar mes a mes acumulando el pool de nuevos
+  const acumIds     = new Set();
+  const acumNombres = new Set();
+  const result = {};
+
+  for (let m = 1; m <= 12; m++) {
+    (nuevosPorMes[m] || []).forEach(c => {
+      const id = (c.cliente_num || '').trim();
+      if (id) acumIds.add(id);
+      else if (c.cliente_nombre) acumNombres.add(c.cliente_nombre);
+    });
+
+    const totalAcum = acumIds.size + acumNombres.size;
+    if (totalAcum === 0) continue;
+
+    const comp = compPorMes[m] || { ids: new Set(), nombres: new Set() };
+    let compraron = 0;
+    acumIds.forEach(id  => { if (comp.ids.has(id))       compraron++; });
+    acumNombres.forEach(nom => { if (comp.nombres.has(nom)) compraron++; });
+
+    result[m] = {
+      nuevos_acum: totalAcum,
+      compraron,
+      pct: Math.round((compraron / totalAcum) * 1000) / 10,
+    };
+  }
   return result;
 }
 
@@ -813,6 +861,7 @@ async function main() {
   const clientes_sobre_3000_por_mes      = buildClientesSobre3000(ventas2026c);
   const clientes_sobre_3000_por_mes_2025 = buildClientesSobre3000(ventas2025c);
   const ticket_promedio_nuevos_por_mes   = buildTicketPromedioNuevos(ventas2026c, clientesNR, AÑO_ACTUAL);
+  const cobertura_nuevos_por_mes         = buildCoberturaNuevosPorMes(ventas2026c, clientesNR, AÑO_ACTUAL);
 
   const output = {
     resumen, agentes, metas,
@@ -824,6 +873,7 @@ async function main() {
     clientes_sobre_3000_por_mes,
     clientes_sobre_3000_por_mes_2025,
     ticket_promedio_nuevos_por_mes,
+    cobertura_nuevos_por_mes,
     bsc_metas: BSC_METAS,
     estrat_ventas_productos: estratProdPorMes,
   };
