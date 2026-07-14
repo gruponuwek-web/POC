@@ -174,7 +174,9 @@ export default function BalancedScorecard({ data }) {
     // Metas configurables desde el JSON (process_data.js → BSC_METAS)
     const M = data.bsc_metas || {}
     const m2a = M['2.1a']?.meta_pct ?? 15
-    const m2c = M['2.1c']?.meta     ?? 600
+    // 2.1c: meta dinámica = ticket promedio del mismo mes del año anterior
+    const ticketProm25 = m25?.ticket_promedio || 0
+    const m2c = ticketProm25 > 0 ? ticketProm25 : (M['2.1c']?.meta ?? 600)
     const m2d = M['2.1d']?.meta     ?? 95
     const m2e = M['2.1e']?.meta     ?? 3000
     const m2f = M['2.1f']?.meta     ?? 840
