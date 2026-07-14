@@ -9,49 +9,49 @@ const PERSPECTIVAS = [
     id: 'ventas', nombre: 'Incrementar ventas',
     icon: '💰', hdrColor: '#0f1f3d', hdrBg: '#eff6ff',
     kpis: [
-      { cod:'2.1a', desc:'Crecimiento de ventas en el periodo', unidad:'%', peso:25,  meta:'15.00%',     actual:'25.02%',     peor:'-6.24%',     ratio:100   },
-      { cod:'2.1b', desc:'Meta alcanzada',                      unidad:'%', peso:25,  meta:'$4,890,000', actual:'$4,832,083', peor:'$3,226,745', ratio:98.82 },
-      { cod:'2.1c', desc:'Ticket promedio',                     unidad:'$', peso:7.5, meta:'$600',       actual:'$5,878',     peor:'$4,808',     ratio:100   },
-      { cod:'2.1d', desc:'Clientes con incremento de ticket',   unidad:'#', peso:10,  meta:'95',         actual:'294',        peor:'70',         ratio:100   },
-      { cod:'2.1e', desc:'Primer ticket de cliente nuevo',      unidad:'$', peso:7.5, meta:'$3,000',     actual:'$5,286',     peor:'$500',       ratio:100   },
-      { cod:'2.1f', desc:'Tickets únicos atendidos',            unidad:'#', peso:10,  meta:'840',        actual:'821',        peor:'707',        ratio:97.74 },
+      { cod:'2.1a', desc:'Crecimiento de ventas en el periodo', unidad:'%', peso:10,  meta:'15.00%',     actual:'25.02%',     peor:'-6.24%',     ratio:100   },
+      { cod:'2.1b', desc:'Meta alcanzada',                      unidad:'%', peso:12,  meta:'$4,890,000', actual:'$4,832,083', peor:'$3,226,745', ratio:98.82 },
+      { cod:'2.1c', desc:'Ticket promedio',                     unidad:'$', peso:6,   meta:'$600',       actual:'$5,878',     peor:'$4,808',     ratio:100   },
+      { cod:'2.1d', desc:'Clientes con incremento de ticket',   unidad:'#', peso:6,   meta:'95',         actual:'294',        peor:'70',         ratio:100   },
+      { cod:'2.1e', desc:'Primer ticket de cliente nuevo',      unidad:'$', peso:3,   meta:'$3,000',     actual:'$5,286',     peor:'$500',       ratio:100   },
+      { cod:'2.1f', desc:'Tickets únicos atendidos',            unidad:'#', peso:3,   meta:'840',        actual:'821',        peor:'707',        ratio:97.74 },
     ]
   },
   {
     id: 'productos', nombre: 'Estrategia de venta por productos',
     icon: '🏷️', hdrColor: '#1a3a6e', hdrBg: '#f0f7ff',
     kpis: [
-      { cod:'3.1a', desc:'Promociones aplicadas', unidad:'#', peso:14, meta:null, actual:null, peor:null, ratio:null },
-      { cod:'3.1b', desc:'Venta por promociones', unidad:'%', peso:14, meta:null, actual:null, peor:null, ratio:null },
+      { cod:'3.1a', desc:'Promociones aplicadas', unidad:'#', peso:7.5, meta:null, actual:null, peor:null, ratio:null },
+      { cod:'3.1b', desc:'Venta por promociones', unidad:'%', peso:7.5, meta:null, actual:null, peor:null, ratio:null },
     ]
   },
   {
     id: 'clientes', nombre: 'Incrementar clientes',
     icon: '👥', hdrColor: '#1a6cf0', hdrBg: '#eff6ff',
     kpis: [
-      { cod:'4.1a', desc:'Clientes perdidos',              unidad:'#', peso:11, meta:'9',   actual:'6',      peor:'24',  ratio:100   },
-      { cod:'4.1b', desc:'Visitas de atención a clientes', unidad:'#', peso:11, meta:null,  actual:'3',      peor:null,  ratio:null  },
-      { cod:'4.2a', desc:'Cobertura de cartera total',     unidad:'%', peso:11, meta:'55%', actual:'50.79%', peor:'45%', ratio:92.35 },
-      { cod:'4.2b', desc:'Cobertura de clientes nuevos',   unidad:'%', peso:11, meta:null,  actual:'33.53%', peor:null,  ratio:null  },
-      { cod:'4.3a', desc:'Nuevos clientes',                unidad:'#', peso:11, meta:'25',  actual:'16',     peor:null,  ratio:64    },
-      { cod:'4.3b', desc:'Clientes recuperados',           unidad:'#', peso:11, meta:null,  actual:'4',      peor:null,  ratio:null  },
+      { cod:'4.1a', desc:'Clientes perdidos',              unidad:'#', peso:6, meta:'9',   actual:'6',      peor:'24',  ratio:100   },
+      { cod:'4.1b', desc:'Visitas de atención a clientes', unidad:'#', peso:5, meta:null,  actual:'3',      peor:null,  ratio:null  },
+      { cod:'4.2a', desc:'Cobertura de cartera total',     unidad:'%', peso:6, meta:'55%', actual:'50.79%', peor:'45%', ratio:92.35 },
+      { cod:'4.2b', desc:'Cobertura de clientes nuevos',   unidad:'%', peso:5, meta:null,  actual:'33.53%', peor:null,  ratio:null  },
+      { cod:'4.3a', desc:'Nuevos clientes',                unidad:'#', peso:5, meta:'25',  actual:'16',     peor:null,  ratio:64    },
+      { cod:'4.3b', desc:'Clientes recuperados',           unidad:'#', peso:3, meta:null,  actual:'4',      peor:null,  ratio:null  },
     ]
   },
   {
     id: 'entregas', nombre: 'Calidad de entregas',
     icon: '📦', hdrColor: '#0f1f3d', hdrBg: '#f0f7ff',
     kpis: [
-      { cod:'5.1b', desc:'Cantidad de incidencias', unidad:'#', peso:33.33, meta:null, actual:'11', peor:null, ratio:null },
+      { cod:'5.1b', desc:'Cantidad de incidencias', unidad:'#', peso:10, meta:null, actual:'11', peor:null, ratio:null },
     ]
   },
   {
     id: 'oportunidades', nombre: 'Nuevas oportunidades off-line',
     icon: '🎯', hdrColor: '#1a3a6e', hdrBg: '#eff6ff',
     kpis: [
-      { cod:'7.1a', desc:'Tasa de conversión off-line', unidad:'%', peso:25, meta:null, actual:null, peor:null, ratio:null },
-      { cod:'7.1b', desc:'Cotizaciones realizadas',     unidad:'#', peso:25, meta:null, actual:null, peor:null, ratio:null },
-      { cod:'7.1c', desc:'Visitas realizadas',          unidad:'#', peso:25, meta:null, actual:null, peor:null, ratio:null },
-      { cod:'7.1d', desc:'Leads generados',             unidad:'#', peso:25, meta:null, actual:null, peor:null, ratio:null },
+      { cod:'7.1a', desc:'Tasa de conversión off-line', unidad:'%', peso:1.5, meta:null, actual:null, peor:null, ratio:null },
+      { cod:'7.1b', desc:'Cotizaciones realizadas',     unidad:'#', peso:1.5, meta:null, actual:null, peor:null, ratio:null },
+      { cod:'7.1c', desc:'Visitas realizadas',          unidad:'#', peso:1,   meta:null, actual:null, peor:null, ratio:null },
+      { cod:'7.1d', desc:'Leads generados',             unidad:'#', peso:1,   meta:null, actual:null, peor:null, ratio:null },
     ]
   },
 ]
@@ -172,11 +172,15 @@ export default function BalancedScorecard({ data }) {
     const ticketNuevos = data.ticket_promedio_nuevos_por_mes?.[mes] ?? null
 
     // Metas configurables desde el JSON (process_data.js → BSC_METAS)
-    const M = data.bsc_metas || {}
-    const m2a = M['2.1a']?.meta_pct ?? 15
+    const M = data.bsc_metas_por_mes?.[mes] || {}
+    const m2a = M['2.1a']?.meta ?? 15
     // 2.1c: meta dinámica = ticket promedio del mismo mes del año anterior
     const ticketProm25 = m25?.ticket_promedio || 0
     const m2c = ticketProm25 > 0 ? ticketProm25 : (M['2.1c']?.meta ?? 600)
+    // peor = ticket promedio mínimo de cualquier mes del año anterior
+    const ticketMin25 = data.kpi_mensual_anterior?.length
+      ? Math.min(...data.kpi_mensual_anterior.map(m => m.ticket_promedio || Infinity).filter(v => isFinite(v)))
+      : null
     const m2d = M['2.1d']?.meta     ?? 95
     const m2e = M['2.1e']?.meta     ?? 3000
     const m2f = M['2.1f']?.meta     ?? 840
@@ -195,6 +199,7 @@ export default function BalancedScorecard({ data }) {
       '2.1c': {
         actual: fmt$(ticketProm),
         meta:   fmt$(m2c),
+        peor:   ticketMin25 ? fmt$(ticketMin25) : null,
         ratio:  ticketProm > 0 ? (ticketProm / m2c) * 100 : null,
       },
       '2.1d': {
@@ -220,9 +225,9 @@ export default function BalancedScorecard({ data }) {
     if (!data) return null
     const fila = data.estrat_ventas_productos?.[mes]
     if (!fila) return null
-    const M    = data.bsc_metas || {}
-    const m3a  = M['3.1a']?.meta     ?? 10
-    const m3b  = M['3.1b']?.meta_pct ?? 20
+    const M    = data.bsc_metas_por_mes?.[mes] || {}
+    const m3a  = M['3.1a']?.meta ?? 10
+    const m3b  = M['3.1b']?.meta ?? 20
 
     // % venta con promo: usamos ventas reales del mes para el denominador
     const ventasMes = data.kpi_mensual_actual?.find(m => m.mes_num === mes)?.ventas || 0
@@ -232,11 +237,13 @@ export default function BalancedScorecard({ data }) {
       '3.1a': {
         actual: fila.promos_aplicadas > 0 ? String(fila.promos_aplicadas) : null,
         meta:   String(m3a),
+        peor:   M['3.1a']?.peor ? String(M['3.1a'].peor) : null,
         ratio:  fila.promos_aplicadas > 0 ? (fila.promos_aplicadas / m3a) * 100 : null,
       },
       '3.1b': {
         actual: pctPromo !== null ? pctPromo.toFixed(1) + '%' : null,
         meta:   m3b + '%',
+        peor:   M['3.1b']?.peor ? M['3.1b'].peor + '%' : null,
         ratio:  pctPromo !== null ? (pctPromo / m3b) * 100 : null,
       },
     }
@@ -248,7 +255,7 @@ export default function BalancedScorecard({ data }) {
     const añoActual = data.resumen?.año_actual
     const kMes     = data.kpi_mensual_actual?.find(m => m.mes_num === mes)
     const cartera  = data.resumen?.cartera_total || 0
-    const M        = data.bsc_metas || {}
+    const M        = data.bsc_metas_por_mes?.[mes] || {}
 
     // Datos del mes seleccionado (BSC es snapshot mensual, no acumulado)
     const nrMes   = data.clientes_nr_por_mes?.find(m => m.mes_num === mes)
@@ -275,10 +282,12 @@ export default function BalancedScorecard({ data }) {
     // 4.2b: cobertura de nuevos acumulados que compraron en el mes
     const cobNuevos = data.cobertura_nuevos_por_mes?.[mes]
 
-    const m4_1a = M['4.1a']?.meta     ?? 9
-    const m4_2a = M['4.2a']?.meta_pct ?? 55
-    const m4_2b = M['4.2b']?.meta_pct ?? 50
-    const m4_3a = M['4.3a']?.meta     ?? 25
+    const m4_1a = M['4.1a']?.meta ?? 9
+    const m4_1b = M['4.1b']?.meta ?? null
+    const m4_2a = M['4.2a']?.meta ?? 55
+    const m4_2b = M['4.2b']?.meta ?? 50
+    const m4_3a = M['4.3a']?.meta ?? 25
+    const m4_3b = M['4.3b']?.meta ?? null
 
     return {
       '4.1a': {
@@ -288,8 +297,9 @@ export default function BalancedScorecard({ data }) {
       },
       '4.1b': {
         actual: visitas !== null ? String(visitas) : null,
-        meta:   null,
-        ratio:  null,
+        meta:   m4_1b ? String(m4_1b) : null,
+        peor:   M['4.1b']?.peor ? String(M['4.1b'].peor) : null,
+        ratio:  visitas !== null && m4_1b ? (visitas / m4_1b) * 100 : null,
       },
       '4.2a': {
         actual: cobertura !== null ? cobertura.toFixed(1) + '%' : null,
@@ -299,17 +309,20 @@ export default function BalancedScorecard({ data }) {
       '4.2b': {
         actual: cobNuevos ? cobNuevos.pct.toFixed(1) + '%' : null,
         meta:   m4_2b + '%',
+        peor:   M['4.2b']?.peor ? M['4.2b'].peor + '%' : null,
         ratio:  cobNuevos ? (cobNuevos.pct / m4_2b) * 100 : null,
       },
       '4.3a': {
         actual: nuevos !== null ? String(nuevos) : null,
         meta:   String(m4_3a),
+        peor:   M['4.3a']?.peor ? String(M['4.3a'].peor) : null,
         ratio:  nuevos !== null ? (nuevos / m4_3a) * 100 : null,
       },
       '4.3b': {
         actual: recup !== null ? String(recup) : null,
-        meta:   null,
-        ratio:  null,
+        meta:   m4_3b ? String(m4_3b) : null,
+        peor:   M['4.3b']?.peor ? String(M['4.3b'].peor) : null,
+        ratio:  recup !== null && m4_3b ? (recup / m4_3b) * 100 : null,
       },
     }
   }, [data, mes])
@@ -318,11 +331,16 @@ export default function BalancedScorecard({ data }) {
   const entregasLive = useMemo(() => {
     if (!data) return null
     const incidencias = data.incidencias_por_mes?.[mes] ?? null
+    const M = data.bsc_metas_por_mes?.[mes] || {}
+    const m5_1b = M['5.1b']?.meta ?? null
     return {
       '5.1b': {
         actual: incidencias !== null ? String(incidencias) : null,
-        meta:   null,
-        ratio:  null,
+        meta:   m5_1b ? String(m5_1b) : null,
+        peor:   M['5.1b']?.peor ? String(M['5.1b'].peor) : null,
+        ratio:  incidencias !== null && m5_1b
+          ? (incidencias <= m5_1b ? 100 : (m5_1b / incidencias) * 100)
+          : null,
       },
     }
   }, [data, mes])
@@ -332,8 +350,8 @@ export default function BalancedScorecard({ data }) {
     if (!data) return null
     const fila = data.oportunidades_offline_por_mes?.[mes]
     if (!fila) return null
-    const M = data.bsc_metas || {}
-    const m7a = M['7.1a']?.meta_pct ?? null
+    const M = data.bsc_metas_por_mes?.[mes] || {}
+    const m7a = M['7.1a']?.meta ?? null
     const m7b = M['7.1b']?.meta     ?? null
     const m7c = M['7.1c']?.meta     ?? null
     const m7d = M['7.1d']?.meta     ?? null
@@ -341,21 +359,25 @@ export default function BalancedScorecard({ data }) {
       '7.1a': {
         actual: fila.tasa_conversion !== null ? fila.tasa_conversion.toFixed(1) + '%' : null,
         meta:   m7a ? m7a + '%' : null,
+        peor:   M['7.1a']?.peor ? M['7.1a'].peor + '%' : null,
         ratio:  m7a && fila.tasa_conversion !== null ? (fila.tasa_conversion / m7a) * 100 : null,
       },
       '7.1b': {
         actual: fila.cotizaciones > 0 ? String(fila.cotizaciones) : null,
         meta:   m7b ? String(m7b) : null,
+        peor:   M['7.1b']?.peor ? String(M['7.1b'].peor) : null,
         ratio:  m7b && fila.cotizaciones > 0 ? (fila.cotizaciones / m7b) * 100 : null,
       },
       '7.1c': {
         actual: fila.visitas > 0 ? String(fila.visitas) : null,
         meta:   m7c ? String(m7c) : null,
+        peor:   M['7.1c']?.peor ? String(M['7.1c'].peor) : null,
         ratio:  m7c && fila.visitas > 0 ? (fila.visitas / m7c) * 100 : null,
       },
       '7.1d': {
         actual: fila.leads > 0 ? String(fila.leads) : null,
         meta:   m7d ? String(m7d) : null,
+        peor:   M['7.1d']?.peor ? String(M['7.1d'].peor) : null,
         ratio:  m7d && fila.leads > 0 ? (fila.leads / m7d) * 100 : null,
       },
     }
@@ -377,7 +399,8 @@ export default function BalancedScorecard({ data }) {
             ...k,
             actual: live.actual,
             ratio:  live.ratio,
-            ...(live.meta ? { meta: live.meta } : {}),
+            ...(live.meta  ? { meta:  live.meta  } : {}),
+            ...(live.peor  ? { peor:  live.peor  } : {}),
           }
         }),
       }
@@ -616,10 +639,10 @@ export default function BalancedScorecard({ data }) {
                                 <span style={{ fontSize:12, fontWeight:700, color: kpiCal > 0 ? cfg.color : '#cbd5e1', fontVariantNumeric:'tabular-nums' }}>
                                   {kpiCal.toFixed(1)}%
                                 </span>
-                                <span style={{ fontSize:10, color:'#94a3b8' }}>/{kpi.peso.toFixed(0)}%</span>
+                                <span style={{ fontSize:10, color:'#94a3b8' }}>/{kpi.peso.toFixed(1)}%</span>
                               </div>
                               <div style={{ height:4, background:'#f1f5f9', borderRadius:2 }}>
-                                <div style={{ height:'100%', width:`${kpi.peso > 0 ? (kpiCal/kpi.peso)*100 : 0}%`,
+                                <div style={{ height:'100%', width:`${kpi.peso > 0 ? Math.min((kpiCal/kpi.peso)*100, 100) : 0}%`,
                                   background:cfg.dot, borderRadius:2, transition:'width .5s' }} />
                               </div>
                             </div>
@@ -686,7 +709,7 @@ export default function BalancedScorecard({ data }) {
       </div>
 
       <p style={{ marginTop:10, fontSize:11, color:'#94a3b8', textAlign:'right' }}>
-        * Todos los KPIs conectados a Google Sheets. Metas pendientes de definir: 4.1b, 5.1b y "Nuevas oportunidades off-line" (7.1a–7.1d).
+        * Todos los KPIs conectados a Google Sheets. Metas provisionales (es_prueba): 4.1b, 4.3b, 5.1b y "Nuevas oportunidades off-line" (7.1a–7.1d).
       </p>
     </div>
   )

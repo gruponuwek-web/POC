@@ -9,21 +9,6 @@ const CREDENTIALS_PATH = path.join(__dirname, 'credentials.json');
 const AÑO_ACTUAL   = 2026;  // año en curso (ventas activas)
 const AÑO_ANTERIOR = 2025;  // año previo para comparación YoY
 
-// ── Metas BSC — revisar y ajustar cada año nuevo ─────────────────────────────
-const BSC_METAS = {
-  '2.1a': { meta_pct:  15   },   // crecimiento YoY mínimo esperado (%)
-  '2.1c': { meta:     600   },   // ticket promedio ($)
-  '2.1d': { meta:      95   },   // clientes con compra acumulada > $3,000 (#)
-  '2.1e': { meta:    3000   },   // ticket promedio de clientes nuevos ($)
-  '2.1f': { meta:     840   },   // tickets únicos atendidos (#)
-  // 2.1b: la meta viene de la suma de metas por agente (hoja "metas") — no se configura aquí
-  '3.1a': { meta:      10   },   // promociones aplicadas por mes (#)
-  '3.1b': { meta_pct:  20   },   // % de venta proveniente de promociones
-  '4.1a': { meta:       9   },   // clientes perdidos por mes (# — menos es mejor)
-  '4.2a': { meta_pct:  55   },   // cobertura de cartera total por mes (%)
-  '4.2b': { meta_pct:  50   },   // cobertura de clientes nuevos acumulados (%)
-  '4.3a': { meta:      25   },   // clientes nuevos por mes (#)
-};
 
 const SHEETS = {
   // Al pasar a 2027: mover el ID de ventasActual → ventasAnterior y agregar el ID de ventas 2027
@@ -36,6 +21,7 @@ const SHEETS = {
   visitasAtencion:       { id: '1F9vgcHfA20dIm6caUZmH756fgSn562lCqoC0GdqgNRc', range: 'visitas_atencion!A:Z' },
   incidencias:           { id: '1F9vgcHfA20dIm6caUZmH756fgSn562lCqoC0GdqgNRc', range: 'incidencias!A:Z' },
   oportunidadesOffline:  { id: '1F9vgcHfA20dIm6caUZmH756fgSn562lCqoC0GdqgNRc', range: 'oportunidades_offline!A:Z' },
+  bscMetasPeor:          { id: '1F9vgcHfA20dIm6caUZmH756fgSn562lCqoC0GdqgNRc', range: 'bsc_metas_peor!A:Z' },
 };
 
 const outDir = path.join(__dirname, '..', 'src', 'data');
@@ -88,6 +74,22 @@ function normClient(name) {
   return name.trim().toUpperCase()
     .normalize('NFD').replace(/[̀-ͯ]/g, '')
     .replace(/\s+/g, ' ');
+}
+
+// Devuelve la fila de metas más reciente cuya vigencia sea ≤ (targetAño, targetMes)
+function getMetaActiva(rows, kpiCod, targetAño, targetMes) {
+  const candidates = rows.filter(r =>
+    r['kpi_cod'] === kpiCod && (
+      parseInt(r['año']) < targetAño ||
+      (parseInt(r['año']) === targetAño && parseInt(r['mes_inicio']) <= targetMes)
+    )
+  );
+  if (!candidates.length) return null;
+  return candidates.reduce((best, r) => {
+    const rA = parseInt(r['año']), rM = parseInt(r['mes_inicio']);
+    const bA = parseInt(best['año']), bM = parseInt(best['mes_inicio']);
+    return (rA > bA || (rA === bA && rM > bM)) ? r : best;
+  });
 }
 
 const MESES_ES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio',
@@ -645,7 +647,7 @@ async function main() {
   const sheets = google.sheets({ version: 'v4', auth });
 
   console.log('📥 Descargando datos de Google Sheets...');
-  const [rawAnterior, rawActual, rawMetas, rawCartera, rawCliNR, rawEstratProd, rawVisitas, rawIncidencias, rawOportunidades] = await Promise.all([
+  const [rawAnterior, rawActual, rawMetas, rawCartera, rawCliNR, rawEstratProd, rawVisitas, rawIncidencias, rawOportunidades, rawMetasPeor] = await Promise.all([
     getSheetData(sheets, SHEETS.ventasAnterior.id,        SHEETS.ventasAnterior.range),
     getSheetData(sheets, SHEETS.ventasActual.id,          SHEETS.ventasActual.range),
     getSheetData(sheets, SHEETS.metas.id,                 SHEETS.metas.range),
@@ -655,9 +657,10 @@ async function main() {
     getSheetData(sheets, SHEETS.visitasAtencion.id,       SHEETS.visitasAtencion.range),
     getSheetData(sheets, SHEETS.incidencias.id,           SHEETS.incidencias.range),
     getSheetData(sheets, SHEETS.oportunidadesOffline.id,  SHEETS.oportunidadesOffline.range),
+    getSheetData(sheets, SHEETS.bscMetasPeor.id,          SHEETS.bscMetasPeor.range),
   ]);
 
-  console.log(`✅ Datos: ${AÑO_ANTERIOR}=${rawAnterior.length} | ${AÑO_ACTUAL}=${rawActual.length} | metas=${rawMetas.length} | cartera=${rawCartera.length} | cliNR=${rawCliNR.length} | estratProd=${rawEstratProd.length} | visitas=${rawVisitas.length} | incidencias=${rawIncidencias.length} | oport=${rawOportunidades.length}`);
+  console.log(`✅ Datos: ${AÑO_ANTERIOR}=${rawAnterior.length} | ${AÑO_ACTUAL}=${rawActual.length} | metas=${rawMetas.length} | cartera=${rawCartera.length} | cliNR=${rawCliNR.length} | estratProd=${rawEstratProd.length} | visitas=${rawVisitas.length} | incidencias=${rawIncidencias.length} | oport=${rawOportunidades.length} | metasBSC=${rawMetasPeor.length}`);
 
   console.log('⚙️  Procesando ventas...');
   const ventas2025 = processVentas(rawAnterior, AÑO_ANTERIOR);
@@ -911,6 +914,22 @@ async function main() {
       oportunidades_offline_por_mes[m] = { cotizaciones: cotiz, cotizaciones_convertidas: convert, visitas, leads, tasa_conversion: tasa };
     });
 
+  // ── Metas BSC por mes — vigencia dinámica desde hoja "bsc_metas_peor" ────────
+  const kpisEnSheet = [...new Set(rawMetasPeor.map(r => r['kpi_cod']).filter(Boolean))];
+const bsc_metas_por_mes = {};
+  for (let m = 1; m <= 12; m++) {
+    bsc_metas_por_mes[m] = {};
+    kpisEnSheet.forEach(kpi => {
+      const fila = getMetaActiva(rawMetasPeor, kpi, AÑO_ACTUAL, m);
+      if (fila) {
+        bsc_metas_por_mes[m][kpi] = {
+          meta: parseNum(fila['meta']),
+          peor: fila['peor_de_los_casos'] !== '' ? parseNum(fila['peor_de_los_casos']) : null,
+        };
+      }
+    });
+  }
+
   const output = {
     resumen, agentes, metas,
     kpi_mensual_actual: kpi2026, kpi_mensual_anterior: kpi2025,
@@ -925,7 +944,7 @@ async function main() {
     visitas_atencion_por_mes,
     incidencias_por_mes,
     oportunidades_offline_por_mes,
-    bsc_metas: BSC_METAS,
+    bsc_metas_por_mes,
     estrat_ventas_productos: estratProdPorMes,
   };
 
