@@ -113,7 +113,7 @@ function processVentas(rows, año) {
   rows.forEach((r, idx) => {
     const tipo = (r['TIPO DOCUMENTO'] || '').trim().toUpperCase();
     if (tipo !== 'FACTURA' && tipo !== 'NOTA') { skipped++; return; }
-    const soloPresencia = tipo === 'NOTA'; // no suma montos, solo acredita presencia del cliente
+    const soloPresencia = false; // NOTAs cuentan como venta real con su importe
     const fecha = parseDate(r['FECHA']);
     if (!fecha) { skipped++; return; }
     if (fecha.getFullYear() !== año) { skipped++; return; }
@@ -872,6 +872,49 @@ async function main() {
   const ticket_promedio_nuevos_por_mes   = buildTicketPromedioNuevos(ventas2026c, clientesNR, AÑO_ACTUAL);
   const cobertura_nuevos_por_mes         = buildCoberturaNuevosPorMes(ventas2026c, clientesNR, AÑO_ACTUAL);
 
+  // ── Ventas de clientes nuevos agrupadas por mes de COMPRA (no de alta) ────────
+  // Para cada mes M: suma todas las ventas realizadas EN ese mes por cualquier
+  // cliente que esté en la hoja de nuevos/recuperados del año actual.
+  // helper: construye ventas de clientes NR agrupadas por mes de compra
+  function _buildVentasNR(ventas, clientesNRFiltro) {
+    const ids = new Set(), noms = new Set();
+    clientesNRFiltro.forEach(c => {
+      const id = (c.cliente_num || '').trim();
+      if (id) ids.add(id); else if (c.cliente_nombre) noms.add(c.cliente_nombre);
+    });
+    const global = {}, porAgente = {};
+    ventas.filter(v => {
+      if (v.solo_presencia) return false;
+      const id = (v.cliente_num || '').trim();
+      return id ? ids.has(id) : noms.has(v.cliente_nombre);
+    }).forEach(v => {
+      const m = v.mes_num;
+      if (!global[m]) global[m] = { monto: 0, clientes: new Set() };
+      global[m].monto += v.importe;
+      global[m].clientes.add(v.cliente_num || v.cliente_nombre);
+      const ag = v.agente_nombre;
+      if (!porAgente[ag]) porAgente[ag] = {};
+      if (!porAgente[ag][m]) porAgente[ag][m] = { monto: 0, clientes: new Set() };
+      porAgente[ag][m].monto += v.importe;
+      porAgente[ag][m].clientes.add(v.cliente_num || v.cliente_nombre);
+    });
+    const gOut = {}, agOut = {};
+    Object.entries(global).forEach(([m, d]) => { gOut[parseInt(m)] = { monto: Math.round(d.monto), clientes: d.clientes.size }; });
+    Object.entries(porAgente).forEach(([ag, meses]) => {
+      agOut[ag] = {};
+      Object.entries(meses).forEach(([m, d]) => { agOut[ag][parseInt(m)] = { monto: Math.round(d.monto), clientes: d.clientes.size }; });
+    });
+    return { global: gOut, porAgente: agOut };
+  }
+
+  const _vnr2026 = _buildVentasNR(ventas2026c, clientesNR.filter(c => c.año === AÑO_ACTUAL));
+  const _vnr2025 = _buildVentasNR(ventas2025c, clientesNR.filter(c => c.año === AÑO_ANTERIOR));
+
+  const ventas_nr_por_mes_compra        = _vnr2026.global;
+  const ventas_nr_por_mes_compra_agente = _vnr2026.porAgente;
+  const ventas_nr_por_mes_compra_2025        = _vnr2025.global;
+  const ventas_nr_por_mes_compra_agente_2025 = _vnr2025.porAgente;
+
   // ── Visitas de atención (4.1b): suma de visitas por mes para AÑO_ACTUAL ───────
   const visitas_atencion_por_mes = {};
   rawVisitas
@@ -941,6 +984,10 @@ const bsc_metas_por_mes = {};
     clientes_sobre_3000_por_mes_2025,
     ticket_promedio_nuevos_por_mes,
     cobertura_nuevos_por_mes,
+    ventas_nr_por_mes_compra,
+    ventas_nr_por_mes_compra_agente,
+    ventas_nr_por_mes_compra_2025,
+    ventas_nr_por_mes_compra_agente_2025,
     visitas_atencion_por_mes,
     incidencias_por_mes,
     oportunidades_offline_por_mes,
