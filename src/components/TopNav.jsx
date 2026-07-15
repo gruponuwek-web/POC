@@ -1,6 +1,6 @@
 import React from 'react'
 
-export default function TopNav({ activeModule, onModule, lastUpdate }) {
+export default function TopNav({ activeModule, onModule, lastUpdate, session, onLogout }) {
   const tabs = [
     { id: 'dashboard', label: '📊 Dashboard Táctico', active: true },
     { id: 'wbr', label: '📅 WBR' },
@@ -56,9 +56,31 @@ export default function TopNav({ activeModule, onModule, lastUpdate }) {
           ))}
         </div>
 
-        <div style={{ fontSize: 11, color: 'rgba(255,255,255,.5)', display: 'flex', alignItems: 'center', gap: 6 }}>
-          <span style={{ width: 7, height: 7, background: '#22c55e', borderRadius: '50%', display: 'inline-block' }} />
-          Actualización: {lastUpdate || '—'}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+          <div style={{ fontSize: 11, color: 'rgba(255,255,255,.5)', display: 'flex', alignItems: 'center', gap: 6 }}>
+            <span style={{ width: 7, height: 7, background: '#22c55e', borderRadius: '50%', display: 'inline-block' }} />
+            Actualización: {lastUpdate || '—'}
+          </div>
+          {session && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <div style={{ textAlign: 'right' }}>
+                <div style={{ fontSize: 12, fontWeight: 700, color: '#fff' }}>{session.nombre}</div>
+                <div style={{ fontSize: 10, color: 'rgba(255,255,255,.45)' }}>{session.rol}</div>
+              </div>
+              <button onClick={onLogout} style={{
+                background: 'rgba(255,255,255,.1)',
+                border: '1px solid rgba(255,255,255,.2)',
+                borderRadius: 6,
+                color: 'rgba(255,255,255,.7)',
+                fontSize: 11,
+                fontWeight: 600,
+                padding: '4px 10px',
+                cursor: 'pointer',
+              }}>
+                Salir
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </nav>

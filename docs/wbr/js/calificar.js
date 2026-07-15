@@ -4,6 +4,117 @@ const TUMBA = {
   acc:  'Acciones: Agrega los compromisos concretos que el agente asumió en esta sesión.'
 }
 
+// ── ACOMPAÑAMIENTO TAG-INPUT ──────────────────────────────
+
+const ACOMP_OPCIONES = [
+  { grupo: 'Equipo',   items: ['Hortencia','Elizabeth','Adriana','Amairani','Edwin','Verónica','Itzel','David'] },
+  { grupo: 'Externos', items: ['Luis Alberto','Oscar','Nidia','Rocío','Blanca','Vanessa','Fabiola','Jessica','Adrián'] },
+]
+
+const _acompState = {}   // twId → Set<string>
+let   _acompCounter = 0
+
+function _initAllAcompTags() {
+  document.querySelectorAll('.tag-wrap[data-init]').forEach(wrap => {
+    if (_acompState[wrap.id]) return
+    const init = wrap.dataset.init
+    _acompState[wrap.id] = new Set(init.split(',').map(s => s.trim()).filter(Boolean))
+    _renderAcompTags(wrap.id)
+  })
+}
+
+function _renderAcompTags(twId) {
+  const wrap = document.getElementById(twId)
+  if (!wrap) return
+  const inp = wrap.querySelector('.tag-text-input')
+  wrap.querySelectorAll('.tag-chip').forEach(t => t.remove())
+  ;[...(_acompState[twId] || [])].forEach(name => {
+    const chip = document.createElement('div')
+    chip.className = 'tag-chip'
+    chip.innerHTML = `${name}<button class="tag-chip-rm" tabindex="-1" onmousedown="_removeAcompTag('${twId}','${name.replace(/'/g,"\\'")}')">×</button>`
+    wrap.insertBefore(chip, inp)
+  })
+}
+
+function _removeAcompTag(twId, name) {
+  _acompState[twId]?.delete(name)
+  _renderAcompTags(twId)
+  _filterAcompDD(twId)
+}
+
+function _openAcompDD(twId) {
+  document.getElementById(twId)?.classList.add('tw-open')
+  _filterAcompDD(twId)
+}
+
+function _closeAcompDD(twId) {
+  setTimeout(() => {
+    const wrap = document.getElementById(twId)
+    if (!wrap) return
+    wrap.classList.remove('tw-open')
+    wrap.querySelector('.tag-dropdown')?.classList.remove('td-open')
+  }, 180)
+}
+
+function _filterAcompDD(twId) {
+  const wrap = document.getElementById(twId)
+  if (!wrap) return
+  const q  = wrap.querySelector('.tag-text-input').value.trim().toLowerCase()
+  const dd = wrap.querySelector('.tag-dropdown')
+  const sel = _acompState[twId] || new Set()
+  dd.innerHTML = ''
+  let any = false
+  ACOMP_OPCIONES.forEach(({ grupo, items }) => {
+    const fil = items.filter(n => !sel.has(n) && (!q || n.toLowerCase().includes(q)))
+    if (!fil.length) return
+    any = true
+    const sep = document.createElement('div')
+    sep.className = 'td-sep'
+    sep.textContent = grupo
+    dd.appendChild(sep)
+    fil.forEach(name => {
+      const el = document.createElement('div')
+      el.className = 'td-item'
+      el.textContent = name
+      el.onmousedown = () => {
+        _acompState[twId].add(name)
+        _renderAcompTags(twId)
+        wrap.querySelector('.tag-text-input').value = ''
+        _filterAcompDD(twId)
+      }
+      dd.appendChild(el)
+    })
+  })
+  if (!any) {
+    const hint = document.createElement('div')
+    hint.className = 'td-hint'
+    hint.textContent = q ? `Enter para agregar "${q}"` : 'Todos seleccionados'
+    dd.appendChild(hint)
+  }
+  dd.classList.add('td-open')
+}
+
+function _handleAcompKey(e, twId) {
+  const inp = e.target
+  if (e.key === 'Enter') {
+    e.preventDefault()
+    const q = inp.value.trim()
+    if (q) { _acompState[twId]?.add(q); _renderAcompTags(twId); inp.value = ''; _filterAcompDD(twId) }
+  } else if (e.key === 'Backspace' && !inp.value) {
+    const last = [...(_acompState[twId] || [])].pop()
+    if (last) { _acompState[twId].delete(last); _renderAcompTags(twId); _filterAcompDD(twId) }
+  } else if (e.key === 'Escape') {
+    document.getElementById(twId)?.querySelector('.tag-dropdown')?.classList.remove('td-open')
+  }
+}
+
+function _getAcompValue(cardEl) {
+  const wrap = cardEl.querySelector('.tag-wrap')
+  if (!wrap) return COORD
+  const tags = _acompState[wrap.id]
+  return tags?.size ? [...tags].join(', ') : COORD
+}
+
 // ── SESIÓN ───────────────────────────────────────────────
 
 function calcSemana(fechaStr) {
@@ -204,10 +315,11 @@ function renderVendedores() {
 
   // Activar primer step de cada vendedor
   vendedores.forEach((_, i) => switchVStep('v' + i, 'kpis'))
+  _initAllAcompTags()
 }
 
 function panelKpis(vid, v) {
-  const kpisRol = state.kpis[v.Rol] || []
+  const kpisRol = (DEMO_MODE || !state.kpis[v.Rol]?.length ? DEMO_KPIS : state.kpis[v.Rol]) || []
   const calExist = sesionActiva
     ? state.calificaciones.find(c => c.ID_Sesion === sesionActiva.id && c.Vendedor === v.Nombre)
     : null
@@ -223,6 +335,11 @@ function panelKpis(vid, v) {
     })
   }
   const rows = kpisRol.map((kpi, i) => {
+    if (!kpi) return `
+    <div class="kpi-row" style="opacity:.35;pointer-events:none;border:1.5px dashed #e2e8f0;border-radius:6px;padding:6px 10px">
+      <span class="kpi-label" style="font-style:italic;color:#94a3b8">KPI por definir</span>
+      <span style="font-size:11px;color:#cbd5e1">—</span>
+    </div>`
     const val      = kpisExist[i]
     const cumplido = val === true
     const touched  = kpisExist.length > 0
@@ -293,6 +410,8 @@ function panelAcc(vid, v) {
 }
 
 function _accionCardHtml(num, a = {}) {
+  const twId = 'tw' + (++_acompCounter)
+  const initVal = a.Acompanamiento || COORD
   const opts = (list, sel) => list.map(o => `<option${o===sel?' selected':''}>${o}</option>`).join('')
   const clases = ['Prospección','Fidelización','BCG','Recuperación']
   const prios  = ['Alta','Media','Baja']
@@ -315,6 +434,17 @@ function _accionCardHtml(num, a = {}) {
         <div><label class="form-label">Cliente</label><input type="text" placeholder="Nombre del cliente" value="${a.Cliente||''}"></div>
         <div><label class="form-label">Resultado esperado</label><input type="text" value="${a.Resultado_Esperado||''}"></div>
         <div><label class="form-label">Fecha compromiso</label><input type="date" value="${a.Fecha_Compromiso||''}"></div>
+      </div>
+      <div style="margin-top:8px">
+        <label class="form-label">Acompañamiento</label>
+        <div class="tag-wrap" id="${twId}" data-init="${initVal}">
+          <input class="tag-text-input" placeholder="Buscar o escribir nombre…" autocomplete="off"
+            onfocus="_openAcompDD('${twId}')"
+            oninput="_filterAcompDD('${twId}')"
+            onkeydown="_handleAcompKey(event,'${twId}')"
+            onblur="_closeAcompDD('${twId}')">
+          <div class="tag-dropdown"></div>
+        </div>
       </div>
       <div style="margin-top:8px"><label class="form-label">Detalle libre</label>
         <textarea rows="2" placeholder="Contexto adicional…" style="width:100%">${a.Descripcion_Libre||''}</textarea>
@@ -356,7 +486,7 @@ function onKpiToggle(inp, vid, idx) {
 
 async function guardarKpisYseguir(vid, vendedor, rol) {
   if (!sesionActiva) return toast('Primero crea la sesión', 'error')
-  const kpisRol = state.kpis[rol] || []
+  const kpisRol = (state.kpis[rol]?.length ? state.kpis[rol] : DEMO_KPIS) || []
   const kpis = kpisRol.map((_, i) => {
     const tog = document.getElementById('kpitog-' + vid + '-' + i)
     return tog ? tog.checked : false
@@ -403,6 +533,7 @@ function agregarAccionForm(vid, vendedor) {
   const div  = document.createElement('div')
   div.innerHTML = _accionCardHtml(idx + 1)
   cont.appendChild(div.firstElementChild)
+  _initAllAcompTags()
 }
 
 async function guardarAccionesVendedor(vid, vendedor) {
@@ -427,7 +558,7 @@ async function guardarAccionesVendedor(vid, vendedor) {
 
   for (let ci = 0; ci < cardsValidas.length; ci++) {
     const card = cardsValidas[ci]
-    const inputs  = card.querySelectorAll('input')
+    const inputs  = card.querySelectorAll('input:not(.tag-text-input)')
     const selects = card.querySelectorAll('select')
     const ta      = card.querySelector('textarea')
     await post('savePlanAccion', {
@@ -440,7 +571,7 @@ async function guardarAccionesVendedor(vid, vendedor) {
       resultado_esperado: inputs[2]?.value,
       fecha_compromiso: inputs[3]?.value,
       descripcion_libre: ta?.value,
-      acompanamiento: COORD,
+      acompanamiento: _getAcompValue(card),
       primer_del_lote: ci === 0
     })
   }

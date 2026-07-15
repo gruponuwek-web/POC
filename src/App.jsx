@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react'
+import Login from './components/Login.jsx'
+import { getSession, clearSession } from './auth.js'
 import TopNav from './components/TopNav.jsx'
 import FilterBar from './components/FilterBar.jsx'
 import KPIRow from './components/KPIRow.jsx'
@@ -6,6 +8,7 @@ import ChartVentasMensuales from './components/ChartVentasMensuales.jsx'
 import ChartAgenteCuota from './components/ChartAgenteCuota.jsx'
 import ChartCobertura from './components/ChartCobertura.jsx'
 import ChartClientesNP from './components/ChartClientesNP.jsx'
+import ChartVentasClientesNuevos from './components/ChartVentasClientesNuevos.jsx'
 import ChartTickets from './components/ChartTickets.jsx'
 import ChartClientesPerdidos from './components/ChartClientesPerdidos.jsx'
 import ChartMargen from './components/ChartMargen.jsx'
@@ -18,9 +21,11 @@ import TablaClientesPerdidos from './components/TablaClientesPerdidos.jsx'
 import BalancedScorecard from './components/BalancedScorecard.jsx'
 
 export default function App() {
+  const [session, setSession] = useState(() => getSession())
   const [data, setData] = useState(null)
   const [loading, setLoading] = useState(true)
   const [activeModule, setActiveModule] = useState('dashboard')
+  const [wbrMounted, setWbrMounted] = useState(false)
 
   // Filtros
   const [filtros, setFiltros] = useState({
@@ -29,6 +34,10 @@ export default function App() {
     agente: 'todos',
     tipoCliente: 'todos',
   })
+
+  useEffect(() => {
+    if (activeModule === 'wbr') setWbrMounted(true)
+  }, [activeModule])
 
   useEffect(() => {
     fetch(import.meta.env.BASE_URL + 'data/dashboard_data.json')
@@ -249,6 +258,8 @@ export default function App() {
   const [mesPerdidoSel, setMesPerdidoSel] = useState(null)
   const limpiarFiltros = () => { setFiltros({ año: 'todos', meses: [], agente: 'todos', tipoCliente: 'todos' }); setMesPerdidoSel(null) }
 
+  if (!session) return <Login onLogin={setSession} />
+
   if (loading) return (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', flexDirection: 'column', gap: 16 }}>
       <div style={{ width: 48, height: 48, border: '4px solid #e2e8f0', borderTopColor: '#1a6cf0', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
@@ -267,7 +278,13 @@ export default function App() {
 
   return (
     <div style={{ minHeight: '100vh', background: '#f0f4f8' }}>
-      <TopNav activeModule={activeModule} onModule={setActiveModule} lastUpdate={data.resumen.ultima_actualizacion} />
+      <TopNav
+        activeModule={activeModule}
+        onModule={setActiveModule}
+        lastUpdate={data.resumen.ultima_actualizacion}
+        session={session}
+        onLogout={() => { clearSession(); setSession(null) }}
+      />
 
       {activeModule === 'dashboard' && (
         <main style={{ maxWidth: 1600, margin: '0 auto', padding: '20px 20px 40px' }}>
@@ -288,6 +305,21 @@ export default function App() {
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
             <ChartCobertura agentes={dataFiltrada.kpiAgentes} />
             <ChartClientesNP kpi2026={dataFiltrada.kpi2026} clientesNR={data.clientes_nr} nrPorMes={dataFiltrada.nrPorMes} filtros={filtros} año={dataFiltrada.año} />
+          </div>
+
+          <div style={{ marginBottom: 16 }}>
+            <ChartVentasClientesNuevos
+              ventasNR={data.ventas_nr_por_mes_compra}
+              ventasNRAg={data.ventas_nr_por_mes_compra_agente}
+              ventasNR2025={data.ventas_nr_por_mes_compra_2025}
+              ventasNRAg2025={data.ventas_nr_por_mes_compra_agente_2025}
+              kpi2026={dataFiltrada.kpi2026}
+              kpi2025={dataFiltrada.kpi2025}
+              filtros={filtros}
+              año={dataFiltrada.año}
+              ventaTotalAnual2026={(data.kpi_mensual_actual || []).reduce((s, m) => s + (m.ventas || 0), 0)}
+              ventaTotalAnual2025={(data.kpi_mensual_anterior || []).reduce((s, m) => s + (m.ventas || 0), 0)}
+            />
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.6fr', gap: 16, marginBottom: 16 }}>
             <ChartClientesPerdidos kpiAgentes={dataFiltrada.kpiAgentes} clientes={dataFiltrada.clientes} año={filtros.año} filtros={filtros}
@@ -324,10 +356,10 @@ export default function App() {
         </main>
       )}
 
-      {activeModule === 'wbr' && (
+      {wbrMounted && (
         <iframe
           src={import.meta.env.BASE_URL + 'wbr/index.html'}
-          style={{ width: '100%', height: 'calc(100vh - 56px)', border: 'none', display: 'block' }}
+          style={{ width: '100%', height: 'calc(100vh - 56px)', border: 'none', display: activeModule === 'wbr' ? 'block' : 'none' }}
           title="WBR Portal"
         />
       )}

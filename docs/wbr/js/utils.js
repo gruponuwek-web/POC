@@ -18,6 +18,28 @@ function calcSemana(fechaStr) {
   return Math.ceil(((d - inicio) / 86400000 + inicio.getDay() + 1) / 7)
 }
 
+// ── CACHÉ ─────────────────────────────────────────────────
+
+const _CACHE_KEY = 'wbr_cache_v2'
+const _CACHE_TTL = 10 * 60 * 1000 // 10 minutos
+
+function _saveCache(data) {
+  try { localStorage.setItem(_CACHE_KEY, JSON.stringify({ ts: Date.now(), data })) } catch {}
+}
+
+function _loadCache() {
+  try {
+    const raw = localStorage.getItem(_CACHE_KEY)
+    if (!raw) return null
+    const { ts, data } = JSON.parse(raw)
+    return Date.now() - ts < _CACHE_TTL ? data : null
+  } catch { return null }
+}
+
+function _clearCache() {
+  localStorage.removeItem(_CACHE_KEY)
+}
+
 // ── HTTP ──────────────────────────────────────────────────
 
 async function api(action) {
@@ -26,6 +48,7 @@ async function api(action) {
 }
 
 async function post(action, data) {
+  _clearCache()
   const r = await fetch(API, {
     method: 'POST',
     body: JSON.stringify({ action, ...data })
@@ -117,18 +140,27 @@ function fmtDate(d) {
 
 async function loadAll() {
   try {
-    const [equipo, kpis, clasifs, califs, acciones, seg, descs, ausencias, sesionesMBR, compromisos] = await Promise.all([
-      api('getEquipo'),
-      api('getKPIs'),
-      api('getClasificaciones'),
-      api('getCalificaciones'),
-      api('getPlanAcciones'),
-      api('getSeguimiento'),
-      api('getDescubrimientos'),
-      api('getAusencias'),
-      api('getSesionesMBR'),
-      api('getCompromisos')
-    ])
+    const cached = _loadCache()
+    let equipo, kpis, clasifs, califs, acciones, seg, descs, ausencias, sesionesMBR, compromisos
+
+    if (cached) {
+      ;({ equipo, kpis, clasifs, califs, acciones, seg, descs, ausencias, sesionesMBR, compromisos } = cached)
+    } else {
+      ;[equipo, kpis, clasifs, califs, acciones, seg, descs, ausencias, sesionesMBR, compromisos] = await Promise.all([
+        api('getEquipo'),
+        api('getKPIs'),
+        api('getClasificaciones'),
+        api('getCalificaciones'),
+        api('getPlanAcciones'),
+        api('getSeguimiento'),
+        api('getDescubrimientos'),
+        api('getAusencias'),
+        api('getSesionesMBR'),
+        api('getCompromisos')
+      ])
+      _saveCache({ equipo, kpis, clasifs, califs, acciones, seg, descs, ausencias, sesionesMBR, compromisos })
+    }
+
     state.equipo          = equipo
     state.kpis            = kpis
     state.clasificaciones = clasifs
