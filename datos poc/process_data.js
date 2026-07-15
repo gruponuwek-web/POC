@@ -29,7 +29,11 @@ if (!fs.existsSync(outDir)) fs.mkdirSync(outDir, { recursive: true });
 
 // ── Google Sheets reader ─────────────────────────────────────────────────────
 async function getSheetData(sheets, sheetId, range) {
-  const res = await sheets.spreadsheets.values.get({ spreadsheetId: sheetId, range });
+  const res = await sheets.spreadsheets.values.get({
+    spreadsheetId: sheetId,
+    range,
+    valueRenderOption: 'UNFORMATTED_VALUE',  // fechas llegan como serial numérico → sin ambigüedad DD/MM vs MM/DD
+  });
   const rows = res.data.values || [];
   if (rows.length < 2) return [];
   const headers = rows[0].map(h => String(h).trim());
@@ -51,14 +55,19 @@ function parseDate(v) {
   if (!v) return null;
   v = v.trim();
   let d;
-  if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(v)) {
+  // Serial numérico de Google Sheets (días desde 30-dic-1899) — inequívoco
+  const serial = parseFloat(v);
+  if (!isNaN(serial) && serial > 20000 && serial < 60000 && !/\//.test(v)) {
+    d = new Date(Date.UTC(1899, 11, 30) + Math.floor(serial) * 86400000);
+  } else if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(v)) {
+    // Texto DD/MM/AAAA (fallback si la celda es texto)
     const parts = v.split('/');
     const day = parseInt(parts[0]), mon = parseInt(parts[1]), yr = parseInt(parts[2]);
     d = mon > 12 ? new Date(yr, day - 1, mon) : new Date(yr, mon - 1, day);
   } else {
     d = new Date(v);
   }
-  if (isNaN(d.getTime())) return null;
+  if (!d || isNaN(d.getTime())) return null;
   return d;
 }
 
