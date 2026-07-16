@@ -681,9 +681,12 @@ export default function BalancedScorecard({ data }) {
         </div>
         </div>
 
-        {/* ── Panel alertas lateral ── */}
+        {/* ── Columna lateral: alertas + resumen ── */}
+        <div style={{ display:'flex', flexDirection:'column', gap:10, width:210, flexShrink:0 }}>
+
+        {/* Panel alertas */}
         {criticos.length > 0 && (
-          <div style={{ width:210, flexShrink:0, background:'#fff', border:'1px solid #fca5a5',
+          <div style={{ background:'#fff', border:'1px solid #fca5a5',
             borderLeft:'4px solid #ef4444', borderRadius:14, overflow:'hidden',
             boxShadow:'0 1px 4px rgba(0,0,0,.07)' }}>
             <div style={{ background:'#fff5f5', padding:'10px 14px', borderBottom:'1px solid #fecaca',
@@ -712,7 +715,7 @@ export default function BalancedScorecard({ data }) {
 
         {/* ── Resumen global YTD ── */}
         {ytd && (
-          <div style={{ width:210, flexShrink:0, background:'#fff', border:'1px solid #e2e8f0',
+          <div style={{ background:'#fff', border:'1px solid #e2e8f0',
             borderLeft:`4px solid ${scoreColor}`, borderRadius:14,
             boxShadow:'0 1px 4px rgba(0,0,0,.07)', overflow:'hidden' }}>
             <div style={{ background:'#f8fafc', padding:'10px 14px', borderBottom:'1px solid #e2e8f0' }}>
@@ -756,6 +759,8 @@ export default function BalancedScorecard({ data }) {
             </div>
           </div>
         )}
+
+        </div>{/* fin columna lateral */}
 
       </div>
 
