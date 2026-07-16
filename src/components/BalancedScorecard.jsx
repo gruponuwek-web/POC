@@ -339,7 +339,7 @@ export default function BalancedScorecard({ data }) {
         meta:   m5_1b ? String(m5_1b) : null,
         peor:   M['5.1b']?.peor ? String(M['5.1b'].peor) : null,
         ratio:  incidencias !== null && m5_1b
-          ? (incidencias / m5_1b) * 100
+          ? (incidencias <= m5_1b ? 100 : (m5_1b / incidencias) * 100)
           : null,
       },
     }
