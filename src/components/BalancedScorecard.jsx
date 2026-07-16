@@ -417,6 +417,24 @@ export default function BalancedScorecard({ data }) {
   const enAlerta = allKpis.filter(k => k.ratio === null || k.ratio < 70).length
   const scoreColor = totalScore >= 80 ? '#22c55e' : totalScore >= 55 ? '#f59e0b' : '#ef4444'
 
+  // Métricas acumuladas YTD hasta el mes seleccionado
+  const ytd = useMemo(() => {
+    if (!data) return null
+    let ventas = 0, meta = 0
+    for (let m = 1; m <= mes; m++) {
+      const km = data.kpi_mensual_actual?.find(x => x.mes_num === m)
+      if (km) ventas += km.ventas || 0
+      meta += data.kpi_agentes?.reduce((s, a) => s + (a.meta_por_mes?.[m] || 0), 0) || 0
+    }
+    const pct = meta > 0 ? (ventas / meta) * 100 : null
+    const label = totalScore >= 80 ? 'Desempeño sobresaliente'
+      : totalScore >= 65 ? 'Buen desempeño'
+      : totalScore >= 50 ? 'En proceso — requiere atención'
+      : 'Desempeño crítico'
+    const mesesNombre = MESES.slice(0, mes).join(' – ')
+    return { ventas, meta, pct, label, mesesNombre }
+  }, [data, mes, totalScore])
+
   // KPIs críticos para panel de atención
   const criticos = perspectivas.flatMap(p =>
     p.kpis.filter(k => statusOf(k.ratio) === 'alerta' || statusOf(k.ratio) === 'sin-dato')
@@ -688,6 +706,53 @@ export default function BalancedScorecard({ data }) {
                   </div>
                 </div>
               ))}
+            </div>
+          </div>
+        )}
+
+        {/* ── Resumen global YTD ── */}
+        {ytd && (
+          <div style={{ width:210, flexShrink:0, background:'#fff', border:'1px solid #e2e8f0',
+            borderLeft:`4px solid ${scoreColor}`, borderRadius:14,
+            boxShadow:'0 1px 4px rgba(0,0,0,.07)', overflow:'hidden' }}>
+            <div style={{ background:'#f8fafc', padding:'10px 14px', borderBottom:'1px solid #e2e8f0' }}>
+              <div style={{ fontSize:11, fontWeight:700, color:'#64748b', letterSpacing:'.4px', textTransform:'uppercase', marginBottom:2 }}>
+                Resumen acumulado
+              </div>
+              <div style={{ fontSize:10.5, color:'#94a3b8' }}>Ene – {MESES[mes - 1]}</div>
+            </div>
+            <div style={{ padding:'12px 14px', display:'flex', flexDirection:'column', gap:10 }}>
+              {/* Score BSC */}
+              <div>
+                <div style={{ fontSize:10, color:'#94a3b8', fontWeight:600, marginBottom:2 }}>Score BSC acumulado</div>
+                <div style={{ fontSize:26, fontWeight:800, color:scoreColor, lineHeight:1 }}>
+                  {totalScore.toFixed(1)}%
+                </div>
+                <div style={{ fontSize:11, fontWeight:600, color:scoreColor, marginTop:3 }}>{ytd.label}</div>
+              </div>
+              {/* Barra score */}
+              <div style={{ height:5, background:'#f1f5f9', borderRadius:3 }}>
+                <div style={{ height:'100%', width:`${Math.min(totalScore,100)}%`, background:scoreColor, borderRadius:3, transition:'width .5s' }} />
+              </div>
+              {/* Ventas vs Meta YTD */}
+              <div style={{ borderTop:'1px solid #f1f5f9', paddingTop:8 }}>
+                <div style={{ fontSize:10, color:'#94a3b8', fontWeight:600, marginBottom:4 }}>Ventas vs Cuota YTD</div>
+                <div style={{ fontSize:15, fontWeight:800, color:'#0f1f3d' }}>
+                  {ytd.pct !== null ? ytd.pct.toFixed(1) + '%' : '—'}
+                </div>
+                <div style={{ fontSize:10.5, color:'#64748b', marginTop:2 }}>
+                  {fmt$(ytd.ventas)} / {fmt$(ytd.meta)}
+                </div>
+              </div>
+              {/* KPIs resumen */}
+              <div style={{ borderTop:'1px solid #f1f5f9', paddingTop:8, display:'flex', gap:6 }}>
+                {[['En meta', enMeta, '#22c55e'], ['Seguim.', enSeguim, '#f59e0b'], ['Alerta', enAlerta, '#ef4444']].map(([lbl, n, c]) => (
+                  <div key={lbl} style={{ flex:1, textAlign:'center', background:'#f8fafc', borderRadius:8, padding:'5px 2px' }}>
+                    <div style={{ fontSize:14, fontWeight:800, color:c }}>{n}</div>
+                    <div style={{ fontSize:9.5, color:'#94a3b8', fontWeight:600 }}>{lbl}</div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         )}
