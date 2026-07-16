@@ -427,12 +427,9 @@ export default function BalancedScorecard({ data }) {
       meta += data.kpi_agentes?.reduce((s, a) => s + (a.meta_por_mes?.[m] || 0), 0) || 0
     }
     const pct = meta > 0 ? (ventas / meta) * 100 : null
-    const label = totalScore >= 80 ? 'Desempeño sobresaliente'
-      : totalScore >= 65 ? 'Buen desempeño'
-      : totalScore >= 50 ? 'En proceso — requiere atención'
-      : 'Desempeño crítico'
-    const mesesNombre = MESES.slice(0, mes).join(' – ')
-    return { ventas, meta, pct, label, mesesNombre }
+    const ytdColor = pct >= 80 ? '#22c55e' : pct >= 55 ? '#f59e0b' : '#ef4444'
+    const ytdLabel = pct >= 100 ? 'Cuota superada' : pct >= 80 ? 'En buen camino' : pct >= 55 ? 'Por debajo de cuota' : 'Rezago crítico'
+    return { ventas, meta, pct, ytdColor, ytdLabel }
   }, [data, mes, totalScore])
 
   // KPIs críticos para panel de atención
@@ -716,39 +713,38 @@ export default function BalancedScorecard({ data }) {
         {/* ── Resumen global YTD ── */}
         {ytd && (
           <div style={{ background:'#fff', border:'1px solid #e2e8f0',
-            borderLeft:`4px solid ${scoreColor}`, borderRadius:14,
+            borderLeft:`4px solid ${ytd.ytdColor}`, borderRadius:14,
             boxShadow:'0 1px 4px rgba(0,0,0,.07)', overflow:'hidden' }}>
             <div style={{ background:'#f8fafc', padding:'10px 14px', borderBottom:'1px solid #e2e8f0' }}>
               <div style={{ fontSize:11, fontWeight:700, color:'#64748b', letterSpacing:'.4px', textTransform:'uppercase', marginBottom:2 }}>
-                Resumen acumulado
+                Resumen global
               </div>
-              <div style={{ fontSize:10.5, color:'#94a3b8' }}>Ene – {MESES[mes - 1]}</div>
+              <div style={{ fontSize:10.5, color:'#94a3b8' }}>Acumulado Ene – {MESES[mes - 1]}</div>
             </div>
             <div style={{ padding:'12px 14px', display:'flex', flexDirection:'column', gap:10 }}>
-              {/* Score BSC */}
               <div>
-                <div style={{ fontSize:10, color:'#94a3b8', fontWeight:600, marginBottom:2 }}>Score BSC acumulado</div>
-                <div style={{ fontSize:26, fontWeight:800, color:scoreColor, lineHeight:1 }}>
-                  {totalScore.toFixed(1)}%
-                </div>
-                <div style={{ fontSize:11, fontWeight:600, color:scoreColor, marginTop:3 }}>{ytd.label}</div>
-              </div>
-              {/* Barra score */}
-              <div style={{ height:5, background:'#f1f5f9', borderRadius:3 }}>
-                <div style={{ height:'100%', width:`${Math.min(totalScore,100)}%`, background:scoreColor, borderRadius:3, transition:'width .5s' }} />
-              </div>
-              {/* Ventas vs Meta YTD */}
-              <div style={{ borderTop:'1px solid #f1f5f9', paddingTop:8 }}>
-                <div style={{ fontSize:10, color:'#94a3b8', fontWeight:600, marginBottom:4 }}>Ventas vs Cuota YTD</div>
-                <div style={{ fontSize:15, fontWeight:800, color:'#0f1f3d' }}>
+                <div style={{ fontSize:10, color:'#94a3b8', fontWeight:600, marginBottom:2 }}>Cumplimiento de ventas</div>
+                <div style={{ fontSize:26, fontWeight:800, color:ytd.ytdColor, lineHeight:1 }}>
                   {ytd.pct !== null ? ytd.pct.toFixed(1) + '%' : '—'}
                 </div>
-                <div style={{ fontSize:10.5, color:'#64748b', marginTop:2 }}>
-                  {fmt$(ytd.ventas)} / {fmt$(ytd.meta)}
+                <div style={{ fontSize:11, fontWeight:600, color:ytd.ytdColor, marginTop:3 }}>{ytd.ytdLabel}</div>
+              </div>
+              <div style={{ height:5, background:'#f1f5f9', borderRadius:3 }}>
+                <div style={{ height:'100%', width:`${Math.min(ytd.pct ?? 0, 100)}%`, background:ytd.ytdColor, borderRadius:3, transition:'width .5s' }} />
+              </div>
+              <div style={{ fontSize:10.5, color:'#64748b' }}>
+                {fmt$(ytd.ventas)} <span style={{ color:'#94a3b8' }}>/ {fmt$(ytd.meta)}</span>
+              </div>
+              <div style={{ borderTop:'1px solid #f1f5f9', paddingTop:8 }}>
+                <div style={{ fontSize:10, color:'#94a3b8', fontWeight:600, marginBottom:4 }}>Score BSC — {MESES[mes - 1]}</div>
+                <div style={{ display:'flex', alignItems:'center', gap:8 }}>
+                  <span style={{ fontSize:18, fontWeight:800, color:scoreColor }}>{totalScore.toFixed(1)}%</span>
+                  <div style={{ flex:1, height:4, background:'#f1f5f9', borderRadius:2 }}>
+                    <div style={{ height:'100%', width:`${Math.min(totalScore,100)}%`, background:scoreColor, borderRadius:2 }} />
+                  </div>
                 </div>
               </div>
-              {/* KPIs resumen */}
-              <div style={{ borderTop:'1px solid #f1f5f9', paddingTop:8, display:'flex', gap:6 }}>
+              <div style={{ display:'flex', gap:6 }}>
                 {[['En meta', enMeta, '#22c55e'], ['Seguim.', enSeguim, '#f59e0b'], ['Alerta', enAlerta, '#ef4444']].map(([lbl, n, c]) => (
                   <div key={lbl} style={{ flex:1, textAlign:'center', background:'#f8fafc', borderRadius:8, padding:'5px 2px' }}>
                     <div style={{ fontSize:14, fontWeight:800, color:c }}>{n}</div>
