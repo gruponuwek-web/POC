@@ -431,7 +431,7 @@ export default function BalancedScorecard({ data }) {
         <div>
           <h2 style={{ margin:0, fontSize:18, fontWeight:800, color:'#0f1f3d', letterSpacing:'-.3px', display:'flex', alignItems:'center', gap:10 }}>
             ⚖️ Balanced Scorecard
-            <span style={{ fontSize:13, fontWeight:700, color:'#1a6cf0', background:'#eff6ff', padding:'2px 10px', borderRadius:8, letterSpacing:'.2px' }}>
+            <span style={{ fontSize:15, fontWeight:700, color:'#1a6cf0', background:'#eff6ff', padding:'4px 14px', borderRadius:8, letterSpacing:'.2px' }}>
               {MESES[mes - 1]} {data?.resumen?.año_actual || ''}
             </span>
           </h2>
