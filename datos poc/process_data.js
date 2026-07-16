@@ -58,7 +58,9 @@ function parseDate(v) {
   // Serial numérico de Google Sheets (días desde 30-dic-1899) — inequívoco
   const serial = parseFloat(v);
   if (!isNaN(serial) && serial > 20000 && serial < 60000 && !/\//.test(v)) {
-    d = new Date(Date.UTC(1899, 11, 30) + Math.floor(serial) * 86400000);
+    // Convertir serial a componentes UTC y crear fecha local para evitar desfase por zona horaria
+    const utc = new Date(Date.UTC(1899, 11, 30) + Math.floor(serial) * 86400000);
+    d = new Date(utc.getUTCFullYear(), utc.getUTCMonth(), utc.getUTCDate());
   } else if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(v)) {
     // Texto DD/MM/AAAA (fallback si la celda es texto)
     const parts = v.split('/');

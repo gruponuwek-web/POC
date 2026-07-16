@@ -3,7 +3,7 @@ let vendedorMBR = null
 
 const SECCIONES_MBR = [
   { key: 'Prospeccion', icon: '🗺️', label: '1° Compromiso', sub: 'Prospección — Rutas' },
-  { key: 'BCG',         icon: '📊', label: '2° Compromiso', sub: 'BCG — Clientes' },
+  { key: 'BCG',         icon: '📊', label: '2° Compromiso', sub: 'Crecimiento — Clientes' },
   { key: 'Recuperacion',icon: '🔄', label: '3° Compromiso', sub: 'Recuperación — Clientes' },
 ]
 
@@ -167,7 +167,8 @@ function _seccionCardHTML(secCfg, vendedor) {
     secCfg.key,
     c.Descripcion || '',
     c.Cumplido === 'TRUE' || c.Cumplido === true,
-    c.Monto || 0
+    c.Monto || 0,
+    secCfg.key === 'Prospeccion'
   )).join('')
 
   return `
@@ -181,25 +182,26 @@ function _seccionCardHTML(secCfg, vendedor) {
         <div class="mbr-head-score" id="mbrScore_${secCfg.key}">—</div>
       </div>
       <div class="mbr-items" id="mbrItems_${secCfg.key}">${itemsHTML}</div>
+      ${secCfg.key !== 'Prospeccion' ? `
       <div class="mbr-section-total">
         <span class="mbr-total-lbl">Total $</span>
         <span class="mbr-total-val" id="mbrTotal_${secCfg.key}">$0</span>
-      </div>
+      </div>` : ''}
       <div class="mbr-add-row">
         <button onclick="addItemMBR('${secCfg.key}')">＋ Agregar</button>
       </div>
     </div>`
 }
 
-function _itemHTML(sec, nombre, cumplido, monto) {
+function _itemHTML(sec, nombre, cumplido, monto, hideMonto = false) {
   const uid = 'mbr_tog_' + Math.random().toString(36).slice(2)
   const rowCls = cumplido ? 'mbr-item cumplido' : 'mbr-item no-cumplido'
   return `<div class="${rowCls}">
     <input class="mbr-name-input" type="text" value="${nombre.replace(/"/g,'&quot;')}" placeholder="Escribe el nombre…" oninput="_updateMBRScore()">
-    <div class="mbr-monto-cell">
+    ${hideMonto ? '' : `<div class="mbr-monto-cell">
       <span class="mbr-peso">$</span>
       <input type="number" min="0" value="${monto||''}" placeholder="0" oninput="_updateMBRScore()">
-    </div>
+    </div>`}
     <div class="mbr-toggle-wrap">
       <label class="mbr-toggle">
         <input type="checkbox" id="${uid}" ${cumplido?' checked':''} onchange="_onMBRToggle(this)">
@@ -235,7 +237,7 @@ function _delItemMBR(btn) {
 
 function addItemMBR(sec) {
   const cont = document.getElementById('mbrItems_' + sec)
-  cont.insertAdjacentHTML('beforeend', _itemHTML(sec, '', false, 0))
+  cont.insertAdjacentHTML('beforeend', _itemHTML(sec, '', false, 0, sec === 'Prospeccion'))
   cont.lastElementChild.querySelector('.mbr-name-input').focus()
   _updateMBRScore()
 }
