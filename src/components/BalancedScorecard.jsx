@@ -429,11 +429,14 @@ export default function BalancedScorecard({ data }) {
       {/* ── Encabezado ───────────────────────────────────────── */}
       <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:12, gap:12, flexWrap:'wrap' }}>
         <div>
-          <h2 style={{ margin:0, fontSize:18, fontWeight:800, color:'#0f1f3d', letterSpacing:'-.3px' }}>⚖️ Balanced Scorecard</h2>
+          <h2 style={{ margin:0, fontSize:18, fontWeight:800, color:'#0f1f3d', letterSpacing:'-.3px', display:'flex', alignItems:'center', gap:10 }}>
+            ⚖️ Balanced Scorecard
+            <span style={{ fontSize:13, fontWeight:700, color:'#1a6cf0', background:'#eff6ff', padding:'2px 10px', borderRadius:8, letterSpacing:'.2px' }}>
+              {MESES[mes - 1]} {data?.resumen?.año_actual || ''}
+            </span>
+          </h2>
           <p style={{ margin:'2px 0 0', color:'#64748b', fontSize:11.5 }}>
             Desempeño comercial · <strong style={{color:'#0f1f3d'}}>Ventas</strong> conectada a Google Sheets — resto en proceso
-            {' · '}
-            <strong style={{ color:'#1a6cf0' }}>{MESES[mes - 1]} {data?.resumen?.año_actual || ''}</strong>
           </p>
         </div>
         <div style={{ display:'flex', gap:8, alignItems:'center' }}>
