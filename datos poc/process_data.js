@@ -937,7 +937,7 @@ async function main() {
       if (m > 0) visitas_atencion_por_mes[m] = (visitas_atencion_por_mes[m] || 0) + parseNum(r['visitas']);
     });
 
-  // ── Incidencias (5.1b): suma acumulada por mes para AÑO_ACTUAL ──────────────
+  // ── Incidencias (5.1b): suma acumulada por mes — columna Cantidad_incidencias
   const _incMes = {};
   rawIncidencias
     .filter(r => {
@@ -946,7 +946,8 @@ async function main() {
     })
     .forEach(r => {
       const m = parseInt(r['mes_num']);
-      if (m > 0) _incMes[m] = (_incMes[m] || 0) + 1;
+      const cant = parseNum(r['Cantidad_incidencias']) || 0;
+      if (m > 0) _incMes[m] = (_incMes[m] || 0) + cant;
     });
   const incidencias_por_mes = {};
   let _incAcum = 0;
