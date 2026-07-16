@@ -572,8 +572,10 @@ export default function BalancedScorecard({ data }) {
                               <div style={{ fontSize:13, fontWeight:700, color:persp.hdrColor, lineHeight:1.3 }}>
                                 {persp.icon} {persp.nombre}
                               </div>
-                              <div style={{ marginTop:5, fontSize:11, color:persp.hdrColor, opacity:.7, fontWeight:600 }}>
-                                Peso: {pPeso}%
+                              <div style={{ marginTop:6, display:'inline-block', padding:'2px 8px', borderRadius:10,
+                                background: persp.hdrColor + '22', fontSize:10.5, fontWeight:700,
+                                color: persp.hdrColor, letterSpacing:'.4px' }}>
+                                {pPeso}% del BSC
                               </div>
                             </td>
                           )}
