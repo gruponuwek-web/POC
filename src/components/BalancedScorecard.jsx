@@ -432,6 +432,8 @@ export default function BalancedScorecard({ data }) {
           <h2 style={{ margin:0, fontSize:18, fontWeight:800, color:'#0f1f3d', letterSpacing:'-.3px' }}>⚖️ Balanced Scorecard</h2>
           <p style={{ margin:'2px 0 0', color:'#64748b', fontSize:11.5 }}>
             Desempeño comercial · <strong style={{color:'#0f1f3d'}}>Ventas</strong> conectada a Google Sheets — resto en proceso
+            {' · '}
+            <strong style={{ color:'#1a6cf0' }}>{MESES[mes - 1]} {data?.resumen?.año_actual || ''}</strong>
           </p>
         </div>
         <div style={{ display:'flex', gap:8, alignItems:'center' }}>
