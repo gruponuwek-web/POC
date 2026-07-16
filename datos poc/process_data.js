@@ -937,8 +937,8 @@ async function main() {
       if (m > 0) visitas_atencion_por_mes[m] = (visitas_atencion_por_mes[m] || 0) + parseNum(r['visitas']);
     });
 
-  // ── Incidencias (5.1b): conteo por mes para AÑO_ACTUAL ──────────────────────
-  const incidencias_por_mes = {};
+  // ── Incidencias (5.1b): suma acumulada por mes para AÑO_ACTUAL ──────────────
+  const _incMes = {};
   rawIncidencias
     .filter(r => {
       const añoFila = parseInt(r['año']) || AÑO_ACTUAL;
@@ -946,8 +946,18 @@ async function main() {
     })
     .forEach(r => {
       const m = parseInt(r['mes_num']);
-      if (m > 0) incidencias_por_mes[m] = (incidencias_por_mes[m] || 0) + 1;
+      if (m > 0) _incMes[m] = (_incMes[m] || 0) + 1;
     });
+  const incidencias_por_mes = {};
+  let _incAcum = 0;
+  for (let m = 1; m <= 12; m++) {
+    if (_incMes[m] !== undefined) {
+      _incAcum += _incMes[m];
+      incidencias_por_mes[m] = _incAcum;
+    } else if (_incAcum > 0) {
+      incidencias_por_mes[m] = _incAcum;
+    }
+  }
 
   // ── Oportunidades off-line (7.1a–7.1d) ───────────────────────────────────────
   const oportunidades_offline_por_mes = {};
