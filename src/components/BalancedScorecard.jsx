@@ -417,20 +417,109 @@ export default function BalancedScorecard({ data }) {
   const enAlerta = allKpis.filter(k => k.ratio === null || k.ratio < 70).length
   const scoreColor = totalScore >= 80 ? '#22c55e' : totalScore >= 55 ? '#f59e0b' : '#ef4444'
 
-  // Métricas acumuladas YTD hasta el mes seleccionado
+  // Score BSC acumulado (promedio de scores mensuales Ene – mes seleccionado)
   const ytd = useMemo(() => {
     if (!data) return null
-    let ventas = 0, meta = 0
+    const añoActual = data.resumen?.año_actual || 2026
+    const cartera   = data.resumen?.cartera_total || 0
+    const _esPerdido = c => c.status === 'Perdido' || !c.ultima_compra || c.dias_sin_compra >= 120
+    const relMesKPI  = (fecha) => { const d = new Date(fecha); return (d.getFullYear() - añoActual) * 12 + (d.getMonth() + 1) }
+
+    let scoreSum = 0, scoreCount = 0
+
     for (let m = 1; m <= mes; m++) {
-      const km = data.kpi_mensual_actual?.find(x => x.mes_num === m)
-      if (km) ventas += km.ventas || 0
-      meta += data.kpi_agentes?.reduce((s, a) => s + (a.meta_por_mes?.[m] || 0), 0) || 0
+      const km26 = data.kpi_mensual_actual?.find(x => x.mes_num === m)
+      if (!km26) continue
+      const km25    = data.kpi_mensual_anterior?.find(x => x.mes_num === m)
+      const metaMes = data.kpi_agentes?.reduce((s, a) => s + (a.meta_por_mes?.[m] || 0), 0) || 0
+      const M       = data.bsc_metas_por_mes?.[m] || {}
+
+      const kpis = []
+
+      // 2.1a crecimiento vs año anterior
+      const cr  = km25?.ventas > 0 ? (km26.ventas - km25.ventas) / km25.ventas * 100 : null
+      kpis.push({ ratio: cr !== null ? (cr / (M['2.1a']?.meta ?? 15)) * 100 : null, peso: 10 })
+
+      // 2.1b meta de ventas
+      kpis.push({ ratio: metaMes > 0 ? (km26.ventas / metaMes) * 100 : null, peso: 12 })
+
+      // 2.1c ticket promedio vs año anterior
+      const m2c = (km25?.ticket_promedio || 0) > 0 ? km25.ticket_promedio : (M['2.1c']?.meta ?? 600)
+      kpis.push({ ratio: km26.ticket_promedio > 0 ? (km26.ticket_promedio / m2c) * 100 : null, peso: 6 })
+
+      // 2.1d clientes sobre $3000
+      const cli3k = data.clientes_sobre_3000_por_mes?.[m] ?? null
+      kpis.push({ ratio: cli3k !== null ? (cli3k / (M['2.1d']?.meta ?? 95)) * 100 : null, peso: 6 })
+
+      // 2.1e ticket promedio nuevos
+      const tkNuevos = data.ticket_promedio_nuevos_por_mes?.[m] ?? null
+      kpis.push({ ratio: tkNuevos !== null ? (tkNuevos / (M['2.1e']?.meta ?? 3000)) * 100 : null, peso: 3 })
+
+      // 2.1f tickets únicos
+      kpis.push({ ratio: km26.tickets > 0 ? (km26.tickets / (M['2.1f']?.meta ?? 840)) * 100 : null, peso: 3 })
+
+      // 3.1a promos aplicadas
+      const ep        = data.estrat_ventas_productos?.[m]
+      const pctPromo  = ep && km26.ventas > 0 ? (ep.venta_con_promo / km26.ventas) * 100 : null
+      kpis.push({ ratio: ep?.promos_aplicadas > 0 ? (ep.promos_aplicadas / (M['3.1a']?.meta ?? 10)) * 100 : null, peso: 7.5 })
+
+      // 3.1b % venta con promo
+      kpis.push({ ratio: pctPromo !== null ? (pctPromo / (M['3.1b']?.meta ?? 20)) * 100 : null, peso: 7.5 })
+
+      // 4.1a clientes perdidos (inverso: menos = mejor)
+      const perdidos = data.tabla_clientes?.filter(c => _esPerdido(c) && c.ultima_compra && relMesKPI(c.ultima_compra) === m - 4).length ?? null
+      const m4_1a = M['4.1a']?.meta ?? 9
+      kpis.push({ ratio: perdidos !== null ? (perdidos <= m4_1a ? 100 : (m4_1a / perdidos) * 100) : null, peso: 6 })
+
+      // 4.1b visitas de atención
+      const visitas = data.visitas_atencion_por_mes?.[m] ?? null
+      const m4_1b   = M['4.1b']?.meta ?? null
+      kpis.push({ ratio: visitas !== null && m4_1b ? (visitas / m4_1b) * 100 : null, peso: 5 })
+
+      // 4.2a cobertura cartera
+      const atendidos = data.kpi_agentes?.reduce((s, a) => s + (a.clientes_ids_por_mes?.[m]?.length || 0), 0) ?? null
+      const cob = cartera > 0 && atendidos !== null ? (atendidos / cartera) * 100 : null
+      kpis.push({ ratio: cob !== null ? (cob / (M['4.2a']?.meta ?? 55)) * 100 : null, peso: 6 })
+
+      // 4.2b cobertura nuevos
+      const cobNuevos = data.cobertura_nuevos_por_mes?.[m]
+      kpis.push({ ratio: cobNuevos ? (cobNuevos.pct / (M['4.2b']?.meta ?? 50)) * 100 : null, peso: 5 })
+
+      // 4.3a nuevos clientes
+      const nrMes = data.clientes_nr_por_mes?.find(x => x.mes_num === m)
+      const nuevos = nrMes?.[`nuevos_${añoActual}`] ?? null
+      kpis.push({ ratio: nuevos !== null ? (nuevos / (M['4.3a']?.meta ?? 25)) * 100 : null, peso: 5 })
+
+      // 4.3b recuperados
+      const recup  = nrMes?.[`recup_${añoActual}`] ?? null
+      const m4_3b  = M['4.3b']?.meta ?? null
+      kpis.push({ ratio: recup !== null && m4_3b ? (recup / m4_3b) * 100 : null, peso: 3 })
+
+      // 5.1b incidencias (inverso: menos = mejor)
+      const incidencias = data.incidencias_por_mes?.[m] ?? null
+      const m5_1b       = M['5.1b']?.meta ?? null
+      kpis.push({ ratio: incidencias !== null && m5_1b ? (incidencias <= m5_1b ? 100 : (m5_1b / incidencias) * 100) : null, peso: 10 })
+
+      // 7.1a-d oportunidades offline
+      const oM  = data.oportunidades_offline_por_mes?.[m]
+      const m7a = M['7.1a']?.meta ?? null, m7b = M['7.1b']?.meta ?? null
+      const m7c = M['7.1c']?.meta ?? null, m7d = M['7.1d']?.meta ?? null
+      kpis.push({ ratio: oM && m7a && oM.tasa_conversion !== null ? (oM.tasa_conversion / m7a) * 100 : null, peso: 1.5 })
+      kpis.push({ ratio: oM && m7b && oM.cotizaciones > 0 ? (oM.cotizaciones / m7b) * 100 : null, peso: 1.5 })
+      kpis.push({ ratio: oM && m7c && oM.visitas > 0 ? (oM.visitas / m7c) * 100 : null, peso: 1 })
+      kpis.push({ ratio: oM && m7d && oM.leads > 0 ? (oM.leads / m7d) * 100 : null, peso: 1 })
+
+      // Score ponderado del mes
+      const tPeso = kpis.reduce((s, k) => s + k.peso, 0)
+      const tCal  = kpis.reduce((s, k) => s + (Math.max(0, Math.min(k.ratio ?? 0, 100)) / 100 * k.peso), 0)
+      if (tPeso > 0) { scoreSum += (tCal / tPeso) * 100; scoreCount++ }
     }
-    const pct = meta > 0 ? (ventas / meta) * 100 : null
-    const ytdColor = pct >= 80 ? '#22c55e' : pct >= 55 ? '#f59e0b' : '#ef4444'
-    const ytdLabel = pct >= 100 ? 'Cuota superada' : pct >= 80 ? 'En buen camino' : pct >= 55 ? 'Por debajo de cuota' : 'Rezago crítico'
-    return { ventas, meta, pct, ytdColor, ytdLabel }
-  }, [data, mes, totalScore])
+
+    const avgBSC  = scoreCount > 0 ? scoreSum / scoreCount : null
+    const avgColor = avgBSC >= 80 ? '#22c55e' : avgBSC >= 55 ? '#f59e0b' : '#ef4444'
+    const avgLabel = avgBSC >= 80 ? 'Desempeño sobresaliente' : avgBSC >= 65 ? 'Buen desempeño' : avgBSC >= 50 ? 'En proceso' : 'Desempeño crítico'
+    return { avgBSC, avgColor, avgLabel, scoreCount }
+  }, [data, mes])
 
   // KPIs críticos para panel de atención
   const criticos = perspectivas.flatMap(p =>
@@ -710,31 +799,56 @@ export default function BalancedScorecard({ data }) {
           </div>
         )}
 
-        {/* ── Resumen global YTD ── */}
+        {/* ── Resumen global BSC ── */}
         {ytd && (
           <div style={{ background:'#fff', border:'1px solid #e2e8f0',
-            borderLeft:`4px solid ${ytd.ytdColor}`, borderRadius:14,
+            borderLeft:`4px solid ${ytd.avgColor}`, borderRadius:14,
             boxShadow:'0 1px 4px rgba(0,0,0,.07)', overflow:'hidden' }}>
             <div style={{ background:'#f8fafc', padding:'10px 14px', borderBottom:'1px solid #e2e8f0' }}>
               <div style={{ fontSize:11, fontWeight:700, color:'#64748b', letterSpacing:'.4px', textTransform:'uppercase', marginBottom:2 }}>
                 Resumen global
               </div>
-              <div style={{ fontSize:10.5, color:'#94a3b8' }}>Acumulado Ene – {MESES[mes - 1]}</div>
+              <div style={{ fontSize:10.5, color:'#94a3b8' }}>Promedio BSC · Ene – {MESES[mes - 1]}</div>
             </div>
             <div style={{ padding:'12px 14px', display:'flex', flexDirection:'column', gap:10 }}>
               <div>
-                <div style={{ fontSize:10, color:'#94a3b8', fontWeight:600, marginBottom:2 }}>Cumplimiento de ventas</div>
-                <div style={{ fontSize:26, fontWeight:800, color:ytd.ytdColor, lineHeight:1 }}>
-                  {ytd.pct !== null ? ytd.pct.toFixed(1) + '%' : '—'}
+                <div style={{ fontSize:10, color:'#94a3b8', fontWeight:600, marginBottom:2 }}>Score BSC acumulado</div>
+                <div style={{ fontSize:28, fontWeight:900, color:ytd.avgColor, lineHeight:1, fontVariantNumeric:'tabular-nums' }}>
+                  {ytd.avgBSC !== null ? ytd.avgBSC.toFixed(1) + '%' : '—'}
                 </div>
-                <div style={{ fontSize:11, fontWeight:600, color:ytd.ytdColor, marginTop:3 }}>{ytd.ytdLabel}</div>
+                <div style={{ fontSize:11, fontWeight:600, color:ytd.avgColor, marginTop:3 }}>{ytd.avgLabel}</div>
               </div>
               <div style={{ height:5, background:'#f1f5f9', borderRadius:3 }}>
-                <div style={{ height:'100%', width:`${Math.min(ytd.pct ?? 0, 100)}%`, background:ytd.ytdColor, borderRadius:3, transition:'width .5s' }} />
+                <div style={{ height:'100%', width:`${Math.min(ytd.avgBSC ?? 0, 100)}%`, background:ytd.avgColor, borderRadius:3, transition:'width .5s' }} />
               </div>
-              <div style={{ fontSize:10.5, color:'#64748b' }}>
-                {fmt$(ytd.ventas)} <span style={{ color:'#94a3b8' }}>/ {fmt$(ytd.meta)}</span>
+              <div style={{ fontSize:10.5, color:'#94a3b8' }}>
+                Promedio de {ytd.scoreCount} {ytd.scoreCount === 1 ? 'mes' : 'meses'} · todos los KPIs
               </div>
+
+              {/* Breakdown por perspectiva – mes actual */}
+              <div style={{ borderTop:'1px solid #f1f5f9', paddingTop:7, display:'flex', flexDirection:'column', gap:4 }}>
+                {perspectivas.map(p => {
+                  const pCal   = p.kpis.reduce((s, k) => s + calKpi(k), 0)
+                  const pPeso  = p.kpis.reduce((s, k) => s + k.peso, 0)
+                  const pScore = perspScore(p)
+                  const pc     = pScore >= 80 ? '#22c55e' : pScore >= 55 ? '#f59e0b' : '#ef4444'
+                  return (
+                    <div key={p.id} style={{ display:'flex', alignItems:'center', gap:5 }}>
+                      <span style={{ fontSize:9, flexShrink:0 }}>{p.icon}</span>
+                      <span style={{ fontSize:9, color:'#64748b', flex:1, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>
+                        {p.nombre}
+                      </span>
+                      <div style={{ width:36, height:3, background:'#f1f5f9', borderRadius:2, flexShrink:0 }}>
+                        <div style={{ height:'100%', width:`${Math.min(pScore,100)}%`, background:pc, borderRadius:2 }} />
+                      </div>
+                      <span style={{ fontSize:9.5, fontWeight:700, color:pc, fontVariantNumeric:'tabular-nums', minWidth:28, textAlign:'right', flexShrink:0 }}>
+                        {pCal.toFixed(1)}%
+                      </span>
+                    </div>
+                  )
+                })}
+              </div>
+
               <div style={{ borderTop:'1px solid #f1f5f9', paddingTop:8 }}>
                 <div style={{ fontSize:10, color:'#94a3b8', fontWeight:600, marginBottom:4 }}>Score BSC — {MESES[mes - 1]}</div>
                 <div style={{ display:'flex', alignItems:'center', gap:8 }}>
