@@ -121,8 +121,7 @@ function processVentas(rows, año) {
   let skipped = 0;
   rows.forEach((r, idx) => {
     const tipo = (r['TIPO DOCUMENTO'] || '').trim().toUpperCase();
-    if (tipo !== 'FACTURA' && tipo !== 'NOTA') { skipped++; return; }
-    const soloPresencia = false; // NOTAs cuentan como venta real con su importe
+    if (!tipo) { skipped++; return; } // ignorar filas sin tipo de documento
     const fecha = parseDate(r['FECHA']);
     if (!fecha) { skipped++; return; }
     if (fecha.getFullYear() !== año) { skipped++; return; }
@@ -148,9 +147,9 @@ function processVentas(rows, año) {
       agente_nombre: AGENTES_COMERCIALES.has(agNorm) ? agNorm : 'SIN AGENTE',
       segmento: r['SEGMENTO'] || '',
       linea: r['DECRIP. LINEA'] || r['DESCRIP. LINEA'] || '',
-      importe: soloPresencia ? 0 : Math.abs(importe),
-      costo:   soloPresencia ? 0 : Math.abs(costo),
-      solo_presencia: soloPresencia,
+      importe: Math.abs(importe),
+      costo:   Math.abs(costo),
+      solo_presencia: false,
       sucursal: r['Sucursal'] || 'Pachuca'
     });
   });
