@@ -235,7 +235,7 @@ export default function BalancedScorecard({ data }) {
 
     return {
       '3.1a': {
-        actual: fila.promos_aplicadas > 0 ? String(fila.promos_aplicadas) : null,
+        actual: fila.promos_aplicadas > 0 ? String(parseFloat(fila.promos_aplicadas.toFixed(2))) : null,
         meta:   String(m3a),
         peor:   M['3.1a']?.peor ? String(M['3.1a'].peor) : null,
         ratio:  fila.promos_aplicadas > 0 ? (fila.promos_aplicadas / m3a) * 100 : null,
@@ -339,7 +339,7 @@ export default function BalancedScorecard({ data }) {
         meta:   m5_1b ? String(m5_1b) : null,
         peor:   M['5.1b']?.peor ? String(M['5.1b'].peor) : null,
         ratio:  incidencias !== null && m5_1b
-          ? (incidencias <= m5_1b ? 100 : (m5_1b / incidencias) * 100)
+          ? (incidencias / m5_1b) * 100
           : null,
       },
     }
@@ -527,8 +527,8 @@ export default function BalancedScorecard({ data }) {
                   ['Perspectiva',       'left'  ],
                   ['KPI',               'left'  ],
                   ['Meta',              'center'],
-                  ['Peor de los casos', 'center'],
                   ['Desempeño actual',  'center'],
+                  ['Peor de los casos', 'center'],
                   ['vs Meta',           'center'],
                   ['Calificación',      'center'],
                 ].map(([label, align], i) => (
@@ -589,15 +589,15 @@ export default function BalancedScorecard({ data }) {
                             {kpi.meta ?? <span style={{ color:'#cbd5e1', fontWeight:400 }}>—</span>}
                           </td>
 
-                          {/* Peor de los casos */}
-                          <td style={{ padding:'7px 10px', textAlign:'center', color:'#b91c1c', fontVariantNumeric:'tabular-nums', fontSize:12, width:110 }}>
-                            {kpi.peor ?? <span style={{ color:'#cbd5e1' }}>—</span>}
-                          </td>
-
                           {/* Actual */}
                           <td style={{ padding:'7px 10px', textAlign:'center', fontWeight:700, fontVariantNumeric:'tabular-nums', fontSize:12.5, width:110,
                             color: kpi.actual ? '#0f172a' : '#cbd5e1' }}>
                             {kpi.actual ?? '—'}
+                          </td>
+
+                          {/* Peor de los casos */}
+                          <td style={{ padding:'7px 10px', textAlign:'center', color:'#b91c1c', fontVariantNumeric:'tabular-nums', fontSize:12, width:110 }}>
+                            {kpi.peor ?? <span style={{ color:'#cbd5e1' }}>—</span>}
                           </td>
 
                           {/* vs Meta (badge color) */}
