@@ -59,7 +59,7 @@ const PERSPECTIVAS = [
 // ── Helpers ─────────────────────────────────────────────────────
 function calKpi(kpi) {
   if (kpi.ratio === null || kpi.ratio === undefined) return 0
-  return Math.min(kpi.ratio, 100) / 100 * kpi.peso
+  return Math.max(0, Math.min(kpi.ratio, 100)) / 100 * kpi.peso
 }
 
 function perspScore(persp) {
