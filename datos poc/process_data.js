@@ -149,7 +149,7 @@ function processVentas(rows, año) {
       agente_nombre: AGENTES_COMERCIALES.has(agNorm) ? agNorm : 'SIN AGENTE',
       segmento: r['SEGMENTO'] || '',
       linea: r['DECRIP. LINEA'] || r['DESCRIP. LINEA'] || '',
-      importe: Math.abs(importe),
+      importe,        // negativo en NCR/NOTA → se descuenta correctamente del total
       costo:   Math.abs(costo),
       solo_presencia: false,
       sucursal: r['Sucursal'] || 'Pachuca'
