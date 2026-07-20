@@ -163,7 +163,12 @@ export default function BalancedScorecard({ data }) {
 
     const ventas26   = m26.ventas || 0
     const ventas25   = m25?.ventas || 0
-    const metaMes    = data.kpi_agentes?.reduce((s, a) => s + (a.meta_por_mes?.[mes] || 0), 0) || 0
+    // 2.1b: acumulado Ene–mes (igual que Dashboard Táctico) — solo agentes con meta
+    const mesesYTD    = Array.from({ length: mes }, (_, i) => i + 1)
+    const metaYTD     = data.kpi_agentes?.reduce((s, a) => s + mesesYTD.reduce((sm, m) => sm + (a.meta_por_mes?.[m] || 0), 0), 0) || 0
+    const ventaYTD    = data.kpi_agentes
+      ?.filter(a => mesesYTD.some(m => (a.meta_por_mes?.[m] || 0) > 0))
+      ?.reduce((s, a) => s + mesesYTD.reduce((sm, m) => sm + (a.ventas_por_mes?.[m] || 0), 0), 0) ?? 0
     const ticketProm = m26.ticket_promedio || 0
     const tickets    = m26.tickets || 0
     const crecimiento = ventas25 > 0 ? (ventas26 - ventas25) / ventas25 * 100 : null
@@ -192,9 +197,9 @@ export default function BalancedScorecard({ data }) {
         ratio:  crecimiento !== null ? (crecimiento / m2a) * 100 : null,
       },
       '2.1b': {
-        actual: fmt$(ventas26),
-        meta:   metaMes > 0 ? fmt$(metaMes) : null,
-        ratio:  metaMes > 0 ? (ventas26 / metaMes) * 100 : null,
+        actual: fmt$(ventaYTD),
+        meta:   metaYTD > 0 ? fmt$(metaYTD) : null,
+        ratio:  metaYTD > 0 ? (ventaYTD / metaYTD) * 100 : null,
       },
       '2.1c': {
         actual: fmt$(ticketProm),
