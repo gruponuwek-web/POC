@@ -161,7 +161,7 @@ async function loadAll() {
       _saveCache({ equipo, kpis, clasifs, califs, acciones, seg, descs, ausencias, sesionesMBR, compromisos })
     }
 
-    state.equipo          = equipo
+    state.equipo          = equipo.filter(m => !EXCLUDED_AGENTS.includes(m.Nombre))
     state.kpis            = kpis
     state.clasificaciones = clasifs
     state.calificaciones  = califs
