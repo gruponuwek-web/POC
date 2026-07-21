@@ -129,28 +129,37 @@ export default function ChartVentasClientesNuevos({
         {/* Sección 1 — Totales anuales estáticos (ahora a la derecha) */}
         <div style={{ width:168, flexShrink:0, display:'flex', flexDirection:'column', justifyContent:'center', gap:8, paddingLeft:20 }}>
           <div style={{ fontSize:9, fontWeight:700, color:'#94a3b8', textTransform:'uppercase', letterSpacing:'.08em', marginBottom:2 }}>Ventas anuales NR</div>
-          {[
-            { año:'2026', total:total26, ventaTotal:ventaTotalAnual2026, color:'#1a6cf0', trackBg:'#dbeafe' },
-            { año:'2025', total:total25, ventaTotal:ventaTotalAnual2025, color:'#94a3b8', trackBg:'#f1f5f9' }
-          ].map(({ año, total, ventaTotal, color, trackBg }) => {
-            const max = Math.max(total26, total25, 1)
-            const barPct = Math.round(total / max * 100)
-            const repPct = ventaTotal > 0 ? (total / ventaTotal * 100).toFixed(1) : '—'
-            return (
-              <div key={año} style={{ background:'#f8fafc', border:'1px solid #e2e8f0', borderRadius:8, padding:'9px 11px' }}>
-                <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:4 }}>
-                  <span style={{ fontSize:12, fontWeight:800, color, letterSpacing:'.01em' }}>{año}</span>
-                  <span style={{ fontSize:12, fontWeight:800, color:'#0f1f3d', fontVariantNumeric:'tabular-nums' }}>{fmt.moneda(total)}</span>
+          {(() => {
+            const meses26 = (kpi2026 || []).map(m => m.mes_num).sort((a, b) => a - b)
+            const periodo26 = meses26.length > 1
+              ? `${MESES[meses26[0]-1]}–${MESES[meses26[meses26.length-1]-1]}`
+              : meses26.length === 1 ? MESES[meses26[0]-1] : ''
+            return [
+              { año:'2026', total:total26, ventaTotal:ventaTotalAnual2026, color:'#1a6cf0', trackBg:'#dbeafe', periodo: periodo26 },
+              { año:'2025', total:total25, ventaTotal:ventaTotalAnual2025, color:'#94a3b8', trackBg:'#f1f5f9', periodo: null }
+            ].map(({ año, total, ventaTotal, color, trackBg, periodo }) => {
+              const max = Math.max(total26, total25, 1)
+              const barPct = Math.round(total / max * 100)
+              const repPct = ventaTotal > 0 ? (total / ventaTotal * 100).toFixed(1) : '—'
+              return (
+                <div key={año} style={{ background:'#f8fafc', border:'1px solid #e2e8f0', borderRadius:8, padding:'9px 11px' }}>
+                  <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:2 }}>
+                    <div>
+                      <span style={{ fontSize:12, fontWeight:800, color, letterSpacing:'.01em' }}>{año}</span>
+                      {periodo && <div style={{ fontSize:9, fontWeight:600, color:'#94a3b8', marginTop:1 }}>{periodo}</div>}
+                    </div>
+                    <span style={{ fontSize:12, fontWeight:800, color:'#0f1f3d', fontVariantNumeric:'tabular-nums' }}>{fmt.moneda(total)}</span>
+                  </div>
+                  <div style={{ fontSize:10, color:'#94a3b8', marginBottom:6 }}>
+                    {repPct !== '—' ? `${repPct}% de la venta total` : '—'}
+                  </div>
+                  <div style={{ background:trackBg, borderRadius:4, height:6 }}>
+                    <div style={{ background:color, borderRadius:4, height:6, width:`${barPct}%` }} />
+                  </div>
                 </div>
-                <div style={{ fontSize:10, color:'#94a3b8', marginBottom:6 }}>
-                  {repPct !== '—' ? `${repPct}% de la venta total` : '—'}
-                </div>
-                <div style={{ background:trackBg, borderRadius:4, height:6 }}>
-                  <div style={{ background:color, borderRadius:4, height:6, width:`${barPct}%` }} />
-                </div>
-              </div>
-            )
-          })}
+              )
+            })
+          })()}
         </div>
       </div>
     </div>
