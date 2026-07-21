@@ -14,8 +14,7 @@ import ChartClientesPerdidos from './components/ChartClientesPerdidos.jsx'
 import ChartMargen from './components/ChartMargen.jsx'
 import TablaAgentes from './components/TablaAgentes.jsx'
 import TablaClientes from './components/TablaClientes.jsx'
-import AlertasPanel from './components/AlertasPanel.jsx'
-import LecturaTactica from './components/LecturaTactica.jsx'
+import PanelIntel from './components/PanelIntel.jsx'
 import CalidadDatos from './components/CalidadDatos.jsx'
 import TablaClientesPerdidos from './components/TablaClientesPerdidos.jsx'
 import BalancedScorecard from './components/BalancedScorecard.jsx'
@@ -347,9 +346,8 @@ export default function App() {
             <TablaClientes clientes={dataFiltrada.clientes} filtros={filtros} />
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
-            <AlertasPanel resumen={dataFiltrada.resumen} kpiAgentes={dataFiltrada.kpiAgentes} filtros={filtros} />
-            <LecturaTactica resumen={dataFiltrada.resumen} filtros={filtros} kpiAgentes={dataFiltrada.kpiAgentes} />
+          <div style={{ marginBottom: 16 }}>
+            <PanelIntel resumen={dataFiltrada.resumen} kpiAgentes={dataFiltrada.kpiAgentes} filtros={filtros} />
           </div>
 
           <CalidadDatos data={data} />
