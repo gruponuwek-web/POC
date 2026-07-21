@@ -39,7 +39,7 @@
     "cobertura_cartera_pct": 88.98450946643717,
     "clientes_pendientes": 64,
     "clientes_nuevos": 72,
-    "clientes_recuperados": 7,
+    "clientes_recuperados": 15,
     "clientes_nuevos_2025": 103,
     "clientes_recuperados_2025": 19,
     "clientes_perdidos": 214,
@@ -2070,7 +2070,7 @@
       "cobertura_pct": 102.56410256410255,
       "clientes_pendientes": 0,
       "clientes_nuevos": 12,
-      "clientes_recuperados": 1,
+      "clientes_recuperados": 4,
       "clientes_nuevos_2025": 11,
       "clientes_recuperados_2025": 4,
       "nuevos_por_mes": {
@@ -2080,7 +2080,8 @@
         "5": 2
       },
       "recup_por_mes": {
-        "3": 1
+        "3": 2,
+        "5": 2
       },
       "nuevos_2025_por_mes": {
         "3": 1,
@@ -3164,7 +3165,7 @@
       "cobertura_pct": 80.55555555555556,
       "clientes_pendientes": 21,
       "clientes_nuevos": 9,
-      "clientes_recuperados": 0,
+      "clientes_recuperados": 4,
       "clientes_nuevos_2025": 25,
       "clientes_recuperados_2025": 5,
       "nuevos_por_mes": {
@@ -3174,7 +3175,10 @@
         "4": 1,
         "5": 1
       },
-      "recup_por_mes": {},
+      "recup_por_mes": {
+        "1": 3,
+        "5": 1
+      },
       "nuevos_2025_por_mes": {
         "3": 1,
         "4": 2,
@@ -5032,7 +5036,7 @@
       "cobertura_pct": 88.88888888888889,
       "clientes_pendientes": 13,
       "clientes_nuevos": 19,
-      "clientes_recuperados": 3,
+      "clientes_recuperados": 4,
       "clientes_nuevos_2025": 15,
       "clientes_recuperados_2025": 3,
       "nuevos_por_mes": {
@@ -5044,7 +5048,8 @@
       },
       "recup_por_mes": {
         "3": 1,
-        "4": 2
+        "4": 2,
+        "5": 1
       },
       "nuevos_2025_por_mes": {
         "4": 1,
@@ -12127,8 +12132,8 @@
       "cliente_num": "324",
       "cliente_nombre": "GOBIERNO DEL ESTADO DE HIDALGO",
       "agente": "VERONICA CRUZ",
-      "status": "Activo",
-      "origen": "Activo",
+      "status": "Recuperado",
+      "origen": "Recuperado",
       "ventas_2026": 17097.106599999996,
       "ventas_2025": 0,
       "variacion": null,
@@ -13315,8 +13320,8 @@
       "cliente_num": "1671",
       "cliente_nombre": "ABASTECEDOR CORPORATIVO",
       "agente": "EDWIN HERNANDEZ",
-      "status": "Activo",
-      "origen": "Activo",
+      "status": "Recuperado",
+      "origen": "Recuperado",
       "ventas_2026": 9600.24,
       "ventas_2025": 0,
       "variacion": null,
@@ -13927,8 +13932,8 @@
       "cliente_num": "1238",
       "cliente_nombre": "DAMOR",
       "agente": "VERONICA CRUZ",
-      "status": "Activo",
-      "origen": "Activo",
+      "status": "Recuperado",
+      "origen": "Recuperado",
       "ventas_2026": 7234.72,
       "ventas_2025": 0,
       "variacion": null,
@@ -14431,8 +14436,8 @@
       "cliente_num": "674",
       "cliente_nombre": "HOTEL BOUTIQUE LUXURY",
       "agente": "ADRIANA CASAS PINEDA",
-      "status": "Activo",
-      "origen": "Activo",
+      "status": "Recuperado",
+      "origen": "Recuperado",
       "ventas_2026": 5793.4053,
       "ventas_2025": 0,
       "variacion": null,
@@ -14665,8 +14670,8 @@
       "cliente_num": "1061",
       "cliente_nombre": "HIDROCARBUROS HESMAR IXMIQUILPAN",
       "agente": "ADRIANA CASAS PINEDA",
-      "status": "Activo",
-      "origen": "Activo",
+      "status": "Recuperado",
+      "origen": "Recuperado",
       "ventas_2026": 4965.764499999999,
       "ventas_2025": 0,
       "variacion": null,
@@ -16249,8 +16254,8 @@
       "cliente_num": "1053",
       "cliente_nombre": "SUMINISTROS NECO",
       "agente": "VERONICA CRUZ",
-      "status": "Activo",
-      "origen": "Activo",
+      "status": "Recuperado",
+      "origen": "Recuperado",
       "ventas_2026": 1524.42,
       "ventas_2025": 0,
       "variacion": null,
@@ -17042,7 +17047,7 @@
       "cliente_nombre": "EURO CONFORT",
       "agente": "ADRIANA CASAS PINEDA",
       "status": "Perdido",
-      "origen": "Activo",
+      "origen": "Recuperado",
       "ventas_2026": 621.8475,
       "ventas_2025": 0,
       "variacion": null,
@@ -17132,7 +17137,7 @@
       "cliente_nombre": "HIDROCARBUROS ESMHAR SAN ISIDRO",
       "agente": "ADRIANA CASAS PINEDA",
       "status": "Perdido",
-      "origen": "Activo",
+      "origen": "Recuperado",
       "ventas_2026": 502.3787,
       "ventas_2025": 0,
       "variacion": null,
@@ -19728,7 +19733,7 @@
     "La venta acumulada alcanza el 87.5% de la meta, con déficit de $4,310,203.823.",
     "1 agente superaron su cuota: VERONICA (102%).",
     "La cobertura de cartera asignada es del 89.0%. Quedan 64 clientes pendientes.",
-    "Se incorporaron 72 clientes nuevos y se recuperaron 7. En riesgo: 214.",
+    "Se incorporaron 72 clientes nuevos y se recuperaron 15. En riesgo: 214.",
     "Ticket promedio $5,705.61 con 5293 tickets únicos."
   ],
   "cartera_detalle": [
@@ -26059,7 +26064,7 @@
       "nuevos_2025": 0,
       "recup_2025": 0,
       "nuevos_2026": 9,
-      "recup_2026": 0
+      "recup_2026": 3
     },
     {
       "mes_num": 2,
@@ -26073,7 +26078,7 @@
       "nuevos_2025": 5,
       "recup_2025": 1,
       "nuevos_2026": 11,
-      "recup_2026": 2
+      "recup_2026": 3
     },
     {
       "mes_num": 4,
@@ -26087,7 +26092,7 @@
       "nuevos_2025": 9,
       "recup_2025": 1,
       "nuevos_2026": 16,
-      "recup_2026": 1
+      "recup_2026": 5
     },
     {
       "mes_num": 6,
@@ -26153,7 +26158,7 @@
         "nuevos_2025": 1,
         "recup_2025": 0,
         "nuevos_2026": 3,
-        "recup_2026": 1
+        "recup_2026": 2
       },
       {
         "mes_num": 4,
@@ -26167,7 +26172,7 @@
         "nuevos_2025": 0,
         "recup_2025": 0,
         "nuevos_2026": 2,
-        "recup_2026": 0
+        "recup_2026": 2
       },
       {
         "mes_num": 6,
@@ -26225,7 +26230,7 @@
         "nuevos_2025": 0,
         "recup_2025": 0,
         "nuevos_2026": 1,
-        "recup_2026": 0
+        "recup_2026": 3
       },
       {
         "mes_num": 2,
@@ -26253,7 +26258,7 @@
         "nuevos_2025": 5,
         "recup_2025": 0,
         "nuevos_2026": 1,
-        "recup_2026": 0
+        "recup_2026": 1
       },
       {
         "mes_num": 6,
@@ -26332,7 +26337,7 @@
         "nuevos_2025": 0,
         "recup_2025": 0,
         "nuevos_2026": 5,
-        "recup_2026": 0
+        "recup_2026": 1
       },
       {
         "mes_num": 6,
