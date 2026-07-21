@@ -3,7 +3,7 @@
     "año": 2026,
     "año_actual": 2026,
     "año_anterior": 2025,
-    "ultima_actualizacion": "2026-07-20",
+    "ultima_actualizacion": "2026-07-21",
     "meses_disponibles": [
       1,
       2,
@@ -2127,7 +2127,8 @@
       "ticket_promedio": 3186.725609517379,
       "costo": 2073953.5942875287,
       "margen": 749485.2957448689,
-      "margen_pct": 26.5451219217381
+      "margen_pct": 26.5451219217381,
+      "meta_margen_pct": 0.25
     },
     {
       "agente": "ADRIANA CASAS PINEDA",
@@ -3222,7 +3223,8 @@
       "ticket_promedio": 6893.659859339154,
       "costo": 4026482.7186958506,
       "margen": 1129974.8560898365,
-      "margen_pct": 21.913781694146888
+      "margen_pct": 21.913781694146888,
+      "meta_margen_pct": 0.22
     },
     {
       "agente": "ITZEL ZORAIDA HERNANDEZ BARBOSA",
@@ -3936,7 +3938,8 @@
       "ticket_promedio": 6858.0576840242,
       "costo": 3333658.1783419047,
       "margen": 719453.9129163977,
-      "margen_pct": 17.750654231056334
+      "margen_pct": 17.750654231056334,
+      "meta_margen_pct": 0.24
     },
     {
       "agente": "EDWIN HERNANDEZ",
@@ -5086,7 +5089,8 @@
       "ticket_promedio": 3979.565040911404,
       "costo": 2379961.339631459,
       "margen": 688283.3069112333,
-      "margen_pct": 22.4324780518005
+      "margen_pct": 22.4324780518005,
+      "meta_margen_pct": 0.22
     },
     {
       "agente": "ELIZABETH DIAZ AGUIRRE",
@@ -5887,7 +5891,8 @@
       "ticket_promedio": 12389.080817824843,
       "costo": 6413239.220197302,
       "margen": 1565328.8264818965,
-      "margen_pct": 19.619169972905226
+      "margen_pct": 19.619169972905226,
+      "meta_margen_pct": 0.2
     },
     {
       "agente": "AMAIRANI GARCIA",
@@ -6761,7 +6766,8 @@
       "ticket_promedio": 5521.517159370566,
       "costo": 3604490.62516323,
       "margen": 934196.4798393752,
-      "margen_pct": 20.582967237589273
+      "margen_pct": 20.582967237589273,
+      "meta_margen_pct": 0.21
     },
     {
       "agente": "HORTENCIA VILLA",
@@ -7954,7 +7960,8 @@
       "ticket_promedio": 3106.242867432377,
       "costo": 2034396.268419413,
       "margen": 546891.5544168921,
-      "margen_pct": 21.186771563349748
+      "margen_pct": 21.186771563349748,
+      "meta_margen_pct": 0.22
     }
   ],
   "tabla_clientes": [
@@ -7972,7 +7979,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-07-20",
-      "dias_sin_compra": 1,
+      "dias_sin_compra": 2,
       "ultima_compra_2026": "2026-07-20",
       "riesgo": "Bajo"
     },
@@ -7990,7 +7997,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-07-15",
-      "dias_sin_compra": 6,
+      "dias_sin_compra": 7,
       "ultima_compra_2026": "2026-07-15",
       "riesgo": "Bajo"
     },
@@ -8008,7 +8015,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-07-17",
-      "dias_sin_compra": 4,
+      "dias_sin_compra": 5,
       "ultima_compra_2026": "2026-07-17",
       "riesgo": "Bajo"
     },
@@ -8026,7 +8033,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 3,
       "ultima_compra": "2026-07-09",
-      "dias_sin_compra": 12,
+      "dias_sin_compra": 13,
       "ultima_compra_2026": "2026-07-09",
       "riesgo": "Bajo"
     },
@@ -8044,7 +8051,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 11,
       "ultima_compra": "2026-07-14",
-      "dias_sin_compra": 7,
+      "dias_sin_compra": 8,
       "ultima_compra_2026": "2026-07-14",
       "riesgo": "Bajo"
     },
@@ -8062,7 +8069,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-07-20",
-      "dias_sin_compra": 1,
+      "dias_sin_compra": 2,
       "ultima_compra_2026": "2026-07-20",
       "riesgo": "Bajo"
     },
@@ -8080,7 +8087,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-07-17",
-      "dias_sin_compra": 4,
+      "dias_sin_compra": 5,
       "ultima_compra_2026": "2026-07-17",
       "riesgo": "Bajo"
     },
@@ -8098,7 +8105,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-07-09",
-      "dias_sin_compra": 12,
+      "dias_sin_compra": 13,
       "ultima_compra_2026": "2026-07-09",
       "riesgo": "Bajo"
     },
@@ -8116,7 +8123,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-07-15",
-      "dias_sin_compra": 6,
+      "dias_sin_compra": 7,
       "ultima_compra_2026": "2026-07-15",
       "riesgo": "Bajo"
     },
@@ -8134,7 +8141,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-07-20",
-      "dias_sin_compra": 1,
+      "dias_sin_compra": 2,
       "ultima_compra_2026": "2026-07-20",
       "riesgo": "Bajo"
     },
@@ -8152,7 +8159,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 11,
       "ultima_compra": "2026-07-16",
-      "dias_sin_compra": 5,
+      "dias_sin_compra": 6,
       "ultima_compra_2026": "2026-07-16",
       "riesgo": "Bajo"
     },
@@ -8170,7 +8177,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-07-16",
-      "dias_sin_compra": 5,
+      "dias_sin_compra": 6,
       "ultima_compra_2026": "2026-07-16",
       "riesgo": "Bajo"
     },
@@ -8188,7 +8195,7 @@
       "meses_activos_2026": 5,
       "meses_activos_2025": 9,
       "ultima_compra": "2026-07-10",
-      "dias_sin_compra": 11,
+      "dias_sin_compra": 12,
       "ultima_compra_2026": "2026-07-10",
       "riesgo": "Bajo"
     },
@@ -8206,7 +8213,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-07-14",
-      "dias_sin_compra": 7,
+      "dias_sin_compra": 8,
       "ultima_compra_2026": "2026-07-14",
       "riesgo": "Bajo"
     },
@@ -8224,7 +8231,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-07-14",
-      "dias_sin_compra": 7,
+      "dias_sin_compra": 8,
       "ultima_compra_2026": "2026-07-14",
       "riesgo": "Bajo"
     },
@@ -8242,7 +8249,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 11,
       "ultima_compra": "2026-07-14",
-      "dias_sin_compra": 7,
+      "dias_sin_compra": 8,
       "ultima_compra_2026": "2026-07-14",
       "riesgo": "Bajo"
     },
@@ -8260,7 +8267,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 7,
       "ultima_compra": "2026-07-09",
-      "dias_sin_compra": 12,
+      "dias_sin_compra": 13,
       "ultima_compra_2026": "2026-07-09",
       "riesgo": "Bajo"
     },
@@ -8278,7 +8285,7 @@
       "meses_activos_2026": 3,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-07-02",
-      "dias_sin_compra": 19,
+      "dias_sin_compra": 20,
       "ultima_compra_2026": "2026-07-02",
       "riesgo": "Bajo"
     },
@@ -8296,7 +8303,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-07-02",
-      "dias_sin_compra": 19,
+      "dias_sin_compra": 20,
       "ultima_compra_2026": "2026-07-02",
       "riesgo": "Bajo"
     },
@@ -8314,7 +8321,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-07-16",
-      "dias_sin_compra": 5,
+      "dias_sin_compra": 6,
       "ultima_compra_2026": "2026-07-16",
       "riesgo": "Bajo"
     },
@@ -8332,7 +8339,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-07-06",
-      "dias_sin_compra": 15,
+      "dias_sin_compra": 16,
       "ultima_compra_2026": "2026-07-06",
       "riesgo": "Bajo"
     },
@@ -8350,7 +8357,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-07-13",
-      "dias_sin_compra": 8,
+      "dias_sin_compra": 9,
       "ultima_compra_2026": "2026-07-13",
       "riesgo": "Bajo"
     },
@@ -8368,7 +8375,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-07-13",
-      "dias_sin_compra": 8,
+      "dias_sin_compra": 9,
       "ultima_compra_2026": "2026-07-13",
       "riesgo": "Bajo"
     },
@@ -8386,7 +8393,7 @@
       "meses_activos_2026": 5,
       "meses_activos_2025": 11,
       "ultima_compra": "2026-06-26",
-      "dias_sin_compra": 25,
+      "dias_sin_compra": 26,
       "ultima_compra_2026": "2026-06-26",
       "riesgo": "Bajo"
     },
@@ -8404,7 +8411,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-07-02",
-      "dias_sin_compra": 19,
+      "dias_sin_compra": 20,
       "ultima_compra_2026": "2026-07-02",
       "riesgo": "Bajo"
     },
@@ -8422,7 +8429,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-07-10",
-      "dias_sin_compra": 11,
+      "dias_sin_compra": 12,
       "ultima_compra_2026": "2026-07-10",
       "riesgo": "Bajo"
     },
@@ -8440,7 +8447,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-07-20",
-      "dias_sin_compra": 1,
+      "dias_sin_compra": 2,
       "ultima_compra_2026": "2026-07-20",
       "riesgo": "Bajo"
     },
@@ -8458,7 +8465,7 @@
       "meses_activos_2026": 5,
       "meses_activos_2025": 9,
       "ultima_compra": "2026-06-23",
-      "dias_sin_compra": 28,
+      "dias_sin_compra": 29,
       "ultima_compra_2026": "2026-06-23",
       "riesgo": "Bajo"
     },
@@ -8476,7 +8483,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-07-17",
-      "dias_sin_compra": 4,
+      "dias_sin_compra": 5,
       "ultima_compra_2026": "2026-07-17",
       "riesgo": "Bajo"
     },
@@ -8494,7 +8501,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-07-10",
-      "dias_sin_compra": 11,
+      "dias_sin_compra": 12,
       "ultima_compra_2026": "2026-07-10",
       "riesgo": "Bajo"
     },
@@ -8512,7 +8519,7 @@
       "meses_activos_2026": 6,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-07-02",
-      "dias_sin_compra": 19,
+      "dias_sin_compra": 20,
       "ultima_compra_2026": "2026-07-02",
       "riesgo": "Bajo"
     },
@@ -8530,7 +8537,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-07-20",
-      "dias_sin_compra": 1,
+      "dias_sin_compra": 2,
       "ultima_compra_2026": "2026-07-20",
       "riesgo": "Bajo"
     },
@@ -8548,7 +8555,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 11,
       "ultima_compra": "2026-07-20",
-      "dias_sin_compra": 1,
+      "dias_sin_compra": 2,
       "ultima_compra_2026": "2026-07-20",
       "riesgo": "Bajo"
     },
@@ -8566,7 +8573,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 9,
       "ultima_compra": "2026-07-03",
-      "dias_sin_compra": 18,
+      "dias_sin_compra": 19,
       "ultima_compra_2026": "2026-07-03",
       "riesgo": "Bajo"
     },
@@ -8584,7 +8591,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-05-15",
-      "dias_sin_compra": 67,
+      "dias_sin_compra": 68,
       "ultima_compra_2026": "2026-05-15",
       "riesgo": "Medio"
     },
@@ -8602,7 +8609,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 1,
       "ultima_compra": "2026-07-16",
-      "dias_sin_compra": 5,
+      "dias_sin_compra": 6,
       "ultima_compra_2026": "2026-07-16",
       "riesgo": "Bajo"
     },
@@ -8620,7 +8627,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-07-15",
-      "dias_sin_compra": 6,
+      "dias_sin_compra": 7,
       "ultima_compra_2026": "2026-07-15",
       "riesgo": "Bajo"
     },
@@ -8638,7 +8645,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-07-09",
-      "dias_sin_compra": 12,
+      "dias_sin_compra": 13,
       "ultima_compra_2026": "2026-07-09",
       "riesgo": "Bajo"
     },
@@ -8656,7 +8663,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-07-14",
-      "dias_sin_compra": 7,
+      "dias_sin_compra": 8,
       "ultima_compra_2026": "2026-07-14",
       "riesgo": "Bajo"
     },
@@ -8674,7 +8681,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-07-16",
-      "dias_sin_compra": 5,
+      "dias_sin_compra": 6,
       "ultima_compra_2026": "2026-07-16",
       "riesgo": "Bajo"
     },
@@ -8692,7 +8699,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-07-07",
-      "dias_sin_compra": 14,
+      "dias_sin_compra": 15,
       "ultima_compra_2026": "2026-07-07",
       "riesgo": "Bajo"
     },
@@ -8710,7 +8717,7 @@
       "meses_activos_2026": 4,
       "meses_activos_2025": 8,
       "ultima_compra": "2026-06-30",
-      "dias_sin_compra": 21,
+      "dias_sin_compra": 22,
       "ultima_compra_2026": "2026-06-30",
       "riesgo": "Bajo"
     },
@@ -8728,7 +8735,7 @@
       "meses_activos_2026": 6,
       "meses_activos_2025": 10,
       "ultima_compra": "2026-07-16",
-      "dias_sin_compra": 5,
+      "dias_sin_compra": 6,
       "ultima_compra_2026": "2026-07-16",
       "riesgo": "Bajo"
     },
@@ -8746,7 +8753,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-07-09",
-      "dias_sin_compra": 12,
+      "dias_sin_compra": 13,
       "ultima_compra_2026": "2026-07-09",
       "riesgo": "Bajo"
     },
@@ -8764,7 +8771,7 @@
       "meses_activos_2026": 6,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-07-02",
-      "dias_sin_compra": 19,
+      "dias_sin_compra": 20,
       "ultima_compra_2026": "2026-07-02",
       "riesgo": "Bajo"
     },
@@ -8782,7 +8789,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 11,
       "ultima_compra": "2026-07-14",
-      "dias_sin_compra": 7,
+      "dias_sin_compra": 8,
       "ultima_compra_2026": "2026-07-14",
       "riesgo": "Bajo"
     },
@@ -8800,7 +8807,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 5,
       "ultima_compra": "2026-07-03",
-      "dias_sin_compra": 18,
+      "dias_sin_compra": 19,
       "ultima_compra_2026": "2026-07-03",
       "riesgo": "Bajo"
     },
@@ -8818,7 +8825,7 @@
       "meses_activos_2026": 5,
       "meses_activos_2025": 10,
       "ultima_compra": "2026-06-22",
-      "dias_sin_compra": 29,
+      "dias_sin_compra": 30,
       "ultima_compra_2026": "2026-06-22",
       "riesgo": "Bajo"
     },
@@ -8836,7 +8843,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-07-17",
-      "dias_sin_compra": 4,
+      "dias_sin_compra": 5,
       "ultima_compra_2026": "2026-07-17",
       "riesgo": "Bajo"
     },
@@ -8854,7 +8861,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-07-17",
-      "dias_sin_compra": 4,
+      "dias_sin_compra": 5,
       "ultima_compra_2026": "2026-07-17",
       "riesgo": "Bajo"
     },
@@ -8872,7 +8879,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-07-17",
-      "dias_sin_compra": 4,
+      "dias_sin_compra": 5,
       "ultima_compra_2026": "2026-07-17",
       "riesgo": "Bajo"
     },
@@ -8890,7 +8897,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 10,
       "ultima_compra": "2026-07-02",
-      "dias_sin_compra": 19,
+      "dias_sin_compra": 20,
       "ultima_compra_2026": "2026-07-02",
       "riesgo": "Bajo"
     },
@@ -8908,7 +8915,7 @@
       "meses_activos_2026": 6,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-06-11",
-      "dias_sin_compra": 40,
+      "dias_sin_compra": 41,
       "ultima_compra_2026": "2026-06-11",
       "riesgo": "Bajo"
     },
@@ -8926,7 +8933,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-07-15",
-      "dias_sin_compra": 6,
+      "dias_sin_compra": 7,
       "ultima_compra_2026": "2026-07-15",
       "riesgo": "Bajo"
     },
@@ -8944,7 +8951,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 11,
       "ultima_compra": "2026-07-17",
-      "dias_sin_compra": 4,
+      "dias_sin_compra": 5,
       "ultima_compra_2026": "2026-07-17",
       "riesgo": "Bajo"
     },
@@ -8962,7 +8969,7 @@
       "meses_activos_2026": 5,
       "meses_activos_2025": 6,
       "ultima_compra": "2026-05-25",
-      "dias_sin_compra": 57,
+      "dias_sin_compra": 58,
       "ultima_compra_2026": "2026-05-25",
       "riesgo": "Bajo"
     },
@@ -8980,7 +8987,7 @@
       "meses_activos_2026": 5,
       "meses_activos_2025": 8,
       "ultima_compra": "2026-07-15",
-      "dias_sin_compra": 6,
+      "dias_sin_compra": 7,
       "ultima_compra_2026": "2026-07-15",
       "riesgo": "Bajo"
     },
@@ -8998,7 +9005,7 @@
       "meses_activos_2026": 5,
       "meses_activos_2025": 7,
       "ultima_compra": "2026-07-16",
-      "dias_sin_compra": 5,
+      "dias_sin_compra": 6,
       "ultima_compra_2026": "2026-07-16",
       "riesgo": "Bajo"
     },
@@ -9016,7 +9023,7 @@
       "meses_activos_2026": 4,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-06-05",
-      "dias_sin_compra": 46,
+      "dias_sin_compra": 47,
       "ultima_compra_2026": "2026-06-05",
       "riesgo": "Bajo"
     },
@@ -9034,7 +9041,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 10,
       "ultima_compra": "2026-07-02",
-      "dias_sin_compra": 19,
+      "dias_sin_compra": 20,
       "ultima_compra_2026": "2026-07-02",
       "riesgo": "Bajo"
     },
@@ -9052,7 +9059,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-07-14",
-      "dias_sin_compra": 7,
+      "dias_sin_compra": 8,
       "ultima_compra_2026": "2026-07-14",
       "riesgo": "Bajo"
     },
@@ -9070,7 +9077,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-07-13",
-      "dias_sin_compra": 8,
+      "dias_sin_compra": 9,
       "ultima_compra_2026": "2026-07-13",
       "riesgo": "Bajo"
     },
@@ -9088,7 +9095,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 3,
       "ultima_compra": "2026-07-14",
-      "dias_sin_compra": 7,
+      "dias_sin_compra": 8,
       "ultima_compra_2026": "2026-07-14",
       "riesgo": "Bajo"
     },
@@ -9106,7 +9113,7 @@
       "meses_activos_2026": 3,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-06-23",
-      "dias_sin_compra": 28,
+      "dias_sin_compra": 29,
       "ultima_compra_2026": "2026-06-23",
       "riesgo": "Bajo"
     },
@@ -9124,7 +9131,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-07-14",
-      "dias_sin_compra": 7,
+      "dias_sin_compra": 8,
       "ultima_compra_2026": "2026-07-14",
       "riesgo": "Bajo"
     },
@@ -9142,7 +9149,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-07-16",
-      "dias_sin_compra": 5,
+      "dias_sin_compra": 6,
       "ultima_compra_2026": "2026-07-16",
       "riesgo": "Bajo"
     },
@@ -9160,7 +9167,7 @@
       "meses_activos_2026": 6,
       "meses_activos_2025": 10,
       "ultima_compra": "2026-06-03",
-      "dias_sin_compra": 48,
+      "dias_sin_compra": 49,
       "ultima_compra_2026": "2026-06-03",
       "riesgo": "Bajo"
     },
@@ -9178,7 +9185,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 9,
       "ultima_compra": "2026-07-16",
-      "dias_sin_compra": 5,
+      "dias_sin_compra": 6,
       "ultima_compra_2026": "2026-07-16",
       "riesgo": "Bajo"
     },
@@ -9196,7 +9203,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-07-17",
-      "dias_sin_compra": 4,
+      "dias_sin_compra": 5,
       "ultima_compra_2026": "2026-07-17",
       "riesgo": "Bajo"
     },
@@ -9214,7 +9221,7 @@
       "meses_activos_2026": 6,
       "meses_activos_2025": 3,
       "ultima_compra": "2026-07-14",
-      "dias_sin_compra": 7,
+      "dias_sin_compra": 8,
       "ultima_compra_2026": "2026-07-14",
       "riesgo": "Bajo"
     },
@@ -9232,7 +9239,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-07-14",
-      "dias_sin_compra": 7,
+      "dias_sin_compra": 8,
       "ultima_compra_2026": "2026-07-14",
       "riesgo": "Bajo"
     },
@@ -9250,7 +9257,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 7,
       "ultima_compra": "2026-07-16",
-      "dias_sin_compra": 5,
+      "dias_sin_compra": 6,
       "ultima_compra_2026": "2026-07-16",
       "riesgo": "Bajo"
     },
@@ -9268,7 +9275,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-07-20",
-      "dias_sin_compra": 1,
+      "dias_sin_compra": 2,
       "ultima_compra_2026": "2026-07-20",
       "riesgo": "Bajo"
     },
@@ -9286,7 +9293,7 @@
       "meses_activos_2026": 3,
       "meses_activos_2025": 6,
       "ultima_compra": "2026-06-30",
-      "dias_sin_compra": 21,
+      "dias_sin_compra": 22,
       "ultima_compra_2026": "2026-06-30",
       "riesgo": "Bajo"
     },
@@ -9304,7 +9311,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 6,
       "ultima_compra": "2026-07-17",
-      "dias_sin_compra": 4,
+      "dias_sin_compra": 5,
       "ultima_compra_2026": "2026-07-17",
       "riesgo": "Bajo"
     },
@@ -9322,7 +9329,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-07-09",
-      "dias_sin_compra": 12,
+      "dias_sin_compra": 13,
       "ultima_compra_2026": "2026-07-09",
       "riesgo": "Bajo"
     },
@@ -9340,7 +9347,7 @@
       "meses_activos_2026": 6,
       "meses_activos_2025": 4,
       "ultima_compra": "2026-07-03",
-      "dias_sin_compra": 18,
+      "dias_sin_compra": 19,
       "ultima_compra_2026": "2026-07-03",
       "riesgo": "Bajo"
     },
@@ -9358,7 +9365,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-07-09",
-      "dias_sin_compra": 12,
+      "dias_sin_compra": 13,
       "ultima_compra_2026": "2026-07-09",
       "riesgo": "Bajo"
     },
@@ -9376,7 +9383,7 @@
       "meses_activos_2026": 5,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-06-25",
-      "dias_sin_compra": 26,
+      "dias_sin_compra": 27,
       "ultima_compra_2026": "2026-06-25",
       "riesgo": "Bajo"
     },
@@ -9394,7 +9401,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-07-16",
-      "dias_sin_compra": 5,
+      "dias_sin_compra": 6,
       "ultima_compra_2026": "2026-07-16",
       "riesgo": "Bajo"
     },
@@ -9412,7 +9419,7 @@
       "meses_activos_2026": 5,
       "meses_activos_2025": 6,
       "ultima_compra": "2026-07-08",
-      "dias_sin_compra": 13,
+      "dias_sin_compra": 14,
       "ultima_compra_2026": "2026-07-08",
       "riesgo": "Bajo"
     },
@@ -9430,7 +9437,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-07-02",
-      "dias_sin_compra": 19,
+      "dias_sin_compra": 20,
       "ultima_compra_2026": "2026-07-02",
       "riesgo": "Bajo"
     },
@@ -9448,7 +9455,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-07-15",
-      "dias_sin_compra": 6,
+      "dias_sin_compra": 7,
       "ultima_compra_2026": "2026-07-15",
       "riesgo": "Bajo"
     },
@@ -9466,7 +9473,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 1,
       "ultima_compra": "2026-07-16",
-      "dias_sin_compra": 5,
+      "dias_sin_compra": 6,
       "ultima_compra_2026": "2026-07-16",
       "riesgo": "Bajo"
     },
@@ -9484,7 +9491,7 @@
       "meses_activos_2026": 5,
       "meses_activos_2025": 4,
       "ultima_compra": "2026-07-17",
-      "dias_sin_compra": 4,
+      "dias_sin_compra": 5,
       "ultima_compra_2026": "2026-07-17",
       "riesgo": "Bajo"
     },
@@ -9502,7 +9509,7 @@
       "meses_activos_2026": 5,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-06-26",
-      "dias_sin_compra": 25,
+      "dias_sin_compra": 26,
       "ultima_compra_2026": "2026-06-26",
       "riesgo": "Bajo"
     },
@@ -9520,7 +9527,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-07-13",
-      "dias_sin_compra": 8,
+      "dias_sin_compra": 9,
       "ultima_compra_2026": "2026-07-13",
       "riesgo": "Bajo"
     },
@@ -9538,7 +9545,7 @@
       "meses_activos_2026": 4,
       "meses_activos_2025": 7,
       "ultima_compra": "2026-06-16",
-      "dias_sin_compra": 35,
+      "dias_sin_compra": 36,
       "ultima_compra_2026": "2026-06-16",
       "riesgo": "Bajo"
     },
@@ -9556,7 +9563,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-07-06",
-      "dias_sin_compra": 15,
+      "dias_sin_compra": 16,
       "ultima_compra_2026": "2026-07-06",
       "riesgo": "Bajo"
     },
@@ -9574,7 +9581,7 @@
       "meses_activos_2026": 3,
       "meses_activos_2025": 4,
       "ultima_compra": "2026-06-11",
-      "dias_sin_compra": 40,
+      "dias_sin_compra": 41,
       "ultima_compra_2026": "2026-06-11",
       "riesgo": "Bajo"
     },
@@ -9592,7 +9599,7 @@
       "meses_activos_2026": 6,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-06-24",
-      "dias_sin_compra": 27,
+      "dias_sin_compra": 28,
       "ultima_compra_2026": "2026-06-24",
       "riesgo": "Bajo"
     },
@@ -9610,7 +9617,7 @@
       "meses_activos_2026": 3,
       "meses_activos_2025": 3,
       "ultima_compra": "2026-07-09",
-      "dias_sin_compra": 12,
+      "dias_sin_compra": 13,
       "ultima_compra_2026": "2026-07-09",
       "riesgo": "Bajo"
     },
@@ -9628,7 +9635,7 @@
       "meses_activos_2026": 3,
       "meses_activos_2025": 4,
       "ultima_compra": "2026-05-29",
-      "dias_sin_compra": 53,
+      "dias_sin_compra": 54,
       "ultima_compra_2026": "2026-05-29",
       "riesgo": "Bajo"
     },
@@ -9646,7 +9653,7 @@
       "meses_activos_2026": 5,
       "meses_activos_2025": 10,
       "ultima_compra": "2026-07-13",
-      "dias_sin_compra": 8,
+      "dias_sin_compra": 9,
       "ultima_compra_2026": "2026-07-13",
       "riesgo": "Bajo"
     },
@@ -9664,7 +9671,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-07-14",
-      "dias_sin_compra": 7,
+      "dias_sin_compra": 8,
       "ultima_compra_2026": "2026-07-14",
       "riesgo": "Bajo"
     },
@@ -9682,7 +9689,7 @@
       "meses_activos_2026": 3,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-05-18",
-      "dias_sin_compra": 64,
+      "dias_sin_compra": 65,
       "ultima_compra_2026": "2026-05-18",
       "riesgo": "Medio"
     },
@@ -9700,7 +9707,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-07-07",
-      "dias_sin_compra": 14,
+      "dias_sin_compra": 15,
       "ultima_compra_2026": "2026-07-07",
       "riesgo": "Bajo"
     },
@@ -9718,7 +9725,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-07-17",
-      "dias_sin_compra": 4,
+      "dias_sin_compra": 5,
       "ultima_compra_2026": "2026-07-17",
       "riesgo": "Bajo"
     },
@@ -9736,7 +9743,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 10,
       "ultima_compra": "2026-07-10",
-      "dias_sin_compra": 11,
+      "dias_sin_compra": 12,
       "ultima_compra_2026": "2026-07-10",
       "riesgo": "Bajo"
     },
@@ -9754,7 +9761,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 11,
       "ultima_compra": "2026-07-02",
-      "dias_sin_compra": 19,
+      "dias_sin_compra": 20,
       "ultima_compra_2026": "2026-07-02",
       "riesgo": "Bajo"
     },
@@ -9772,7 +9779,7 @@
       "meses_activos_2026": 6,
       "meses_activos_2025": 9,
       "ultima_compra": "2026-07-14",
-      "dias_sin_compra": 7,
+      "dias_sin_compra": 8,
       "ultima_compra_2026": "2026-07-14",
       "riesgo": "Bajo"
     },
@@ -9790,7 +9797,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 11,
       "ultima_compra": "2026-07-15",
-      "dias_sin_compra": 6,
+      "dias_sin_compra": 7,
       "ultima_compra_2026": "2026-07-15",
       "riesgo": "Bajo"
     },
@@ -9808,7 +9815,7 @@
       "meses_activos_2026": 4,
       "meses_activos_2025": 6,
       "ultima_compra": "2026-07-17",
-      "dias_sin_compra": 4,
+      "dias_sin_compra": 5,
       "ultima_compra_2026": "2026-07-17",
       "riesgo": "Bajo"
     },
@@ -9826,7 +9833,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-07-13",
-      "dias_sin_compra": 8,
+      "dias_sin_compra": 9,
       "ultima_compra_2026": "2026-07-13",
       "riesgo": "Bajo"
     },
@@ -9844,7 +9851,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 10,
       "ultima_compra": "2026-07-09",
-      "dias_sin_compra": 12,
+      "dias_sin_compra": 13,
       "ultima_compra_2026": "2026-07-09",
       "riesgo": "Bajo"
     },
@@ -9862,7 +9869,7 @@
       "meses_activos_2026": 4,
       "meses_activos_2025": 11,
       "ultima_compra": "2026-07-06",
-      "dias_sin_compra": 15,
+      "dias_sin_compra": 16,
       "ultima_compra_2026": "2026-07-06",
       "riesgo": "Bajo"
     },
@@ -9880,7 +9887,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 8,
       "ultima_compra": "2026-07-09",
-      "dias_sin_compra": 12,
+      "dias_sin_compra": 13,
       "ultima_compra_2026": "2026-07-09",
       "riesgo": "Bajo"
     },
@@ -9898,7 +9905,7 @@
       "meses_activos_2026": 6,
       "meses_activos_2025": 3,
       "ultima_compra": "2026-07-06",
-      "dias_sin_compra": 15,
+      "dias_sin_compra": 16,
       "ultima_compra_2026": "2026-07-06",
       "riesgo": "Bajo"
     },
@@ -9916,7 +9923,7 @@
       "meses_activos_2026": 6,
       "meses_activos_2025": 10,
       "ultima_compra": "2026-06-29",
-      "dias_sin_compra": 22,
+      "dias_sin_compra": 23,
       "ultima_compra_2026": "2026-06-29",
       "riesgo": "Bajo"
     },
@@ -9934,7 +9941,7 @@
       "meses_activos_2026": 5,
       "meses_activos_2025": 5,
       "ultima_compra": "2026-06-08",
-      "dias_sin_compra": 43,
+      "dias_sin_compra": 44,
       "ultima_compra_2026": "2026-06-08",
       "riesgo": "Bajo"
     },
@@ -9952,7 +9959,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-07-14",
-      "dias_sin_compra": 7,
+      "dias_sin_compra": 8,
       "ultima_compra_2026": "2026-07-14",
       "riesgo": "Bajo"
     },
@@ -9970,7 +9977,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-07-17",
-      "dias_sin_compra": 4,
+      "dias_sin_compra": 5,
       "ultima_compra_2026": "2026-07-17",
       "riesgo": "Bajo"
     },
@@ -9988,7 +9995,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 11,
       "ultima_compra": "2026-07-16",
-      "dias_sin_compra": 5,
+      "dias_sin_compra": 6,
       "ultima_compra_2026": "2026-07-16",
       "riesgo": "Bajo"
     },
@@ -10006,7 +10013,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-07-17",
-      "dias_sin_compra": 4,
+      "dias_sin_compra": 5,
       "ultima_compra_2026": "2026-07-17",
       "riesgo": "Bajo"
     },
@@ -10024,7 +10031,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 10,
       "ultima_compra": "2026-07-07",
-      "dias_sin_compra": 14,
+      "dias_sin_compra": 15,
       "ultima_compra_2026": "2026-07-07",
       "riesgo": "Bajo"
     },
@@ -10042,7 +10049,7 @@
       "meses_activos_2026": 5,
       "meses_activos_2025": 2,
       "ultima_compra": "2026-06-29",
-      "dias_sin_compra": 22,
+      "dias_sin_compra": 23,
       "ultima_compra_2026": "2026-06-29",
       "riesgo": "Bajo"
     },
@@ -10060,7 +10067,7 @@
       "meses_activos_2026": 6,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-06-26",
-      "dias_sin_compra": 25,
+      "dias_sin_compra": 26,
       "ultima_compra_2026": "2026-06-26",
       "riesgo": "Bajo"
     },
@@ -10078,7 +10085,7 @@
       "meses_activos_2026": 6,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-06-02",
-      "dias_sin_compra": 49,
+      "dias_sin_compra": 50,
       "ultima_compra_2026": "2026-06-02",
       "riesgo": "Bajo"
     },
@@ -10096,7 +10103,7 @@
       "meses_activos_2026": 6,
       "meses_activos_2025": 11,
       "ultima_compra": "2026-07-03",
-      "dias_sin_compra": 18,
+      "dias_sin_compra": 19,
       "ultima_compra_2026": "2026-07-03",
       "riesgo": "Bajo"
     },
@@ -10114,7 +10121,7 @@
       "meses_activos_2026": 5,
       "meses_activos_2025": 8,
       "ultima_compra": "2026-07-17",
-      "dias_sin_compra": 4,
+      "dias_sin_compra": 5,
       "ultima_compra_2026": "2026-07-17",
       "riesgo": "Bajo"
     },
@@ -10132,7 +10139,7 @@
       "meses_activos_2026": 6,
       "meses_activos_2025": 9,
       "ultima_compra": "2026-07-15",
-      "dias_sin_compra": 6,
+      "dias_sin_compra": 7,
       "ultima_compra_2026": "2026-07-15",
       "riesgo": "Bajo"
     },
@@ -10150,7 +10157,7 @@
       "meses_activos_2026": 6,
       "meses_activos_2025": 7,
       "ultima_compra": "2026-07-02",
-      "dias_sin_compra": 19,
+      "dias_sin_compra": 20,
       "ultima_compra_2026": "2026-07-02",
       "riesgo": "Bajo"
     },
@@ -10168,7 +10175,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-07-14",
-      "dias_sin_compra": 7,
+      "dias_sin_compra": 8,
       "ultima_compra_2026": "2026-07-14",
       "riesgo": "Bajo"
     },
@@ -10186,7 +10193,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-02-26",
-      "dias_sin_compra": 145,
+      "dias_sin_compra": 146,
       "ultima_compra_2026": "2026-02-26",
       "riesgo": "Alto"
     },
@@ -10204,7 +10211,7 @@
       "meses_activos_2026": 6,
       "meses_activos_2025": 11,
       "ultima_compra": "2026-06-15",
-      "dias_sin_compra": 36,
+      "dias_sin_compra": 37,
       "ultima_compra_2026": "2026-06-15",
       "riesgo": "Bajo"
     },
@@ -10222,7 +10229,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-07-16",
-      "dias_sin_compra": 5,
+      "dias_sin_compra": 6,
       "ultima_compra_2026": "2026-07-16",
       "riesgo": "Bajo"
     },
@@ -10240,7 +10247,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 11,
       "ultima_compra": "2026-07-15",
-      "dias_sin_compra": 6,
+      "dias_sin_compra": 7,
       "ultima_compra_2026": "2026-07-15",
       "riesgo": "Bajo"
     },
@@ -10258,7 +10265,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-07-08",
-      "dias_sin_compra": 13,
+      "dias_sin_compra": 14,
       "ultima_compra_2026": "2026-07-08",
       "riesgo": "Bajo"
     },
@@ -10276,7 +10283,7 @@
       "meses_activos_2026": 5,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-06-29",
-      "dias_sin_compra": 22,
+      "dias_sin_compra": 23,
       "ultima_compra_2026": "2026-06-29",
       "riesgo": "Bajo"
     },
@@ -10294,7 +10301,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 9,
       "ultima_compra": "2026-07-14",
-      "dias_sin_compra": 7,
+      "dias_sin_compra": 8,
       "ultima_compra_2026": "2026-07-14",
       "riesgo": "Bajo"
     },
@@ -10312,7 +10319,7 @@
       "meses_activos_2026": 4,
       "meses_activos_2025": 8,
       "ultima_compra": "2026-06-03",
-      "dias_sin_compra": 48,
+      "dias_sin_compra": 49,
       "ultima_compra_2026": "2026-06-03",
       "riesgo": "Bajo"
     },
@@ -10330,7 +10337,7 @@
       "meses_activos_2026": 4,
       "meses_activos_2025": 9,
       "ultima_compra": "2026-07-03",
-      "dias_sin_compra": 18,
+      "dias_sin_compra": 19,
       "ultima_compra_2026": "2026-07-03",
       "riesgo": "Bajo"
     },
@@ -10348,7 +10355,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-07-20",
-      "dias_sin_compra": 1,
+      "dias_sin_compra": 2,
       "ultima_compra_2026": "2026-07-20",
       "riesgo": "Bajo"
     },
@@ -10366,7 +10373,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-07-13",
-      "dias_sin_compra": 8,
+      "dias_sin_compra": 9,
       "ultima_compra_2026": "2026-07-13",
       "riesgo": "Bajo"
     },
@@ -10384,7 +10391,7 @@
       "meses_activos_2026": 6,
       "meses_activos_2025": 3,
       "ultima_compra": "2026-07-10",
-      "dias_sin_compra": 11,
+      "dias_sin_compra": 12,
       "ultima_compra_2026": "2026-07-10",
       "riesgo": "Bajo"
     },
@@ -10402,7 +10409,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-07-14",
-      "dias_sin_compra": 7,
+      "dias_sin_compra": 8,
       "ultima_compra_2026": "2026-07-14",
       "riesgo": "Bajo"
     },
@@ -10420,7 +10427,7 @@
       "meses_activos_2026": 3,
       "meses_activos_2025": 5,
       "ultima_compra": "2026-06-08",
-      "dias_sin_compra": 43,
+      "dias_sin_compra": 44,
       "ultima_compra_2026": "2026-06-08",
       "riesgo": "Bajo"
     },
@@ -10438,7 +10445,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 4,
       "ultima_compra": "2026-07-13",
-      "dias_sin_compra": 8,
+      "dias_sin_compra": 9,
       "ultima_compra_2026": "2026-07-13",
       "riesgo": "Bajo"
     },
@@ -10456,7 +10463,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 11,
       "ultima_compra": "2026-07-15",
-      "dias_sin_compra": 6,
+      "dias_sin_compra": 7,
       "ultima_compra_2026": "2026-07-15",
       "riesgo": "Bajo"
     },
@@ -10474,7 +10481,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-07-02",
-      "dias_sin_compra": 19,
+      "dias_sin_compra": 20,
       "ultima_compra_2026": "2026-07-02",
       "riesgo": "Bajo"
     },
@@ -10492,7 +10499,7 @@
       "meses_activos_2026": 2,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-03-11",
-      "dias_sin_compra": 132,
+      "dias_sin_compra": 133,
       "ultima_compra_2026": "2026-03-11",
       "riesgo": "Alto"
     },
@@ -10510,7 +10517,7 @@
       "meses_activos_2026": 4,
       "meses_activos_2025": 4,
       "ultima_compra": "2026-06-09",
-      "dias_sin_compra": 42,
+      "dias_sin_compra": 43,
       "ultima_compra_2026": "2026-06-09",
       "riesgo": "Bajo"
     },
@@ -10528,7 +10535,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 3,
       "ultima_compra": "2026-07-07",
-      "dias_sin_compra": 14,
+      "dias_sin_compra": 15,
       "ultima_compra_2026": "2026-07-07",
       "riesgo": "Bajo"
     },
@@ -10546,7 +10553,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-07-14",
-      "dias_sin_compra": 7,
+      "dias_sin_compra": 8,
       "ultima_compra_2026": "2026-07-14",
       "riesgo": "Bajo"
     },
@@ -10564,7 +10571,7 @@
       "meses_activos_2026": 6,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-06-26",
-      "dias_sin_compra": 25,
+      "dias_sin_compra": 26,
       "ultima_compra_2026": "2026-06-26",
       "riesgo": "Bajo"
     },
@@ -10582,7 +10589,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 10,
       "ultima_compra": "2026-07-07",
-      "dias_sin_compra": 14,
+      "dias_sin_compra": 15,
       "ultima_compra_2026": "2026-07-07",
       "riesgo": "Bajo"
     },
@@ -10600,7 +10607,7 @@
       "meses_activos_2026": 3,
       "meses_activos_2025": 3,
       "ultima_compra": "2026-06-15",
-      "dias_sin_compra": 36,
+      "dias_sin_compra": 37,
       "ultima_compra_2026": "2026-06-15",
       "riesgo": "Bajo"
     },
@@ -10618,7 +10625,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-07-20",
-      "dias_sin_compra": 1,
+      "dias_sin_compra": 2,
       "ultima_compra_2026": "2026-07-20",
       "riesgo": "Bajo"
     },
@@ -10636,7 +10643,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 4,
       "ultima_compra": "2026-07-15",
-      "dias_sin_compra": 6,
+      "dias_sin_compra": 7,
       "ultima_compra_2026": "2026-07-15",
       "riesgo": "Bajo"
     },
@@ -10654,7 +10661,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 3,
       "ultima_compra": "2026-07-16",
-      "dias_sin_compra": 5,
+      "dias_sin_compra": 6,
       "ultima_compra_2026": "2026-07-16",
       "riesgo": "Bajo"
     },
@@ -10672,7 +10679,7 @@
       "meses_activos_2026": 6,
       "meses_activos_2025": 3,
       "ultima_compra": "2026-07-14",
-      "dias_sin_compra": 7,
+      "dias_sin_compra": 8,
       "ultima_compra_2026": "2026-07-14",
       "riesgo": "Bajo"
     },
@@ -10690,7 +10697,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-07-09",
-      "dias_sin_compra": 12,
+      "dias_sin_compra": 13,
       "ultima_compra_2026": "2026-07-09",
       "riesgo": "Bajo"
     },
@@ -10708,7 +10715,7 @@
       "meses_activos_2026": 4,
       "meses_activos_2025": 8,
       "ultima_compra": "2026-05-29",
-      "dias_sin_compra": 53,
+      "dias_sin_compra": 54,
       "ultima_compra_2026": "2026-05-29",
       "riesgo": "Bajo"
     },
@@ -10726,7 +10733,7 @@
       "meses_activos_2026": 6,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-07-08",
-      "dias_sin_compra": 13,
+      "dias_sin_compra": 14,
       "ultima_compra_2026": "2026-07-08",
       "riesgo": "Bajo"
     },
@@ -10744,7 +10751,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-07-06",
-      "dias_sin_compra": 15,
+      "dias_sin_compra": 16,
       "ultima_compra_2026": "2026-07-06",
       "riesgo": "Bajo"
     },
@@ -10762,7 +10769,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-07-20",
-      "dias_sin_compra": 1,
+      "dias_sin_compra": 2,
       "ultima_compra_2026": "2026-07-20",
       "riesgo": "Bajo"
     },
@@ -10780,7 +10787,7 @@
       "meses_activos_2026": 2,
       "meses_activos_2025": 1,
       "ultima_compra": "2026-07-17",
-      "dias_sin_compra": 4,
+      "dias_sin_compra": 5,
       "ultima_compra_2026": "2026-07-17",
       "riesgo": "Bajo"
     },
@@ -10798,7 +10805,7 @@
       "meses_activos_2026": 2,
       "meses_activos_2025": 5,
       "ultima_compra": "2026-04-24",
-      "dias_sin_compra": 88,
+      "dias_sin_compra": 89,
       "ultima_compra_2026": "2026-04-24",
       "riesgo": "Medio"
     },
@@ -10816,7 +10823,7 @@
       "meses_activos_2026": 4,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-06-26",
-      "dias_sin_compra": 25,
+      "dias_sin_compra": 26,
       "ultima_compra_2026": "2026-06-26",
       "riesgo": "Bajo"
     },
@@ -10834,7 +10841,7 @@
       "meses_activos_2026": 3,
       "meses_activos_2025": 4,
       "ultima_compra": "2026-05-07",
-      "dias_sin_compra": 75,
+      "dias_sin_compra": 76,
       "ultima_compra_2026": "2026-05-07",
       "riesgo": "Medio"
     },
@@ -10852,7 +10859,7 @@
       "meses_activos_2026": 4,
       "meses_activos_2025": 7,
       "ultima_compra": "2026-06-17",
-      "dias_sin_compra": 34,
+      "dias_sin_compra": 35,
       "ultima_compra_2026": "2026-06-17",
       "riesgo": "Bajo"
     },
@@ -10870,7 +10877,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 9,
       "ultima_compra": "2026-07-08",
-      "dias_sin_compra": 13,
+      "dias_sin_compra": 14,
       "ultima_compra_2026": "2026-07-08",
       "riesgo": "Bajo"
     },
@@ -10888,7 +10895,7 @@
       "meses_activos_2026": 4,
       "meses_activos_2025": 5,
       "ultima_compra": "2026-06-17",
-      "dias_sin_compra": 34,
+      "dias_sin_compra": 35,
       "ultima_compra_2026": "2026-06-17",
       "riesgo": "Bajo"
     },
@@ -10906,7 +10913,7 @@
       "meses_activos_2026": 5,
       "meses_activos_2025": 5,
       "ultima_compra": "2026-07-13",
-      "dias_sin_compra": 8,
+      "dias_sin_compra": 9,
       "ultima_compra_2026": "2026-07-13",
       "riesgo": "Bajo"
     },
@@ -10924,7 +10931,7 @@
       "meses_activos_2026": 6,
       "meses_activos_2025": 10,
       "ultima_compra": "2026-07-03",
-      "dias_sin_compra": 18,
+      "dias_sin_compra": 19,
       "ultima_compra_2026": "2026-07-03",
       "riesgo": "Bajo"
     },
@@ -10942,7 +10949,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-07-13",
-      "dias_sin_compra": 8,
+      "dias_sin_compra": 9,
       "ultima_compra_2026": "2026-07-13",
       "riesgo": "Bajo"
     },
@@ -10960,7 +10967,7 @@
       "meses_activos_2026": 6,
       "meses_activos_2025": 8,
       "ultima_compra": "2026-07-10",
-      "dias_sin_compra": 11,
+      "dias_sin_compra": 12,
       "ultima_compra_2026": "2026-07-10",
       "riesgo": "Bajo"
     },
@@ -10978,7 +10985,7 @@
       "meses_activos_2026": 4,
       "meses_activos_2025": 8,
       "ultima_compra": "2026-07-13",
-      "dias_sin_compra": 8,
+      "dias_sin_compra": 9,
       "ultima_compra_2026": "2026-07-13",
       "riesgo": "Bajo"
     },
@@ -10986,7 +10993,7 @@
       "cliente_num": "1958",
       "cliente_nombre": "HERMAN JESUS LOPEZ CRUZ",
       "agente": "EDWIN HERNANDEZ",
-      "status": "Activo",
+      "status": "Perdido",
       "origen": "Activo",
       "ventas_2026": 29837.5,
       "ventas_2025": 19243.636,
@@ -10996,9 +11003,9 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 1,
       "ultima_compra": "2026-03-24",
-      "dias_sin_compra": 119,
+      "dias_sin_compra": 120,
       "ultima_compra_2026": "2026-03-24",
-      "riesgo": "Medio"
+      "riesgo": "Alto"
     },
     {
       "cliente_num": "1517",
@@ -11014,7 +11021,7 @@
       "meses_activos_2026": 4,
       "meses_activos_2025": 8,
       "ultima_compra": "2026-05-08",
-      "dias_sin_compra": 74,
+      "dias_sin_compra": 75,
       "ultima_compra_2026": "2026-05-08",
       "riesgo": "Medio"
     },
@@ -11032,7 +11039,7 @@
       "meses_activos_2026": 6,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-06-30",
-      "dias_sin_compra": 21,
+      "dias_sin_compra": 22,
       "ultima_compra_2026": "2026-06-30",
       "riesgo": "Bajo"
     },
@@ -11050,7 +11057,7 @@
       "meses_activos_2026": 6,
       "meses_activos_2025": 9,
       "ultima_compra": "2026-06-08",
-      "dias_sin_compra": 43,
+      "dias_sin_compra": 44,
       "ultima_compra_2026": "2026-06-08",
       "riesgo": "Bajo"
     },
@@ -11068,7 +11075,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-07-15",
-      "dias_sin_compra": 6,
+      "dias_sin_compra": 7,
       "ultima_compra_2026": "2026-07-15",
       "riesgo": "Bajo"
     },
@@ -11086,7 +11093,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-07-08",
-      "dias_sin_compra": 13,
+      "dias_sin_compra": 14,
       "ultima_compra_2026": "2026-07-08",
       "riesgo": "Bajo"
     },
@@ -11104,7 +11111,7 @@
       "meses_activos_2026": 5,
       "meses_activos_2025": 11,
       "ultima_compra": "2026-07-02",
-      "dias_sin_compra": 19,
+      "dias_sin_compra": 20,
       "ultima_compra_2026": "2026-07-02",
       "riesgo": "Bajo"
     },
@@ -11122,7 +11129,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-07-20",
-      "dias_sin_compra": 1,
+      "dias_sin_compra": 2,
       "ultima_compra_2026": "2026-07-20",
       "riesgo": "Bajo"
     },
@@ -11140,7 +11147,7 @@
       "meses_activos_2026": 6,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-07-09",
-      "dias_sin_compra": 12,
+      "dias_sin_compra": 13,
       "ultima_compra_2026": "2026-07-09",
       "riesgo": "Bajo"
     },
@@ -11158,7 +11165,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 9,
       "ultima_compra": "2026-07-17",
-      "dias_sin_compra": 4,
+      "dias_sin_compra": 5,
       "ultima_compra_2026": "2026-07-17",
       "riesgo": "Bajo"
     },
@@ -11176,7 +11183,7 @@
       "meses_activos_2026": 5,
       "meses_activos_2025": 5,
       "ultima_compra": "2026-07-16",
-      "dias_sin_compra": 5,
+      "dias_sin_compra": 6,
       "ultima_compra_2026": "2026-07-16",
       "riesgo": "Bajo"
     },
@@ -11194,7 +11201,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 5,
       "ultima_compra": "2026-07-14",
-      "dias_sin_compra": 7,
+      "dias_sin_compra": 8,
       "ultima_compra_2026": "2026-07-14",
       "riesgo": "Bajo"
     },
@@ -11212,7 +11219,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 11,
       "ultima_compra": "2026-07-02",
-      "dias_sin_compra": 19,
+      "dias_sin_compra": 20,
       "ultima_compra_2026": "2026-07-02",
       "riesgo": "Bajo"
     },
@@ -11230,7 +11237,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 8,
       "ultima_compra": "2026-07-17",
-      "dias_sin_compra": 4,
+      "dias_sin_compra": 5,
       "ultima_compra_2026": "2026-07-17",
       "riesgo": "Bajo"
     },
@@ -11248,7 +11255,7 @@
       "meses_activos_2026": 5,
       "meses_activos_2025": 6,
       "ultima_compra": "2026-06-17",
-      "dias_sin_compra": 34,
+      "dias_sin_compra": 35,
       "ultima_compra_2026": "2026-06-17",
       "riesgo": "Bajo"
     },
@@ -11266,7 +11273,7 @@
       "meses_activos_2026": 3,
       "meses_activos_2025": 3,
       "ultima_compra": "2026-07-10",
-      "dias_sin_compra": 11,
+      "dias_sin_compra": 12,
       "ultima_compra_2026": "2026-07-10",
       "riesgo": "Bajo"
     },
@@ -11284,7 +11291,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 9,
       "ultima_compra": "2026-07-17",
-      "dias_sin_compra": 4,
+      "dias_sin_compra": 5,
       "ultima_compra_2026": "2026-07-17",
       "riesgo": "Bajo"
     },
@@ -11302,7 +11309,7 @@
       "meses_activos_2026": 6,
       "meses_activos_2025": 11,
       "ultima_compra": "2026-07-09",
-      "dias_sin_compra": 12,
+      "dias_sin_compra": 13,
       "ultima_compra_2026": "2026-07-09",
       "riesgo": "Bajo"
     },
@@ -11320,7 +11327,7 @@
       "meses_activos_2026": 4,
       "meses_activos_2025": 8,
       "ultima_compra": "2026-07-02",
-      "dias_sin_compra": 19,
+      "dias_sin_compra": 20,
       "ultima_compra_2026": "2026-07-02",
       "riesgo": "Bajo"
     },
@@ -11338,7 +11345,7 @@
       "meses_activos_2026": 3,
       "meses_activos_2025": 7,
       "ultima_compra": "2026-06-08",
-      "dias_sin_compra": 43,
+      "dias_sin_compra": 44,
       "ultima_compra_2026": "2026-06-08",
       "riesgo": "Bajo"
     },
@@ -11356,7 +11363,7 @@
       "meses_activos_2026": 3,
       "meses_activos_2025": 1,
       "ultima_compra": "2026-04-23",
-      "dias_sin_compra": 89,
+      "dias_sin_compra": 90,
       "ultima_compra_2026": "2026-04-23",
       "riesgo": "Medio"
     },
@@ -11374,7 +11381,7 @@
       "meses_activos_2026": 4,
       "meses_activos_2025": 7,
       "ultima_compra": "2026-06-23",
-      "dias_sin_compra": 28,
+      "dias_sin_compra": 29,
       "ultima_compra_2026": "2026-06-23",
       "riesgo": "Bajo"
     },
@@ -11392,7 +11399,7 @@
       "meses_activos_2026": 6,
       "meses_activos_2025": 11,
       "ultima_compra": "2026-07-13",
-      "dias_sin_compra": 8,
+      "dias_sin_compra": 9,
       "ultima_compra_2026": "2026-07-13",
       "riesgo": "Bajo"
     },
@@ -11410,7 +11417,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-07-14",
-      "dias_sin_compra": 7,
+      "dias_sin_compra": 8,
       "ultima_compra_2026": "2026-07-14",
       "riesgo": "Bajo"
     },
@@ -11428,7 +11435,7 @@
       "meses_activos_2026": 3,
       "meses_activos_2025": 4,
       "ultima_compra": "2026-04-09",
-      "dias_sin_compra": 103,
+      "dias_sin_compra": 104,
       "ultima_compra_2026": "2026-04-09",
       "riesgo": "Medio"
     },
@@ -11446,7 +11453,7 @@
       "meses_activos_2026": 3,
       "meses_activos_2025": 4,
       "ultima_compra": "2026-07-07",
-      "dias_sin_compra": 14,
+      "dias_sin_compra": 15,
       "ultima_compra_2026": "2026-07-07",
       "riesgo": "Bajo"
     },
@@ -11464,7 +11471,7 @@
       "meses_activos_2026": 3,
       "meses_activos_2025": 9,
       "ultima_compra": "2026-06-29",
-      "dias_sin_compra": 22,
+      "dias_sin_compra": 23,
       "ultima_compra_2026": "2026-06-29",
       "riesgo": "Bajo"
     },
@@ -11482,7 +11489,7 @@
       "meses_activos_2026": 6,
       "meses_activos_2025": 10,
       "ultima_compra": "2026-06-22",
-      "dias_sin_compra": 29,
+      "dias_sin_compra": 30,
       "ultima_compra_2026": "2026-06-22",
       "riesgo": "Bajo"
     },
@@ -11500,7 +11507,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 9,
       "ultima_compra": "2026-07-09",
-      "dias_sin_compra": 12,
+      "dias_sin_compra": 13,
       "ultima_compra_2026": "2026-07-09",
       "riesgo": "Bajo"
     },
@@ -11518,7 +11525,7 @@
       "meses_activos_2026": 5,
       "meses_activos_2025": 10,
       "ultima_compra": "2026-06-10",
-      "dias_sin_compra": 41,
+      "dias_sin_compra": 42,
       "ultima_compra_2026": "2026-06-10",
       "riesgo": "Bajo"
     },
@@ -11536,7 +11543,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-07-01",
-      "dias_sin_compra": 20,
+      "dias_sin_compra": 21,
       "ultima_compra_2026": "2026-07-01",
       "riesgo": "Bajo"
     },
@@ -11554,7 +11561,7 @@
       "meses_activos_2026": 5,
       "meses_activos_2025": 10,
       "ultima_compra": "2026-06-30",
-      "dias_sin_compra": 21,
+      "dias_sin_compra": 22,
       "ultima_compra_2026": "2026-06-30",
       "riesgo": "Bajo"
     },
@@ -11572,7 +11579,7 @@
       "meses_activos_2026": 6,
       "meses_activos_2025": 7,
       "ultima_compra": "2026-07-16",
-      "dias_sin_compra": 5,
+      "dias_sin_compra": 6,
       "ultima_compra_2026": "2026-07-16",
       "riesgo": "Bajo"
     },
@@ -11590,7 +11597,7 @@
       "meses_activos_2026": 6,
       "meses_activos_2025": 7,
       "ultima_compra": "2026-06-22",
-      "dias_sin_compra": 29,
+      "dias_sin_compra": 30,
       "ultima_compra_2026": "2026-06-22",
       "riesgo": "Bajo"
     },
@@ -11608,7 +11615,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-07-07",
-      "dias_sin_compra": 14,
+      "dias_sin_compra": 15,
       "ultima_compra_2026": "2026-07-07",
       "riesgo": "Bajo"
     },
@@ -11626,7 +11633,7 @@
       "meses_activos_2026": 5,
       "meses_activos_2025": 3,
       "ultima_compra": "2026-06-17",
-      "dias_sin_compra": 34,
+      "dias_sin_compra": 35,
       "ultima_compra_2026": "2026-06-17",
       "riesgo": "Bajo"
     },
@@ -11644,7 +11651,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-07-06",
-      "dias_sin_compra": 15,
+      "dias_sin_compra": 16,
       "ultima_compra_2026": "2026-07-06",
       "riesgo": "Bajo"
     },
@@ -11662,7 +11669,7 @@
       "meses_activos_2026": 6,
       "meses_activos_2025": 8,
       "ultima_compra": "2026-07-07",
-      "dias_sin_compra": 14,
+      "dias_sin_compra": 15,
       "ultima_compra_2026": "2026-07-07",
       "riesgo": "Bajo"
     },
@@ -11680,7 +11687,7 @@
       "meses_activos_2026": 6,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-06-24",
-      "dias_sin_compra": 27,
+      "dias_sin_compra": 28,
       "ultima_compra_2026": "2026-06-24",
       "riesgo": "Bajo"
     },
@@ -11698,7 +11705,7 @@
       "meses_activos_2026": 2,
       "meses_activos_2025": 3,
       "ultima_compra": "2026-05-11",
-      "dias_sin_compra": 71,
+      "dias_sin_compra": 72,
       "ultima_compra_2026": "2026-05-11",
       "riesgo": "Medio"
     },
@@ -11716,7 +11723,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 10,
       "ultima_compra": "2026-07-14",
-      "dias_sin_compra": 7,
+      "dias_sin_compra": 8,
       "ultima_compra_2026": "2026-07-14",
       "riesgo": "Bajo"
     },
@@ -11734,7 +11741,7 @@
       "meses_activos_2026": 5,
       "meses_activos_2025": 8,
       "ultima_compra": "2026-07-09",
-      "dias_sin_compra": 12,
+      "dias_sin_compra": 13,
       "ultima_compra_2026": "2026-07-09",
       "riesgo": "Bajo"
     },
@@ -11752,7 +11759,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-07-17",
-      "dias_sin_compra": 4,
+      "dias_sin_compra": 5,
       "ultima_compra_2026": "2026-07-17",
       "riesgo": "Bajo"
     },
@@ -11770,7 +11777,7 @@
       "meses_activos_2026": 6,
       "meses_activos_2025": 11,
       "ultima_compra": "2026-06-05",
-      "dias_sin_compra": 46,
+      "dias_sin_compra": 47,
       "ultima_compra_2026": "2026-06-05",
       "riesgo": "Bajo"
     },
@@ -11788,7 +11795,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-07-20",
-      "dias_sin_compra": 1,
+      "dias_sin_compra": 2,
       "ultima_compra_2026": "2026-07-20",
       "riesgo": "Bajo"
     },
@@ -11806,7 +11813,7 @@
       "meses_activos_2026": 3,
       "meses_activos_2025": 7,
       "ultima_compra": "2026-06-03",
-      "dias_sin_compra": 48,
+      "dias_sin_compra": 49,
       "ultima_compra_2026": "2026-06-03",
       "riesgo": "Bajo"
     },
@@ -11824,7 +11831,7 @@
       "meses_activos_2026": 2,
       "meses_activos_2025": 1,
       "ultima_compra": "2026-02-17",
-      "dias_sin_compra": 154,
+      "dias_sin_compra": 155,
       "ultima_compra_2026": "2026-02-17",
       "riesgo": "Alto"
     },
@@ -11842,7 +11849,7 @@
       "meses_activos_2026": 4,
       "meses_activos_2025": 5,
       "ultima_compra": "2026-07-03",
-      "dias_sin_compra": 18,
+      "dias_sin_compra": 19,
       "ultima_compra_2026": "2026-07-03",
       "riesgo": "Bajo"
     },
@@ -11860,7 +11867,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 11,
       "ultima_compra": "2026-07-20",
-      "dias_sin_compra": 1,
+      "dias_sin_compra": 2,
       "ultima_compra_2026": "2026-07-20",
       "riesgo": "Bajo"
     },
@@ -11878,7 +11885,7 @@
       "meses_activos_2026": 5,
       "meses_activos_2025": 6,
       "ultima_compra": "2026-06-25",
-      "dias_sin_compra": 26,
+      "dias_sin_compra": 27,
       "ultima_compra_2026": "2026-06-25",
       "riesgo": "Bajo"
     },
@@ -11896,7 +11903,7 @@
       "meses_activos_2026": 4,
       "meses_activos_2025": 9,
       "ultima_compra": "2026-06-08",
-      "dias_sin_compra": 43,
+      "dias_sin_compra": 44,
       "ultima_compra_2026": "2026-06-08",
       "riesgo": "Bajo"
     },
@@ -11914,7 +11921,7 @@
       "meses_activos_2026": 6,
       "meses_activos_2025": 4,
       "ultima_compra": "2026-07-02",
-      "dias_sin_compra": 19,
+      "dias_sin_compra": 20,
       "ultima_compra_2026": "2026-07-02",
       "riesgo": "Bajo"
     },
@@ -11932,7 +11939,7 @@
       "meses_activos_2026": 6,
       "meses_activos_2025": 10,
       "ultima_compra": "2026-07-02",
-      "dias_sin_compra": 19,
+      "dias_sin_compra": 20,
       "ultima_compra_2026": "2026-07-02",
       "riesgo": "Bajo"
     },
@@ -11950,7 +11957,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 9,
       "ultima_compra": "2026-07-14",
-      "dias_sin_compra": 7,
+      "dias_sin_compra": 8,
       "ultima_compra_2026": "2026-07-14",
       "riesgo": "Bajo"
     },
@@ -11968,7 +11975,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 11,
       "ultima_compra": "2026-07-20",
-      "dias_sin_compra": 1,
+      "dias_sin_compra": 2,
       "ultima_compra_2026": "2026-07-20",
       "riesgo": "Bajo"
     },
@@ -11986,7 +11993,7 @@
       "meses_activos_2026": 3,
       "meses_activos_2025": 10,
       "ultima_compra": "2026-06-10",
-      "dias_sin_compra": 41,
+      "dias_sin_compra": 42,
       "ultima_compra_2026": "2026-06-10",
       "riesgo": "Bajo"
     },
@@ -12004,7 +12011,7 @@
       "meses_activos_2026": 4,
       "meses_activos_2025": 6,
       "ultima_compra": "2026-07-13",
-      "dias_sin_compra": 8,
+      "dias_sin_compra": 9,
       "ultima_compra_2026": "2026-07-13",
       "riesgo": "Bajo"
     },
@@ -12022,7 +12029,7 @@
       "meses_activos_2026": 3,
       "meses_activos_2025": 6,
       "ultima_compra": "2026-06-29",
-      "dias_sin_compra": 22,
+      "dias_sin_compra": 23,
       "ultima_compra_2026": "2026-06-29",
       "riesgo": "Bajo"
     },
@@ -12040,7 +12047,7 @@
       "meses_activos_2026": 6,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-07-02",
-      "dias_sin_compra": 19,
+      "dias_sin_compra": 20,
       "ultima_compra_2026": "2026-07-02",
       "riesgo": "Bajo"
     },
@@ -12058,7 +12065,7 @@
       "meses_activos_2026": 5,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-07-15",
-      "dias_sin_compra": 6,
+      "dias_sin_compra": 7,
       "ultima_compra_2026": "2026-07-15",
       "riesgo": "Bajo"
     },
@@ -12076,7 +12083,7 @@
       "meses_activos_2026": 5,
       "meses_activos_2025": 10,
       "ultima_compra": "2026-06-03",
-      "dias_sin_compra": 48,
+      "dias_sin_compra": 49,
       "ultima_compra_2026": "2026-06-03",
       "riesgo": "Bajo"
     },
@@ -12094,7 +12101,7 @@
       "meses_activos_2026": 6,
       "meses_activos_2025": 9,
       "ultima_compra": "2026-07-15",
-      "dias_sin_compra": 6,
+      "dias_sin_compra": 7,
       "ultima_compra_2026": "2026-07-15",
       "riesgo": "Bajo"
     },
@@ -12112,7 +12119,7 @@
       "meses_activos_2026": 4,
       "meses_activos_2025": 3,
       "ultima_compra": "2026-06-25",
-      "dias_sin_compra": 26,
+      "dias_sin_compra": 27,
       "ultima_compra_2026": "2026-06-25",
       "riesgo": "Bajo"
     },
@@ -12130,7 +12137,7 @@
       "meses_activos_2026": 2,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-06-12",
-      "dias_sin_compra": 39,
+      "dias_sin_compra": 40,
       "ultima_compra_2026": "2026-06-12",
       "riesgo": "Bajo"
     },
@@ -12148,7 +12155,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 2,
       "ultima_compra": "2026-07-10",
-      "dias_sin_compra": 11,
+      "dias_sin_compra": 12,
       "ultima_compra_2026": "2026-07-10",
       "riesgo": "Bajo"
     },
@@ -12166,7 +12173,7 @@
       "meses_activos_2026": 3,
       "meses_activos_2025": 7,
       "ultima_compra": "2026-05-19",
-      "dias_sin_compra": 63,
+      "dias_sin_compra": 64,
       "ultima_compra_2026": "2026-05-19",
       "riesgo": "Medio"
     },
@@ -12184,7 +12191,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 11,
       "ultima_compra": "2026-07-09",
-      "dias_sin_compra": 12,
+      "dias_sin_compra": 13,
       "ultima_compra_2026": "2026-07-09",
       "riesgo": "Bajo"
     },
@@ -12202,7 +12209,7 @@
       "meses_activos_2026": 4,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-07-14",
-      "dias_sin_compra": 7,
+      "dias_sin_compra": 8,
       "ultima_compra_2026": "2026-07-14",
       "riesgo": "Bajo"
     },
@@ -12220,7 +12227,7 @@
       "meses_activos_2026": 6,
       "meses_activos_2025": 7,
       "ultima_compra": "2026-07-15",
-      "dias_sin_compra": 6,
+      "dias_sin_compra": 7,
       "ultima_compra_2026": "2026-07-15",
       "riesgo": "Bajo"
     },
@@ -12238,7 +12245,7 @@
       "meses_activos_2026": 2,
       "meses_activos_2025": 9,
       "ultima_compra": "2026-02-17",
-      "dias_sin_compra": 154,
+      "dias_sin_compra": 155,
       "ultima_compra_2026": "2026-02-17",
       "riesgo": "Alto"
     },
@@ -12256,7 +12263,7 @@
       "meses_activos_2026": 5,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-06-24",
-      "dias_sin_compra": 27,
+      "dias_sin_compra": 28,
       "ultima_compra_2026": "2026-06-24",
       "riesgo": "Bajo"
     },
@@ -12274,7 +12281,7 @@
       "meses_activos_2026": 5,
       "meses_activos_2025": 11,
       "ultima_compra": "2026-07-03",
-      "dias_sin_compra": 18,
+      "dias_sin_compra": 19,
       "ultima_compra_2026": "2026-07-03",
       "riesgo": "Bajo"
     },
@@ -12292,7 +12299,7 @@
       "meses_activos_2026": 4,
       "meses_activos_2025": 9,
       "ultima_compra": "2026-06-11",
-      "dias_sin_compra": 40,
+      "dias_sin_compra": 41,
       "ultima_compra_2026": "2026-06-11",
       "riesgo": "Bajo"
     },
@@ -12310,7 +12317,7 @@
       "meses_activos_2026": 4,
       "meses_activos_2025": 6,
       "ultima_compra": "2026-07-13",
-      "dias_sin_compra": 8,
+      "dias_sin_compra": 9,
       "ultima_compra_2026": "2026-07-13",
       "riesgo": "Bajo"
     },
@@ -12328,7 +12335,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-07-17",
-      "dias_sin_compra": 4,
+      "dias_sin_compra": 5,
       "ultima_compra_2026": "2026-07-17",
       "riesgo": "Bajo"
     },
@@ -12346,7 +12353,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 6,
       "ultima_compra": "2026-04-20",
-      "dias_sin_compra": 92,
+      "dias_sin_compra": 93,
       "ultima_compra_2026": "2026-04-20",
       "riesgo": "Medio"
     },
@@ -12364,7 +12371,7 @@
       "meses_activos_2026": 2,
       "meses_activos_2025": 5,
       "ultima_compra": "2026-03-10",
-      "dias_sin_compra": 133,
+      "dias_sin_compra": 134,
       "ultima_compra_2026": "2026-03-10",
       "riesgo": "Alto"
     },
@@ -12382,7 +12389,7 @@
       "meses_activos_2026": 2,
       "meses_activos_2025": 3,
       "ultima_compra": "2026-04-22",
-      "dias_sin_compra": 90,
+      "dias_sin_compra": 91,
       "ultima_compra_2026": "2026-04-22",
       "riesgo": "Medio"
     },
@@ -12400,7 +12407,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-07-09",
-      "dias_sin_compra": 12,
+      "dias_sin_compra": 13,
       "ultima_compra_2026": "2026-07-09",
       "riesgo": "Bajo"
     },
@@ -12418,7 +12425,7 @@
       "meses_activos_2026": 2,
       "meses_activos_2025": 9,
       "ultima_compra": "2026-07-14",
-      "dias_sin_compra": 7,
+      "dias_sin_compra": 8,
       "ultima_compra_2026": "2026-07-14",
       "riesgo": "Bajo"
     },
@@ -12436,7 +12443,7 @@
       "meses_activos_2026": 6,
       "meses_activos_2025": 11,
       "ultima_compra": "2026-06-17",
-      "dias_sin_compra": 34,
+      "dias_sin_compra": 35,
       "ultima_compra_2026": "2026-06-17",
       "riesgo": "Bajo"
     },
@@ -12454,7 +12461,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-01-12",
-      "dias_sin_compra": 190,
+      "dias_sin_compra": 191,
       "ultima_compra_2026": "2026-01-12",
       "riesgo": "Alto"
     },
@@ -12472,7 +12479,7 @@
       "meses_activos_2026": 5,
       "meses_activos_2025": 11,
       "ultima_compra": "2026-07-02",
-      "dias_sin_compra": 19,
+      "dias_sin_compra": 20,
       "ultima_compra_2026": "2026-07-02",
       "riesgo": "Bajo"
     },
@@ -12490,7 +12497,7 @@
       "meses_activos_2026": 5,
       "meses_activos_2025": 3,
       "ultima_compra": "2026-07-09",
-      "dias_sin_compra": 12,
+      "dias_sin_compra": 13,
       "ultima_compra_2026": "2026-07-09",
       "riesgo": "Bajo"
     },
@@ -12508,7 +12515,7 @@
       "meses_activos_2026": 6,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-07-07",
-      "dias_sin_compra": 14,
+      "dias_sin_compra": 15,
       "ultima_compra_2026": "2026-07-07",
       "riesgo": "Bajo"
     },
@@ -12526,7 +12533,7 @@
       "meses_activos_2026": 5,
       "meses_activos_2025": 3,
       "ultima_compra": "2026-05-19",
-      "dias_sin_compra": 63,
+      "dias_sin_compra": 64,
       "ultima_compra_2026": "2026-05-19",
       "riesgo": "Medio"
     },
@@ -12544,7 +12551,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 9,
       "ultima_compra": "2026-07-02",
-      "dias_sin_compra": 19,
+      "dias_sin_compra": 20,
       "ultima_compra_2026": "2026-07-02",
       "riesgo": "Bajo"
     },
@@ -12562,7 +12569,7 @@
       "meses_activos_2026": 3,
       "meses_activos_2025": 3,
       "ultima_compra": "2026-06-22",
-      "dias_sin_compra": 29,
+      "dias_sin_compra": 30,
       "ultima_compra_2026": "2026-06-22",
       "riesgo": "Bajo"
     },
@@ -12580,7 +12587,7 @@
       "meses_activos_2026": 5,
       "meses_activos_2025": 7,
       "ultima_compra": "2026-06-23",
-      "dias_sin_compra": 28,
+      "dias_sin_compra": 29,
       "ultima_compra_2026": "2026-06-23",
       "riesgo": "Bajo"
     },
@@ -12598,7 +12605,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 11,
       "ultima_compra": "2026-07-02",
-      "dias_sin_compra": 19,
+      "dias_sin_compra": 20,
       "ultima_compra_2026": "2026-07-02",
       "riesgo": "Bajo"
     },
@@ -12616,7 +12623,7 @@
       "meses_activos_2026": 6,
       "meses_activos_2025": 11,
       "ultima_compra": "2026-07-16",
-      "dias_sin_compra": 5,
+      "dias_sin_compra": 6,
       "ultima_compra_2026": "2026-07-16",
       "riesgo": "Bajo"
     },
@@ -12634,7 +12641,7 @@
       "meses_activos_2026": 2,
       "meses_activos_2025": 8,
       "ultima_compra": "2026-07-14",
-      "dias_sin_compra": 7,
+      "dias_sin_compra": 8,
       "ultima_compra_2026": "2026-07-14",
       "riesgo": "Bajo"
     },
@@ -12652,7 +12659,7 @@
       "meses_activos_2026": 5,
       "meses_activos_2025": 10,
       "ultima_compra": "2026-06-08",
-      "dias_sin_compra": 43,
+      "dias_sin_compra": 44,
       "ultima_compra_2026": "2026-06-08",
       "riesgo": "Bajo"
     },
@@ -12670,7 +12677,7 @@
       "meses_activos_2026": 2,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-07-10",
-      "dias_sin_compra": 11,
+      "dias_sin_compra": 12,
       "ultima_compra_2026": "2026-07-10",
       "riesgo": "Bajo"
     },
@@ -12688,7 +12695,7 @@
       "meses_activos_2026": 4,
       "meses_activos_2025": 10,
       "ultima_compra": "2026-06-25",
-      "dias_sin_compra": 26,
+      "dias_sin_compra": 27,
       "ultima_compra_2026": "2026-06-25",
       "riesgo": "Bajo"
     },
@@ -12706,7 +12713,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 3,
       "ultima_compra": "2026-01-30",
-      "dias_sin_compra": 172,
+      "dias_sin_compra": 173,
       "ultima_compra_2026": "2026-01-30",
       "riesgo": "Alto"
     },
@@ -12724,7 +12731,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-01-30",
-      "dias_sin_compra": 172,
+      "dias_sin_compra": 173,
       "ultima_compra_2026": "2026-01-30",
       "riesgo": "Alto"
     },
@@ -12742,7 +12749,7 @@
       "meses_activos_2026": 6,
       "meses_activos_2025": 9,
       "ultima_compra": "2026-07-10",
-      "dias_sin_compra": 11,
+      "dias_sin_compra": 12,
       "ultima_compra_2026": "2026-07-10",
       "riesgo": "Bajo"
     },
@@ -12760,7 +12767,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-04-21",
-      "dias_sin_compra": 91,
+      "dias_sin_compra": 92,
       "ultima_compra_2026": "2026-04-21",
       "riesgo": "Medio"
     },
@@ -12778,7 +12785,7 @@
       "meses_activos_2026": 2,
       "meses_activos_2025": 3,
       "ultima_compra": "2026-03-12",
-      "dias_sin_compra": 131,
+      "dias_sin_compra": 132,
       "ultima_compra_2026": "2026-03-12",
       "riesgo": "Alto"
     },
@@ -12796,7 +12803,7 @@
       "meses_activos_2026": 3,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-06-30",
-      "dias_sin_compra": 21,
+      "dias_sin_compra": 22,
       "ultima_compra_2026": "2026-06-30",
       "riesgo": "Bajo"
     },
@@ -12814,7 +12821,7 @@
       "meses_activos_2026": 3,
       "meses_activos_2025": 2,
       "ultima_compra": "2026-06-10",
-      "dias_sin_compra": 41,
+      "dias_sin_compra": 42,
       "ultima_compra_2026": "2026-06-10",
       "riesgo": "Bajo"
     },
@@ -12832,7 +12839,7 @@
       "meses_activos_2026": 3,
       "meses_activos_2025": 4,
       "ultima_compra": "2026-05-20",
-      "dias_sin_compra": 62,
+      "dias_sin_compra": 63,
       "ultima_compra_2026": "2026-05-20",
       "riesgo": "Medio"
     },
@@ -12850,7 +12857,7 @@
       "meses_activos_2026": 4,
       "meses_activos_2025": 5,
       "ultima_compra": "2026-04-06",
-      "dias_sin_compra": 106,
+      "dias_sin_compra": 107,
       "ultima_compra_2026": "2026-04-06",
       "riesgo": "Medio"
     },
@@ -12868,7 +12875,7 @@
       "meses_activos_2026": 6,
       "meses_activos_2025": 3,
       "ultima_compra": "2026-06-17",
-      "dias_sin_compra": 34,
+      "dias_sin_compra": 35,
       "ultima_compra_2026": "2026-06-17",
       "riesgo": "Bajo"
     },
@@ -12886,7 +12893,7 @@
       "meses_activos_2026": 2,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-03-12",
-      "dias_sin_compra": 131,
+      "dias_sin_compra": 132,
       "ultima_compra_2026": "2026-03-12",
       "riesgo": "Alto"
     },
@@ -12904,7 +12911,7 @@
       "meses_activos_2026": 5,
       "meses_activos_2025": 7,
       "ultima_compra": "2026-07-10",
-      "dias_sin_compra": 11,
+      "dias_sin_compra": 12,
       "ultima_compra_2026": "2026-07-10",
       "riesgo": "Bajo"
     },
@@ -12922,7 +12929,7 @@
       "meses_activos_2026": 5,
       "meses_activos_2025": 9,
       "ultima_compra": "2026-07-02",
-      "dias_sin_compra": 19,
+      "dias_sin_compra": 20,
       "ultima_compra_2026": "2026-07-02",
       "riesgo": "Bajo"
     },
@@ -12940,7 +12947,7 @@
       "meses_activos_2026": 4,
       "meses_activos_2025": 6,
       "ultima_compra": "2026-07-09",
-      "dias_sin_compra": 12,
+      "dias_sin_compra": 13,
       "ultima_compra_2026": "2026-07-09",
       "riesgo": "Bajo"
     },
@@ -12958,7 +12965,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-01-31",
-      "dias_sin_compra": 171,
+      "dias_sin_compra": 172,
       "ultima_compra_2026": "2026-01-31",
       "riesgo": "Alto"
     },
@@ -12976,7 +12983,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 3,
       "ultima_compra": "2026-07-16",
-      "dias_sin_compra": 5,
+      "dias_sin_compra": 6,
       "ultima_compra_2026": "2026-07-16",
       "riesgo": "Bajo"
     },
@@ -12994,7 +13001,7 @@
       "meses_activos_2026": 4,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-06-24",
-      "dias_sin_compra": 27,
+      "dias_sin_compra": 28,
       "ultima_compra_2026": "2026-06-24",
       "riesgo": "Bajo"
     },
@@ -13012,7 +13019,7 @@
       "meses_activos_2026": 6,
       "meses_activos_2025": 4,
       "ultima_compra": "2026-07-14",
-      "dias_sin_compra": 7,
+      "dias_sin_compra": 8,
       "ultima_compra_2026": "2026-07-14",
       "riesgo": "Bajo"
     },
@@ -13030,7 +13037,7 @@
       "meses_activos_2026": 2,
       "meses_activos_2025": 7,
       "ultima_compra": "2026-04-23",
-      "dias_sin_compra": 89,
+      "dias_sin_compra": 90,
       "ultima_compra_2026": "2026-04-23",
       "riesgo": "Medio"
     },
@@ -13048,7 +13055,7 @@
       "meses_activos_2026": 4,
       "meses_activos_2025": 9,
       "ultima_compra": "2026-07-16",
-      "dias_sin_compra": 5,
+      "dias_sin_compra": 6,
       "ultima_compra_2026": "2026-07-16",
       "riesgo": "Bajo"
     },
@@ -13066,7 +13073,7 @@
       "meses_activos_2026": 2,
       "meses_activos_2025": 4,
       "ultima_compra": "2026-04-21",
-      "dias_sin_compra": 91,
+      "dias_sin_compra": 92,
       "ultima_compra_2026": "2026-04-21",
       "riesgo": "Medio"
     },
@@ -13084,7 +13091,7 @@
       "meses_activos_2026": 5,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-05-22",
-      "dias_sin_compra": 60,
+      "dias_sin_compra": 61,
       "ultima_compra_2026": "2026-05-22",
       "riesgo": "Medio"
     },
@@ -13102,7 +13109,7 @@
       "meses_activos_2026": 3,
       "meses_activos_2025": 4,
       "ultima_compra": "2026-04-24",
-      "dias_sin_compra": 88,
+      "dias_sin_compra": 89,
       "ultima_compra_2026": "2026-04-24",
       "riesgo": "Medio"
     },
@@ -13120,7 +13127,7 @@
       "meses_activos_2026": 2,
       "meses_activos_2025": 9,
       "ultima_compra": "2026-06-08",
-      "dias_sin_compra": 43,
+      "dias_sin_compra": 44,
       "ultima_compra_2026": "2026-06-08",
       "riesgo": "Bajo"
     },
@@ -13138,7 +13145,7 @@
       "meses_activos_2026": 5,
       "meses_activos_2025": 10,
       "ultima_compra": "2026-06-23",
-      "dias_sin_compra": 28,
+      "dias_sin_compra": 29,
       "ultima_compra_2026": "2026-06-23",
       "riesgo": "Bajo"
     },
@@ -13156,7 +13163,7 @@
       "meses_activos_2026": 2,
       "meses_activos_2025": 4,
       "ultima_compra": "2026-06-30",
-      "dias_sin_compra": 21,
+      "dias_sin_compra": 22,
       "ultima_compra_2026": "2026-06-30",
       "riesgo": "Bajo"
     },
@@ -13174,7 +13181,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-07-07",
-      "dias_sin_compra": 14,
+      "dias_sin_compra": 15,
       "ultima_compra_2026": "2026-07-07",
       "riesgo": "Bajo"
     },
@@ -13192,7 +13199,7 @@
       "meses_activos_2026": 6,
       "meses_activos_2025": 9,
       "ultima_compra": "2026-07-10",
-      "dias_sin_compra": 11,
+      "dias_sin_compra": 12,
       "ultima_compra_2026": "2026-07-10",
       "riesgo": "Bajo"
     },
@@ -13210,7 +13217,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-04-27",
-      "dias_sin_compra": 85,
+      "dias_sin_compra": 86,
       "ultima_compra_2026": "2026-04-27",
       "riesgo": "Medio"
     },
@@ -13228,7 +13235,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 5,
       "ultima_compra": "2026-02-26",
-      "dias_sin_compra": 145,
+      "dias_sin_compra": 146,
       "ultima_compra_2026": "2026-02-26",
       "riesgo": "Alto"
     },
@@ -13246,7 +13253,7 @@
       "meses_activos_2026": 6,
       "meses_activos_2025": 8,
       "ultima_compra": "2026-07-14",
-      "dias_sin_compra": 7,
+      "dias_sin_compra": 8,
       "ultima_compra_2026": "2026-07-14",
       "riesgo": "Bajo"
     },
@@ -13264,7 +13271,7 @@
       "meses_activos_2026": 4,
       "meses_activos_2025": 5,
       "ultima_compra": "2026-07-16",
-      "dias_sin_compra": 5,
+      "dias_sin_compra": 6,
       "ultima_compra_2026": "2026-07-16",
       "riesgo": "Bajo"
     },
@@ -13282,7 +13289,7 @@
       "meses_activos_2026": 3,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-07-02",
-      "dias_sin_compra": 19,
+      "dias_sin_compra": 20,
       "ultima_compra_2026": "2026-07-02",
       "riesgo": "Bajo"
     },
@@ -13300,7 +13307,7 @@
       "meses_activos_2026": 6,
       "meses_activos_2025": 11,
       "ultima_compra": "2026-07-14",
-      "dias_sin_compra": 7,
+      "dias_sin_compra": 8,
       "ultima_compra_2026": "2026-07-14",
       "riesgo": "Bajo"
     },
@@ -13318,7 +13325,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-05-27",
-      "dias_sin_compra": 55,
+      "dias_sin_compra": 56,
       "ultima_compra_2026": "2026-05-27",
       "riesgo": "Bajo"
     },
@@ -13336,7 +13343,7 @@
       "meses_activos_2026": 3,
       "meses_activos_2025": 5,
       "ultima_compra": "2026-07-14",
-      "dias_sin_compra": 7,
+      "dias_sin_compra": 8,
       "ultima_compra_2026": "2026-07-14",
       "riesgo": "Bajo"
     },
@@ -13354,7 +13361,7 @@
       "meses_activos_2026": 2,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-05-29",
-      "dias_sin_compra": 53,
+      "dias_sin_compra": 54,
       "ultima_compra_2026": "2026-05-29",
       "riesgo": "Bajo"
     },
@@ -13372,7 +13379,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-05-13",
-      "dias_sin_compra": 69,
+      "dias_sin_compra": 70,
       "ultima_compra_2026": "2026-05-13",
       "riesgo": "Medio"
     },
@@ -13390,7 +13397,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 10,
       "ultima_compra": "2026-07-20",
-      "dias_sin_compra": 1,
+      "dias_sin_compra": 2,
       "ultima_compra_2026": "2026-07-20",
       "riesgo": "Bajo"
     },
@@ -13408,7 +13415,7 @@
       "meses_activos_2026": 3,
       "meses_activos_2025": 4,
       "ultima_compra": "2026-05-28",
-      "dias_sin_compra": 54,
+      "dias_sin_compra": 55,
       "ultima_compra_2026": "2026-05-28",
       "riesgo": "Bajo"
     },
@@ -13426,7 +13433,7 @@
       "meses_activos_2026": 6,
       "meses_activos_2025": 2,
       "ultima_compra": "2026-07-02",
-      "dias_sin_compra": 19,
+      "dias_sin_compra": 20,
       "ultima_compra_2026": "2026-07-02",
       "riesgo": "Bajo"
     },
@@ -13444,7 +13451,7 @@
       "meses_activos_2026": 4,
       "meses_activos_2025": 3,
       "ultima_compra": "2026-06-09",
-      "dias_sin_compra": 42,
+      "dias_sin_compra": 43,
       "ultima_compra_2026": "2026-06-09",
       "riesgo": "Bajo"
     },
@@ -13462,7 +13469,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-05-28",
-      "dias_sin_compra": 54,
+      "dias_sin_compra": 55,
       "ultima_compra_2026": "2026-05-28",
       "riesgo": "Bajo"
     },
@@ -13480,7 +13487,7 @@
       "meses_activos_2026": 5,
       "meses_activos_2025": 5,
       "ultima_compra": "2026-06-12",
-      "dias_sin_compra": 39,
+      "dias_sin_compra": 40,
       "ultima_compra_2026": "2026-06-12",
       "riesgo": "Bajo"
     },
@@ -13498,7 +13505,7 @@
       "meses_activos_2026": 3,
       "meses_activos_2025": 4,
       "ultima_compra": "2026-07-07",
-      "dias_sin_compra": 14,
+      "dias_sin_compra": 15,
       "ultima_compra_2026": "2026-07-07",
       "riesgo": "Bajo"
     },
@@ -13516,7 +13523,7 @@
       "meses_activos_2026": 5,
       "meses_activos_2025": 6,
       "ultima_compra": "2026-07-01",
-      "dias_sin_compra": 20,
+      "dias_sin_compra": 21,
       "ultima_compra_2026": "2026-07-01",
       "riesgo": "Bajo"
     },
@@ -13534,7 +13541,7 @@
       "meses_activos_2026": 5,
       "meses_activos_2025": 10,
       "ultima_compra": "2026-07-17",
-      "dias_sin_compra": 4,
+      "dias_sin_compra": 5,
       "ultima_compra_2026": "2026-07-17",
       "riesgo": "Bajo"
     },
@@ -13552,7 +13559,7 @@
       "meses_activos_2026": 2,
       "meses_activos_2025": 7,
       "ultima_compra": "2026-05-21",
-      "dias_sin_compra": 61,
+      "dias_sin_compra": 62,
       "ultima_compra_2026": "2026-05-21",
       "riesgo": "Medio"
     },
@@ -13570,7 +13577,7 @@
       "meses_activos_2026": 2,
       "meses_activos_2025": 6,
       "ultima_compra": "2026-07-03",
-      "dias_sin_compra": 18,
+      "dias_sin_compra": 19,
       "ultima_compra_2026": "2026-07-03",
       "riesgo": "Bajo"
     },
@@ -13588,7 +13595,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 5,
       "ultima_compra": "2026-07-17",
-      "dias_sin_compra": 4,
+      "dias_sin_compra": 5,
       "ultima_compra_2026": "2026-07-17",
       "riesgo": "Bajo"
     },
@@ -13606,7 +13613,7 @@
       "meses_activos_2026": 3,
       "meses_activos_2025": 8,
       "ultima_compra": "2026-06-04",
-      "dias_sin_compra": 47,
+      "dias_sin_compra": 48,
       "ultima_compra_2026": "2026-06-04",
       "riesgo": "Bajo"
     },
@@ -13624,7 +13631,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-07-16",
-      "dias_sin_compra": 5,
+      "dias_sin_compra": 6,
       "ultima_compra_2026": "2026-07-16",
       "riesgo": "Bajo"
     },
@@ -13642,7 +13649,7 @@
       "meses_activos_2026": 5,
       "meses_activos_2025": 8,
       "ultima_compra": "2026-07-02",
-      "dias_sin_compra": 19,
+      "dias_sin_compra": 20,
       "ultima_compra_2026": "2026-07-02",
       "riesgo": "Bajo"
     },
@@ -13660,7 +13667,7 @@
       "meses_activos_2026": 3,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-07-14",
-      "dias_sin_compra": 7,
+      "dias_sin_compra": 8,
       "ultima_compra_2026": "2026-07-14",
       "riesgo": "Bajo"
     },
@@ -13678,7 +13685,7 @@
       "meses_activos_2026": 6,
       "meses_activos_2025": 9,
       "ultima_compra": "2026-07-17",
-      "dias_sin_compra": 4,
+      "dias_sin_compra": 5,
       "ultima_compra_2026": "2026-07-17",
       "riesgo": "Bajo"
     },
@@ -13696,7 +13703,7 @@
       "meses_activos_2026": 3,
       "meses_activos_2025": 2,
       "ultima_compra": "2026-07-15",
-      "dias_sin_compra": 6,
+      "dias_sin_compra": 7,
       "ultima_compra_2026": "2026-07-15",
       "riesgo": "Bajo"
     },
@@ -13714,7 +13721,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-05-25",
-      "dias_sin_compra": 57,
+      "dias_sin_compra": 58,
       "ultima_compra_2026": "2026-05-25",
       "riesgo": "Bajo"
     },
@@ -13732,7 +13739,7 @@
       "meses_activos_2026": 2,
       "meses_activos_2025": 8,
       "ultima_compra": "2026-02-24",
-      "dias_sin_compra": 147,
+      "dias_sin_compra": 148,
       "ultima_compra_2026": "2026-02-24",
       "riesgo": "Alto"
     },
@@ -13750,7 +13757,7 @@
       "meses_activos_2026": 2,
       "meses_activos_2025": 6,
       "ultima_compra": "2026-04-09",
-      "dias_sin_compra": 103,
+      "dias_sin_compra": 104,
       "ultima_compra_2026": "2026-04-09",
       "riesgo": "Medio"
     },
@@ -13768,7 +13775,7 @@
       "meses_activos_2026": 4,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-07-10",
-      "dias_sin_compra": 11,
+      "dias_sin_compra": 12,
       "ultima_compra_2026": "2026-07-10",
       "riesgo": "Bajo"
     },
@@ -13786,7 +13793,7 @@
       "meses_activos_2026": 4,
       "meses_activos_2025": 9,
       "ultima_compra": "2026-06-30",
-      "dias_sin_compra": 21,
+      "dias_sin_compra": 22,
       "ultima_compra_2026": "2026-06-30",
       "riesgo": "Bajo"
     },
@@ -13804,7 +13811,7 @@
       "meses_activos_2026": 5,
       "meses_activos_2025": 10,
       "ultima_compra": "2026-06-25",
-      "dias_sin_compra": 26,
+      "dias_sin_compra": 27,
       "ultima_compra_2026": "2026-06-25",
       "riesgo": "Bajo"
     },
@@ -13822,7 +13829,7 @@
       "meses_activos_2026": 3,
       "meses_activos_2025": 8,
       "ultima_compra": "2026-06-11",
-      "dias_sin_compra": 40,
+      "dias_sin_compra": 41,
       "ultima_compra_2026": "2026-06-11",
       "riesgo": "Bajo"
     },
@@ -13840,7 +13847,7 @@
       "meses_activos_2026": 2,
       "meses_activos_2025": 9,
       "ultima_compra": "2026-07-02",
-      "dias_sin_compra": 19,
+      "dias_sin_compra": 20,
       "ultima_compra_2026": "2026-07-02",
       "riesgo": "Bajo"
     },
@@ -13858,7 +13865,7 @@
       "meses_activos_2026": 5,
       "meses_activos_2025": 8,
       "ultima_compra": "2026-07-02",
-      "dias_sin_compra": 19,
+      "dias_sin_compra": 20,
       "ultima_compra_2026": "2026-07-02",
       "riesgo": "Bajo"
     },
@@ -13876,7 +13883,7 @@
       "meses_activos_2026": 5,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-06-22",
-      "dias_sin_compra": 29,
+      "dias_sin_compra": 30,
       "ultima_compra_2026": "2026-06-22",
       "riesgo": "Bajo"
     },
@@ -13894,7 +13901,7 @@
       "meses_activos_2026": 5,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-07-17",
-      "dias_sin_compra": 4,
+      "dias_sin_compra": 5,
       "ultima_compra_2026": "2026-07-17",
       "riesgo": "Bajo"
     },
@@ -13912,7 +13919,7 @@
       "meses_activos_2026": 3,
       "meses_activos_2025": 6,
       "ultima_compra": "2026-06-22",
-      "dias_sin_compra": 29,
+      "dias_sin_compra": 30,
       "ultima_compra_2026": "2026-06-22",
       "riesgo": "Bajo"
     },
@@ -13930,7 +13937,7 @@
       "meses_activos_2026": 5,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-07-03",
-      "dias_sin_compra": 18,
+      "dias_sin_compra": 19,
       "ultima_compra_2026": "2026-07-03",
       "riesgo": "Bajo"
     },
@@ -13948,7 +13955,7 @@
       "meses_activos_2026": 4,
       "meses_activos_2025": 5,
       "ultima_compra": "2026-07-13",
-      "dias_sin_compra": 8,
+      "dias_sin_compra": 9,
       "ultima_compra_2026": "2026-07-13",
       "riesgo": "Bajo"
     },
@@ -13966,7 +13973,7 @@
       "meses_activos_2026": 4,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-07-08",
-      "dias_sin_compra": 13,
+      "dias_sin_compra": 14,
       "ultima_compra_2026": "2026-07-08",
       "riesgo": "Bajo"
     },
@@ -13984,7 +13991,7 @@
       "meses_activos_2026": 4,
       "meses_activos_2025": 6,
       "ultima_compra": "2026-07-02",
-      "dias_sin_compra": 19,
+      "dias_sin_compra": 20,
       "ultima_compra_2026": "2026-07-02",
       "riesgo": "Bajo"
     },
@@ -14002,7 +14009,7 @@
       "meses_activos_2026": 2,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-07-09",
-      "dias_sin_compra": 12,
+      "dias_sin_compra": 13,
       "ultima_compra_2026": "2026-07-09",
       "riesgo": "Bajo"
     },
@@ -14020,7 +14027,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 1,
       "ultima_compra": "2026-03-30",
-      "dias_sin_compra": 113,
+      "dias_sin_compra": 114,
       "ultima_compra_2026": "2026-03-30",
       "riesgo": "Medio"
     },
@@ -14038,7 +14045,7 @@
       "meses_activos_2026": 4,
       "meses_activos_2025": 9,
       "ultima_compra": "2026-07-02",
-      "dias_sin_compra": 19,
+      "dias_sin_compra": 20,
       "ultima_compra_2026": "2026-07-02",
       "riesgo": "Bajo"
     },
@@ -14056,7 +14063,7 @@
       "meses_activos_2026": 2,
       "meses_activos_2025": 2,
       "ultima_compra": "2026-07-02",
-      "dias_sin_compra": 19,
+      "dias_sin_compra": 20,
       "ultima_compra_2026": "2026-07-02",
       "riesgo": "Bajo"
     },
@@ -14074,7 +14081,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-07-16",
-      "dias_sin_compra": 5,
+      "dias_sin_compra": 6,
       "ultima_compra_2026": "2026-07-16",
       "riesgo": "Bajo"
     },
@@ -14092,7 +14099,7 @@
       "meses_activos_2026": 4,
       "meses_activos_2025": 6,
       "ultima_compra": "2026-06-26",
-      "dias_sin_compra": 25,
+      "dias_sin_compra": 26,
       "ultima_compra_2026": "2026-06-26",
       "riesgo": "Bajo"
     },
@@ -14110,7 +14117,7 @@
       "meses_activos_2026": 7,
       "meses_activos_2025": 8,
       "ultima_compra": "2026-07-09",
-      "dias_sin_compra": 12,
+      "dias_sin_compra": 13,
       "ultima_compra_2026": "2026-07-09",
       "riesgo": "Bajo"
     },
@@ -14128,7 +14135,7 @@
       "meses_activos_2026": 3,
       "meses_activos_2025": 1,
       "ultima_compra": "2026-06-26",
-      "dias_sin_compra": 25,
+      "dias_sin_compra": 26,
       "ultima_compra_2026": "2026-06-26",
       "riesgo": "Bajo"
     },
@@ -14146,7 +14153,7 @@
       "meses_activos_2026": 2,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-04-09",
-      "dias_sin_compra": 103,
+      "dias_sin_compra": 104,
       "ultima_compra_2026": "2026-04-09",
       "riesgo": "Medio"
     },
@@ -14164,7 +14171,7 @@
       "meses_activos_2026": 2,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-05-12",
-      "dias_sin_compra": 70,
+      "dias_sin_compra": 71,
       "ultima_compra_2026": "2026-05-12",
       "riesgo": "Medio"
     },
@@ -14182,7 +14189,7 @@
       "meses_activos_2026": 4,
       "meses_activos_2025": 6,
       "ultima_compra": "2026-07-13",
-      "dias_sin_compra": 8,
+      "dias_sin_compra": 9,
       "ultima_compra_2026": "2026-07-13",
       "riesgo": "Bajo"
     },
@@ -14200,7 +14207,7 @@
       "meses_activos_2026": 4,
       "meses_activos_2025": 6,
       "ultima_compra": "2026-06-03",
-      "dias_sin_compra": 48,
+      "dias_sin_compra": 49,
       "ultima_compra_2026": "2026-06-03",
       "riesgo": "Bajo"
     },
@@ -14218,7 +14225,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-05-29",
-      "dias_sin_compra": 53,
+      "dias_sin_compra": 54,
       "ultima_compra_2026": "2026-05-29",
       "riesgo": "Bajo"
     },
@@ -14236,7 +14243,7 @@
       "meses_activos_2026": 2,
       "meses_activos_2025": 2,
       "ultima_compra": "2026-04-29",
-      "dias_sin_compra": 83,
+      "dias_sin_compra": 84,
       "ultima_compra_2026": "2026-04-29",
       "riesgo": "Medio"
     },
@@ -14254,7 +14261,7 @@
       "meses_activos_2026": 4,
       "meses_activos_2025": 10,
       "ultima_compra": "2026-07-16",
-      "dias_sin_compra": 5,
+      "dias_sin_compra": 6,
       "ultima_compra_2026": "2026-07-16",
       "riesgo": "Bajo"
     },
@@ -14272,7 +14279,7 @@
       "meses_activos_2026": 4,
       "meses_activos_2025": 4,
       "ultima_compra": "2026-06-12",
-      "dias_sin_compra": 39,
+      "dias_sin_compra": 40,
       "ultima_compra_2026": "2026-06-12",
       "riesgo": "Bajo"
     },
@@ -14290,7 +14297,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 2,
       "ultima_compra": "2026-01-05",
-      "dias_sin_compra": 197,
+      "dias_sin_compra": 198,
       "ultima_compra_2026": "2026-01-05",
       "riesgo": "Alto"
     },
@@ -14308,7 +14315,7 @@
       "meses_activos_2026": 6,
       "meses_activos_2025": 3,
       "ultima_compra": "2026-07-13",
-      "dias_sin_compra": 8,
+      "dias_sin_compra": 9,
       "ultima_compra_2026": "2026-07-13",
       "riesgo": "Bajo"
     },
@@ -14326,7 +14333,7 @@
       "meses_activos_2026": 4,
       "meses_activos_2025": 3,
       "ultima_compra": "2026-04-14",
-      "dias_sin_compra": 98,
+      "dias_sin_compra": 99,
       "ultima_compra_2026": "2026-04-14",
       "riesgo": "Medio"
     },
@@ -14344,7 +14351,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-04-07",
-      "dias_sin_compra": 105,
+      "dias_sin_compra": 106,
       "ultima_compra_2026": "2026-04-07",
       "riesgo": "Medio"
     },
@@ -14362,7 +14369,7 @@
       "meses_activos_2026": 2,
       "meses_activos_2025": 1,
       "ultima_compra": "2026-05-13",
-      "dias_sin_compra": 69,
+      "dias_sin_compra": 70,
       "ultima_compra_2026": "2026-05-13",
       "riesgo": "Medio"
     },
@@ -14380,7 +14387,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-07-03",
-      "dias_sin_compra": 18,
+      "dias_sin_compra": 19,
       "ultima_compra_2026": "2026-07-03",
       "riesgo": "Bajo"
     },
@@ -14398,7 +14405,7 @@
       "meses_activos_2026": 4,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-07-20",
-      "dias_sin_compra": 1,
+      "dias_sin_compra": 2,
       "ultima_compra_2026": "2026-07-20",
       "riesgo": "Bajo"
     },
@@ -14416,7 +14423,7 @@
       "meses_activos_2026": 2,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-07-14",
-      "dias_sin_compra": 7,
+      "dias_sin_compra": 8,
       "ultima_compra_2026": "2026-07-14",
       "riesgo": "Bajo"
     },
@@ -14434,7 +14441,7 @@
       "meses_activos_2026": 2,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-06-05",
-      "dias_sin_compra": 46,
+      "dias_sin_compra": 47,
       "ultima_compra_2026": "2026-06-05",
       "riesgo": "Bajo"
     },
@@ -14452,7 +14459,7 @@
       "meses_activos_2026": 2,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-06-25",
-      "dias_sin_compra": 26,
+      "dias_sin_compra": 27,
       "ultima_compra_2026": "2026-06-25",
       "riesgo": "Bajo"
     },
@@ -14470,7 +14477,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-07-16",
-      "dias_sin_compra": 5,
+      "dias_sin_compra": 6,
       "ultima_compra_2026": "2026-07-16",
       "riesgo": "Bajo"
     },
@@ -14488,7 +14495,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-06-26",
-      "dias_sin_compra": 25,
+      "dias_sin_compra": 26,
       "ultima_compra_2026": "2026-06-26",
       "riesgo": "Bajo"
     },
@@ -14506,7 +14513,7 @@
       "meses_activos_2026": 4,
       "meses_activos_2025": 10,
       "ultima_compra": "2026-07-02",
-      "dias_sin_compra": 19,
+      "dias_sin_compra": 20,
       "ultima_compra_2026": "2026-07-02",
       "riesgo": "Bajo"
     },
@@ -14524,7 +14531,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 5,
       "ultima_compra": "2026-05-14",
-      "dias_sin_compra": 68,
+      "dias_sin_compra": 69,
       "ultima_compra_2026": "2026-05-14",
       "riesgo": "Medio"
     },
@@ -14542,7 +14549,7 @@
       "meses_activos_2026": 4,
       "meses_activos_2025": 3,
       "ultima_compra": "2026-04-16",
-      "dias_sin_compra": 96,
+      "dias_sin_compra": 97,
       "ultima_compra_2026": "2026-04-16",
       "riesgo": "Medio"
     },
@@ -14560,7 +14567,7 @@
       "meses_activos_2026": 3,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-06-11",
-      "dias_sin_compra": 40,
+      "dias_sin_compra": 41,
       "ultima_compra_2026": "2026-06-11",
       "riesgo": "Bajo"
     },
@@ -14578,7 +14585,7 @@
       "meses_activos_2026": 2,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-06-26",
-      "dias_sin_compra": 25,
+      "dias_sin_compra": 26,
       "ultima_compra_2026": "2026-06-26",
       "riesgo": "Bajo"
     },
@@ -14596,7 +14603,7 @@
       "meses_activos_2026": 2,
       "meses_activos_2025": 4,
       "ultima_compra": "2026-05-05",
-      "dias_sin_compra": 77,
+      "dias_sin_compra": 78,
       "ultima_compra_2026": "2026-05-05",
       "riesgo": "Medio"
     },
@@ -14614,7 +14621,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 3,
       "ultima_compra": "2026-01-26",
-      "dias_sin_compra": 176,
+      "dias_sin_compra": 177,
       "ultima_compra_2026": "2026-01-26",
       "riesgo": "Alto"
     },
@@ -14632,7 +14639,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-06-18",
-      "dias_sin_compra": 33,
+      "dias_sin_compra": 34,
       "ultima_compra_2026": "2026-06-18",
       "riesgo": "Bajo"
     },
@@ -14650,7 +14657,7 @@
       "meses_activos_2026": 2,
       "meses_activos_2025": 10,
       "ultima_compra": "2026-06-08",
-      "dias_sin_compra": 43,
+      "dias_sin_compra": 44,
       "ultima_compra_2026": "2026-06-08",
       "riesgo": "Bajo"
     },
@@ -14668,7 +14675,7 @@
       "meses_activos_2026": 4,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-06-25",
-      "dias_sin_compra": 26,
+      "dias_sin_compra": 27,
       "ultima_compra_2026": "2026-06-25",
       "riesgo": "Bajo"
     },
@@ -14686,7 +14693,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-02-27",
-      "dias_sin_compra": 144,
+      "dias_sin_compra": 145,
       "ultima_compra_2026": "2026-02-27",
       "riesgo": "Alto"
     },
@@ -14704,7 +14711,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 2,
       "ultima_compra": "2026-02-26",
-      "dias_sin_compra": 145,
+      "dias_sin_compra": 146,
       "ultima_compra_2026": "2026-02-26",
       "riesgo": "Alto"
     },
@@ -14722,7 +14729,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-06-24",
-      "dias_sin_compra": 27,
+      "dias_sin_compra": 28,
       "ultima_compra_2026": "2026-06-24",
       "riesgo": "Bajo"
     },
@@ -14740,7 +14747,7 @@
       "meses_activos_2026": 2,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-06-10",
-      "dias_sin_compra": 41,
+      "dias_sin_compra": 42,
       "ultima_compra_2026": "2026-06-10",
       "riesgo": "Bajo"
     },
@@ -14758,7 +14765,7 @@
       "meses_activos_2026": 3,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-05-26",
-      "dias_sin_compra": 56,
+      "dias_sin_compra": 57,
       "ultima_compra_2026": "2026-05-26",
       "riesgo": "Bajo"
     },
@@ -14776,7 +14783,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-03-18",
-      "dias_sin_compra": 125,
+      "dias_sin_compra": 126,
       "ultima_compra_2026": "2026-03-18",
       "riesgo": "Alto"
     },
@@ -14794,7 +14801,7 @@
       "meses_activos_2026": 3,
       "meses_activos_2025": 5,
       "ultima_compra": "2026-06-04",
-      "dias_sin_compra": 47,
+      "dias_sin_compra": 48,
       "ultima_compra_2026": "2026-06-04",
       "riesgo": "Bajo"
     },
@@ -14812,7 +14819,7 @@
       "meses_activos_2026": 2,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-06-18",
-      "dias_sin_compra": 33,
+      "dias_sin_compra": 34,
       "ultima_compra_2026": "2026-06-18",
       "riesgo": "Bajo"
     },
@@ -14830,7 +14837,7 @@
       "meses_activos_2026": 2,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-02-25",
-      "dias_sin_compra": 146,
+      "dias_sin_compra": 147,
       "ultima_compra_2026": "2026-02-25",
       "riesgo": "Alto"
     },
@@ -14848,7 +14855,7 @@
       "meses_activos_2026": 4,
       "meses_activos_2025": 2,
       "ultima_compra": "2026-06-30",
-      "dias_sin_compra": 21,
+      "dias_sin_compra": 22,
       "ultima_compra_2026": "2026-06-30",
       "riesgo": "Bajo"
     },
@@ -14866,7 +14873,7 @@
       "meses_activos_2026": 3,
       "meses_activos_2025": 5,
       "ultima_compra": "2026-05-28",
-      "dias_sin_compra": 54,
+      "dias_sin_compra": 55,
       "ultima_compra_2026": "2026-05-28",
       "riesgo": "Bajo"
     },
@@ -14884,7 +14891,7 @@
       "meses_activos_2026": 3,
       "meses_activos_2025": 2,
       "ultima_compra": "2026-03-31",
-      "dias_sin_compra": 112,
+      "dias_sin_compra": 113,
       "ultima_compra_2026": "2026-03-31",
       "riesgo": "Medio"
     },
@@ -14902,7 +14909,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 11,
       "ultima_compra": "2026-01-22",
-      "dias_sin_compra": 180,
+      "dias_sin_compra": 181,
       "ultima_compra_2026": "2026-01-22",
       "riesgo": "Alto"
     },
@@ -14920,7 +14927,7 @@
       "meses_activos_2026": 2,
       "meses_activos_2025": 7,
       "ultima_compra": "2026-05-12",
-      "dias_sin_compra": 70,
+      "dias_sin_compra": 71,
       "ultima_compra_2026": "2026-05-12",
       "riesgo": "Medio"
     },
@@ -14938,7 +14945,7 @@
       "meses_activos_2026": 6,
       "meses_activos_2025": 10,
       "ultima_compra": "2026-07-06",
-      "dias_sin_compra": 15,
+      "dias_sin_compra": 16,
       "ultima_compra_2026": "2026-07-06",
       "riesgo": "Bajo"
     },
@@ -14956,7 +14963,7 @@
       "meses_activos_2026": 2,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-07-03",
-      "dias_sin_compra": 18,
+      "dias_sin_compra": 19,
       "ultima_compra_2026": "2026-07-03",
       "riesgo": "Bajo"
     },
@@ -14974,7 +14981,7 @@
       "meses_activos_2026": 3,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-07-13",
-      "dias_sin_compra": 8,
+      "dias_sin_compra": 9,
       "ultima_compra_2026": "2026-07-13",
       "riesgo": "Bajo"
     },
@@ -14992,7 +14999,7 @@
       "meses_activos_2026": 2,
       "meses_activos_2025": 2,
       "ultima_compra": "2026-06-09",
-      "dias_sin_compra": 42,
+      "dias_sin_compra": 43,
       "ultima_compra_2026": "2026-06-09",
       "riesgo": "Bajo"
     },
@@ -15010,7 +15017,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 10,
       "ultima_compra": "2026-02-26",
-      "dias_sin_compra": 145,
+      "dias_sin_compra": 146,
       "ultima_compra_2026": "2026-02-26",
       "riesgo": "Alto"
     },
@@ -15028,7 +15035,7 @@
       "meses_activos_2026": 2,
       "meses_activos_2025": 4,
       "ultima_compra": "2026-06-29",
-      "dias_sin_compra": 22,
+      "dias_sin_compra": 23,
       "ultima_compra_2026": "2026-06-29",
       "riesgo": "Bajo"
     },
@@ -15046,7 +15053,7 @@
       "meses_activos_2026": 2,
       "meses_activos_2025": 2,
       "ultima_compra": "2026-06-30",
-      "dias_sin_compra": 21,
+      "dias_sin_compra": 22,
       "ultima_compra_2026": "2026-06-30",
       "riesgo": "Bajo"
     },
@@ -15064,7 +15071,7 @@
       "meses_activos_2026": 4,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-07-16",
-      "dias_sin_compra": 5,
+      "dias_sin_compra": 6,
       "ultima_compra_2026": "2026-07-16",
       "riesgo": "Bajo"
     },
@@ -15082,7 +15089,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 3,
       "ultima_compra": "2026-01-14",
-      "dias_sin_compra": 188,
+      "dias_sin_compra": 189,
       "ultima_compra_2026": "2026-01-14",
       "riesgo": "Alto"
     },
@@ -15100,7 +15107,7 @@
       "meses_activos_2026": 4,
       "meses_activos_2025": 2,
       "ultima_compra": "2026-07-20",
-      "dias_sin_compra": 1,
+      "dias_sin_compra": 2,
       "ultima_compra_2026": "2026-07-20",
       "riesgo": "Bajo"
     },
@@ -15118,7 +15125,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-01-22",
-      "dias_sin_compra": 180,
+      "dias_sin_compra": 181,
       "ultima_compra_2026": "2026-01-22",
       "riesgo": "Alto"
     },
@@ -15136,7 +15143,7 @@
       "meses_activos_2026": 5,
       "meses_activos_2025": 8,
       "ultima_compra": "2026-07-10",
-      "dias_sin_compra": 11,
+      "dias_sin_compra": 12,
       "ultima_compra_2026": "2026-07-10",
       "riesgo": "Bajo"
     },
@@ -15154,7 +15161,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 6,
       "ultima_compra": "2026-01-23",
-      "dias_sin_compra": 179,
+      "dias_sin_compra": 180,
       "ultima_compra_2026": "2026-01-23",
       "riesgo": "Alto"
     },
@@ -15172,7 +15179,7 @@
       "meses_activos_2026": 2,
       "meses_activos_2025": 10,
       "ultima_compra": "2026-02-19",
-      "dias_sin_compra": 152,
+      "dias_sin_compra": 153,
       "ultima_compra_2026": "2026-02-19",
       "riesgo": "Alto"
     },
@@ -15190,7 +15197,7 @@
       "meses_activos_2026": 3,
       "meses_activos_2025": 3,
       "ultima_compra": "2026-07-14",
-      "dias_sin_compra": 7,
+      "dias_sin_compra": 8,
       "ultima_compra_2026": "2026-07-14",
       "riesgo": "Bajo"
     },
@@ -15208,7 +15215,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-06-26",
-      "dias_sin_compra": 25,
+      "dias_sin_compra": 26,
       "ultima_compra_2026": "2026-06-26",
       "riesgo": "Bajo"
     },
@@ -15226,7 +15233,7 @@
       "meses_activos_2026": 2,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-07-10",
-      "dias_sin_compra": 11,
+      "dias_sin_compra": 12,
       "ultima_compra_2026": "2026-07-10",
       "riesgo": "Bajo"
     },
@@ -15244,7 +15251,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-05-06",
-      "dias_sin_compra": 76,
+      "dias_sin_compra": 77,
       "ultima_compra_2026": "2026-05-06",
       "riesgo": "Medio"
     },
@@ -15262,7 +15269,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 12,
       "ultima_compra": "2026-01-22",
-      "dias_sin_compra": 180,
+      "dias_sin_compra": 181,
       "ultima_compra_2026": "2026-01-22",
       "riesgo": "Alto"
     },
@@ -15280,7 +15287,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 9,
       "ultima_compra": "2026-01-29",
-      "dias_sin_compra": 173,
+      "dias_sin_compra": 174,
       "ultima_compra_2026": "2026-01-29",
       "riesgo": "Alto"
     },
@@ -15298,7 +15305,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 4,
       "ultima_compra": "2026-03-30",
-      "dias_sin_compra": 113,
+      "dias_sin_compra": 114,
       "ultima_compra_2026": "2026-03-30",
       "riesgo": "Medio"
     },
@@ -15316,7 +15323,7 @@
       "meses_activos_2026": 2,
       "meses_activos_2025": 5,
       "ultima_compra": "2026-05-29",
-      "dias_sin_compra": 53,
+      "dias_sin_compra": 54,
       "ultima_compra_2026": "2026-05-29",
       "riesgo": "Bajo"
     },
@@ -15334,7 +15341,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-04-21",
-      "dias_sin_compra": 91,
+      "dias_sin_compra": 92,
       "ultima_compra_2026": "2026-04-21",
       "riesgo": "Medio"
     },
@@ -15352,7 +15359,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-02-25",
-      "dias_sin_compra": 146,
+      "dias_sin_compra": 147,
       "ultima_compra_2026": "2026-02-25",
       "riesgo": "Alto"
     },
@@ -15370,7 +15377,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 3,
       "ultima_compra": "2026-07-15",
-      "dias_sin_compra": 6,
+      "dias_sin_compra": 7,
       "ultima_compra_2026": "2026-07-15",
       "riesgo": "Bajo"
     },
@@ -15388,7 +15395,7 @@
       "meses_activos_2026": 2,
       "meses_activos_2025": 3,
       "ultima_compra": "2026-06-08",
-      "dias_sin_compra": 43,
+      "dias_sin_compra": 44,
       "ultima_compra_2026": "2026-06-08",
       "riesgo": "Bajo"
     },
@@ -15406,7 +15413,7 @@
       "meses_activos_2026": 2,
       "meses_activos_2025": 5,
       "ultima_compra": "2026-06-15",
-      "dias_sin_compra": 36,
+      "dias_sin_compra": 37,
       "ultima_compra_2026": "2026-06-15",
       "riesgo": "Bajo"
     },
@@ -15424,7 +15431,7 @@
       "meses_activos_2026": 2,
       "meses_activos_2025": 4,
       "ultima_compra": "2026-07-17",
-      "dias_sin_compra": 4,
+      "dias_sin_compra": 5,
       "ultima_compra_2026": "2026-07-17",
       "riesgo": "Bajo"
     },
@@ -15442,7 +15449,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-06-12",
-      "dias_sin_compra": 39,
+      "dias_sin_compra": 40,
       "ultima_compra_2026": "2026-06-12",
       "riesgo": "Bajo"
     },
@@ -15460,7 +15467,7 @@
       "meses_activos_2026": 3,
       "meses_activos_2025": 6,
       "ultima_compra": "2026-06-02",
-      "dias_sin_compra": 49,
+      "dias_sin_compra": 50,
       "ultima_compra_2026": "2026-06-02",
       "riesgo": "Bajo"
     },
@@ -15478,7 +15485,7 @@
       "meses_activos_2026": 4,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-07-03",
-      "dias_sin_compra": 18,
+      "dias_sin_compra": 19,
       "ultima_compra_2026": "2026-07-03",
       "riesgo": "Bajo"
     },
@@ -15496,7 +15503,7 @@
       "meses_activos_2026": 4,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-07-10",
-      "dias_sin_compra": 11,
+      "dias_sin_compra": 12,
       "ultima_compra_2026": "2026-07-10",
       "riesgo": "Bajo"
     },
@@ -15514,7 +15521,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 2,
       "ultima_compra": "2026-06-18",
-      "dias_sin_compra": 33,
+      "dias_sin_compra": 34,
       "ultima_compra_2026": "2026-06-18",
       "riesgo": "Bajo"
     },
@@ -15532,7 +15539,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-05-07",
-      "dias_sin_compra": 75,
+      "dias_sin_compra": 76,
       "ultima_compra_2026": "2026-05-07",
       "riesgo": "Medio"
     },
@@ -15550,7 +15557,7 @@
       "meses_activos_2026": 2,
       "meses_activos_2025": 3,
       "ultima_compra": "2026-06-10",
-      "dias_sin_compra": 41,
+      "dias_sin_compra": 42,
       "ultima_compra_2026": "2026-06-10",
       "riesgo": "Bajo"
     },
@@ -15568,7 +15575,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 1,
       "ultima_compra": "2026-04-27",
-      "dias_sin_compra": 85,
+      "dias_sin_compra": 86,
       "ultima_compra_2026": "2026-04-27",
       "riesgo": "Medio"
     },
@@ -15586,7 +15593,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 2,
       "ultima_compra": "2026-04-30",
-      "dias_sin_compra": 82,
+      "dias_sin_compra": 83,
       "ultima_compra_2026": "2026-04-30",
       "riesgo": "Medio"
     },
@@ -15604,7 +15611,7 @@
       "meses_activos_2026": 3,
       "meses_activos_2025": 2,
       "ultima_compra": "2026-07-09",
-      "dias_sin_compra": 12,
+      "dias_sin_compra": 13,
       "ultima_compra_2026": "2026-07-09",
       "riesgo": "Bajo"
     },
@@ -15622,7 +15629,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-03-02",
-      "dias_sin_compra": 141,
+      "dias_sin_compra": 142,
       "ultima_compra_2026": "2026-03-02",
       "riesgo": "Alto"
     },
@@ -15640,7 +15647,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 1,
       "ultima_compra": "2026-06-23",
-      "dias_sin_compra": 28,
+      "dias_sin_compra": 29,
       "ultima_compra_2026": "2026-06-23",
       "riesgo": "Bajo"
     },
@@ -15658,7 +15665,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 2,
       "ultima_compra": "2026-03-23",
-      "dias_sin_compra": 120,
+      "dias_sin_compra": 121,
       "ultima_compra_2026": "2026-03-23",
       "riesgo": "Alto"
     },
@@ -15676,7 +15683,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-06-17",
-      "dias_sin_compra": 34,
+      "dias_sin_compra": 35,
       "ultima_compra_2026": "2026-06-17",
       "riesgo": "Bajo"
     },
@@ -15694,7 +15701,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 6,
       "ultima_compra": "2026-01-08",
-      "dias_sin_compra": 194,
+      "dias_sin_compra": 195,
       "ultima_compra_2026": "2026-01-08",
       "riesgo": "Alto"
     },
@@ -15712,7 +15719,7 @@
       "meses_activos_2026": 3,
       "meses_activos_2025": 6,
       "ultima_compra": "2026-06-10",
-      "dias_sin_compra": 41,
+      "dias_sin_compra": 42,
       "ultima_compra_2026": "2026-06-10",
       "riesgo": "Bajo"
     },
@@ -15730,7 +15737,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-02-13",
-      "dias_sin_compra": 158,
+      "dias_sin_compra": 159,
       "ultima_compra_2026": "2026-02-13",
       "riesgo": "Alto"
     },
@@ -15748,7 +15755,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 1,
       "ultima_compra": "2026-01-14",
-      "dias_sin_compra": 188,
+      "dias_sin_compra": 189,
       "ultima_compra_2026": "2026-01-14",
       "riesgo": "Alto"
     },
@@ -15766,7 +15773,7 @@
       "meses_activos_2026": 2,
       "meses_activos_2025": 3,
       "ultima_compra": "2026-07-15",
-      "dias_sin_compra": 6,
+      "dias_sin_compra": 7,
       "ultima_compra_2026": "2026-07-15",
       "riesgo": "Bajo"
     },
@@ -15784,7 +15791,7 @@
       "meses_activos_2026": 2,
       "meses_activos_2025": 3,
       "ultima_compra": "2026-05-18",
-      "dias_sin_compra": 64,
+      "dias_sin_compra": 65,
       "ultima_compra_2026": "2026-05-18",
       "riesgo": "Medio"
     },
@@ -15802,7 +15809,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-07-03",
-      "dias_sin_compra": 18,
+      "dias_sin_compra": 19,
       "ultima_compra_2026": "2026-07-03",
       "riesgo": "Bajo"
     },
@@ -15820,7 +15827,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-05-28",
-      "dias_sin_compra": 54,
+      "dias_sin_compra": 55,
       "ultima_compra_2026": "2026-05-28",
       "riesgo": "Bajo"
     },
@@ -15838,7 +15845,7 @@
       "meses_activos_2026": 2,
       "meses_activos_2025": 2,
       "ultima_compra": "2026-04-15",
-      "dias_sin_compra": 97,
+      "dias_sin_compra": 98,
       "ultima_compra_2026": "2026-04-15",
       "riesgo": "Medio"
     },
@@ -15856,7 +15863,7 @@
       "meses_activos_2026": 4,
       "meses_activos_2025": 1,
       "ultima_compra": "2026-05-28",
-      "dias_sin_compra": 54,
+      "dias_sin_compra": 55,
       "ultima_compra_2026": "2026-05-28",
       "riesgo": "Bajo"
     },
@@ -15874,7 +15881,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-02-10",
-      "dias_sin_compra": 161,
+      "dias_sin_compra": 162,
       "ultima_compra_2026": "2026-02-10",
       "riesgo": "Alto"
     },
@@ -15892,7 +15899,7 @@
       "meses_activos_2026": 3,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-04-10",
-      "dias_sin_compra": 102,
+      "dias_sin_compra": 103,
       "ultima_compra_2026": "2026-04-10",
       "riesgo": "Medio"
     },
@@ -15910,7 +15917,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 4,
       "ultima_compra": "2026-07-06",
-      "dias_sin_compra": 15,
+      "dias_sin_compra": 16,
       "ultima_compra_2026": "2026-07-06",
       "riesgo": "Bajo"
     },
@@ -15928,7 +15935,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 2,
       "ultima_compra": "2026-07-15",
-      "dias_sin_compra": 6,
+      "dias_sin_compra": 7,
       "ultima_compra_2026": "2026-07-15",
       "riesgo": "Bajo"
     },
@@ -15946,7 +15953,7 @@
       "meses_activos_2026": 2,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-05-13",
-      "dias_sin_compra": 69,
+      "dias_sin_compra": 70,
       "ultima_compra_2026": "2026-05-13",
       "riesgo": "Medio"
     },
@@ -15964,7 +15971,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-07-16",
-      "dias_sin_compra": 5,
+      "dias_sin_compra": 6,
       "ultima_compra_2026": "2026-07-16",
       "riesgo": "Bajo"
     },
@@ -15982,7 +15989,7 @@
       "meses_activos_2026": 2,
       "meses_activos_2025": 7,
       "ultima_compra": "2026-05-13",
-      "dias_sin_compra": 69,
+      "dias_sin_compra": 70,
       "ultima_compra_2026": "2026-05-13",
       "riesgo": "Medio"
     },
@@ -16000,7 +16007,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-06-26",
-      "dias_sin_compra": 25,
+      "dias_sin_compra": 26,
       "ultima_compra_2026": "2026-06-26",
       "riesgo": "Bajo"
     },
@@ -16018,7 +16025,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-03-09",
-      "dias_sin_compra": 134,
+      "dias_sin_compra": 135,
       "ultima_compra_2026": "2026-03-09",
       "riesgo": "Alto"
     },
@@ -16036,7 +16043,7 @@
       "meses_activos_2026": 4,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-07-03",
-      "dias_sin_compra": 18,
+      "dias_sin_compra": 19,
       "ultima_compra_2026": "2026-07-03",
       "riesgo": "Bajo"
     },
@@ -16054,7 +16061,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 6,
       "ultima_compra": "2026-05-25",
-      "dias_sin_compra": 57,
+      "dias_sin_compra": 58,
       "ultima_compra_2026": "2026-05-25",
       "riesgo": "Bajo"
     },
@@ -16072,7 +16079,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 4,
       "ultima_compra": "2026-05-29",
-      "dias_sin_compra": 53,
+      "dias_sin_compra": 54,
       "ultima_compra_2026": "2026-05-29",
       "riesgo": "Bajo"
     },
@@ -16090,7 +16097,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-07-09",
-      "dias_sin_compra": 12,
+      "dias_sin_compra": 13,
       "ultima_compra_2026": "2026-07-09",
       "riesgo": "Bajo"
     },
@@ -16108,7 +16115,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-07-07",
-      "dias_sin_compra": 14,
+      "dias_sin_compra": 15,
       "ultima_compra_2026": "2026-07-07",
       "riesgo": "Bajo"
     },
@@ -16126,7 +16133,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 3,
       "ultima_compra": "2026-03-19",
-      "dias_sin_compra": 124,
+      "dias_sin_compra": 125,
       "ultima_compra_2026": "2026-03-19",
       "riesgo": "Alto"
     },
@@ -16144,7 +16151,7 @@
       "meses_activos_2026": 3,
       "meses_activos_2025": 2,
       "ultima_compra": "2026-05-15",
-      "dias_sin_compra": 67,
+      "dias_sin_compra": 68,
       "ultima_compra_2026": "2026-05-15",
       "riesgo": "Medio"
     },
@@ -16162,7 +16169,7 @@
       "meses_activos_2026": 2,
       "meses_activos_2025": 7,
       "ultima_compra": "2026-06-09",
-      "dias_sin_compra": 42,
+      "dias_sin_compra": 43,
       "ultima_compra_2026": "2026-06-09",
       "riesgo": "Bajo"
     },
@@ -16180,7 +16187,7 @@
       "meses_activos_2026": 4,
       "meses_activos_2025": 3,
       "ultima_compra": "2026-07-03",
-      "dias_sin_compra": 18,
+      "dias_sin_compra": 19,
       "ultima_compra_2026": "2026-07-03",
       "riesgo": "Bajo"
     },
@@ -16198,7 +16205,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 2,
       "ultima_compra": "2026-02-26",
-      "dias_sin_compra": 145,
+      "dias_sin_compra": 146,
       "ultima_compra_2026": "2026-02-26",
       "riesgo": "Alto"
     },
@@ -16216,7 +16223,7 @@
       "meses_activos_2026": 3,
       "meses_activos_2025": 1,
       "ultima_compra": "2026-07-09",
-      "dias_sin_compra": 12,
+      "dias_sin_compra": 13,
       "ultima_compra_2026": "2026-07-09",
       "riesgo": "Bajo"
     },
@@ -16234,7 +16241,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 1,
       "ultima_compra": "2026-06-10",
-      "dias_sin_compra": 41,
+      "dias_sin_compra": 42,
       "ultima_compra_2026": "2026-06-10",
       "riesgo": "Bajo"
     },
@@ -16252,7 +16259,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-05-15",
-      "dias_sin_compra": 67,
+      "dias_sin_compra": 68,
       "ultima_compra_2026": "2026-05-15",
       "riesgo": "Medio"
     },
@@ -16270,7 +16277,7 @@
       "meses_activos_2026": 3,
       "meses_activos_2025": 2,
       "ultima_compra": "2026-06-23",
-      "dias_sin_compra": 28,
+      "dias_sin_compra": 29,
       "ultima_compra_2026": "2026-06-23",
       "riesgo": "Bajo"
     },
@@ -16288,7 +16295,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-02-17",
-      "dias_sin_compra": 154,
+      "dias_sin_compra": 155,
       "ultima_compra_2026": "2026-02-17",
       "riesgo": "Alto"
     },
@@ -16306,7 +16313,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 2,
       "ultima_compra": "2026-06-29",
-      "dias_sin_compra": 22,
+      "dias_sin_compra": 23,
       "ultima_compra_2026": "2026-06-29",
       "riesgo": "Bajo"
     },
@@ -16324,7 +16331,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 1,
       "ultima_compra": "2026-03-13",
-      "dias_sin_compra": 130,
+      "dias_sin_compra": 131,
       "ultima_compra_2026": "2026-03-13",
       "riesgo": "Alto"
     },
@@ -16342,7 +16349,7 @@
       "meses_activos_2026": 2,
       "meses_activos_2025": 1,
       "ultima_compra": "2026-06-05",
-      "dias_sin_compra": 46,
+      "dias_sin_compra": 47,
       "ultima_compra_2026": "2026-06-05",
       "riesgo": "Bajo"
     },
@@ -16360,7 +16367,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-07-17",
-      "dias_sin_compra": 4,
+      "dias_sin_compra": 5,
       "ultima_compra_2026": "2026-07-17",
       "riesgo": "Bajo"
     },
@@ -16378,7 +16385,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-05-22",
-      "dias_sin_compra": 60,
+      "dias_sin_compra": 61,
       "ultima_compra_2026": "2026-05-22",
       "riesgo": "Medio"
     },
@@ -16396,7 +16403,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 2,
       "ultima_compra": "2026-04-30",
-      "dias_sin_compra": 82,
+      "dias_sin_compra": 83,
       "ultima_compra_2026": "2026-04-30",
       "riesgo": "Medio"
     },
@@ -16414,7 +16421,7 @@
       "meses_activos_2026": 2,
       "meses_activos_2025": 1,
       "ultima_compra": "2026-05-26",
-      "dias_sin_compra": 56,
+      "dias_sin_compra": 57,
       "ultima_compra_2026": "2026-05-26",
       "riesgo": "Bajo"
     },
@@ -16432,7 +16439,7 @@
       "meses_activos_2026": 2,
       "meses_activos_2025": 5,
       "ultima_compra": "2026-04-10",
-      "dias_sin_compra": 102,
+      "dias_sin_compra": 103,
       "ultima_compra_2026": "2026-04-10",
       "riesgo": "Medio"
     },
@@ -16450,7 +16457,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-06-30",
-      "dias_sin_compra": 21,
+      "dias_sin_compra": 22,
       "ultima_compra_2026": "2026-06-30",
       "riesgo": "Bajo"
     },
@@ -16468,7 +16475,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 2,
       "ultima_compra": "2026-03-13",
-      "dias_sin_compra": 130,
+      "dias_sin_compra": 131,
       "ultima_compra_2026": "2026-03-13",
       "riesgo": "Alto"
     },
@@ -16486,7 +16493,7 @@
       "meses_activos_2026": 2,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-04-21",
-      "dias_sin_compra": 91,
+      "dias_sin_compra": 92,
       "ultima_compra_2026": "2026-04-21",
       "riesgo": "Medio"
     },
@@ -16504,7 +16511,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-07-17",
-      "dias_sin_compra": 4,
+      "dias_sin_compra": 5,
       "ultima_compra_2026": "2026-07-17",
       "riesgo": "Bajo"
     },
@@ -16522,7 +16529,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 1,
       "ultima_compra": "2026-02-19",
-      "dias_sin_compra": 152,
+      "dias_sin_compra": 153,
       "ultima_compra_2026": "2026-02-19",
       "riesgo": "Alto"
     },
@@ -16540,7 +16547,7 @@
       "meses_activos_2026": 4,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-07-02",
-      "dias_sin_compra": 19,
+      "dias_sin_compra": 20,
       "ultima_compra_2026": "2026-07-02",
       "riesgo": "Bajo"
     },
@@ -16558,7 +16565,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 1,
       "ultima_compra": "2026-03-05",
-      "dias_sin_compra": 138,
+      "dias_sin_compra": 139,
       "ultima_compra_2026": "2026-03-05",
       "riesgo": "Alto"
     },
@@ -16576,7 +16583,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-04-23",
-      "dias_sin_compra": 89,
+      "dias_sin_compra": 90,
       "ultima_compra_2026": "2026-04-23",
       "riesgo": "Medio"
     },
@@ -16584,7 +16591,7 @@
       "cliente_num": "1547",
       "cliente_nombre": "OFELIA PEREZ ORTEGA",
       "agente": "EDWIN HERNANDEZ",
-      "status": "Activo",
+      "status": "Perdido",
       "origen": "Activo",
       "ventas_2026": 1148.0533,
       "ventas_2025": 6271.7098000000005,
@@ -16594,9 +16601,9 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 2,
       "ultima_compra": "2026-03-24",
-      "dias_sin_compra": 119,
+      "dias_sin_compra": 120,
       "ultima_compra_2026": "2026-03-24",
-      "riesgo": "Medio"
+      "riesgo": "Alto"
     },
     {
       "cliente_num": "824",
@@ -16612,7 +16619,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 3,
       "ultima_compra": "2026-01-19",
-      "dias_sin_compra": 183,
+      "dias_sin_compra": 184,
       "ultima_compra_2026": "2026-01-19",
       "riesgo": "Alto"
     },
@@ -16630,7 +16637,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-05-12",
-      "dias_sin_compra": 70,
+      "dias_sin_compra": 71,
       "ultima_compra_2026": "2026-05-12",
       "riesgo": "Medio"
     },
@@ -16648,7 +16655,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-03-12",
-      "dias_sin_compra": 131,
+      "dias_sin_compra": 132,
       "ultima_compra_2026": "2026-03-12",
       "riesgo": "Alto"
     },
@@ -16666,7 +16673,7 @@
       "meses_activos_2026": 2,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-04-09",
-      "dias_sin_compra": 103,
+      "dias_sin_compra": 104,
       "ultima_compra_2026": "2026-04-09",
       "riesgo": "Medio"
     },
@@ -16684,7 +16691,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 2,
       "ultima_compra": "2026-05-28",
-      "dias_sin_compra": 54,
+      "dias_sin_compra": 55,
       "ultima_compra_2026": "2026-05-28",
       "riesgo": "Bajo"
     },
@@ -16702,7 +16709,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-03-10",
-      "dias_sin_compra": 133,
+      "dias_sin_compra": 134,
       "ultima_compra_2026": "2026-03-10",
       "riesgo": "Alto"
     },
@@ -16720,7 +16727,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-06-22",
-      "dias_sin_compra": 29,
+      "dias_sin_compra": 30,
       "ultima_compra_2026": "2026-06-22",
       "riesgo": "Bajo"
     },
@@ -16738,7 +16745,7 @@
       "meses_activos_2026": 2,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-07-17",
-      "dias_sin_compra": 4,
+      "dias_sin_compra": 5,
       "ultima_compra_2026": "2026-07-17",
       "riesgo": "Bajo"
     },
@@ -16756,7 +16763,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 1,
       "ultima_compra": "2026-02-20",
-      "dias_sin_compra": 151,
+      "dias_sin_compra": 152,
       "ultima_compra_2026": "2026-02-20",
       "riesgo": "Alto"
     },
@@ -16774,7 +16781,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 1,
       "ultima_compra": "2026-06-24",
-      "dias_sin_compra": 27,
+      "dias_sin_compra": 28,
       "ultima_compra_2026": "2026-06-24",
       "riesgo": "Bajo"
     },
@@ -16792,7 +16799,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-05-18",
-      "dias_sin_compra": 64,
+      "dias_sin_compra": 65,
       "ultima_compra_2026": "2026-05-18",
       "riesgo": "Medio"
     },
@@ -16810,7 +16817,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 4,
       "ultima_compra": "2026-04-10",
-      "dias_sin_compra": 102,
+      "dias_sin_compra": 103,
       "ultima_compra_2026": "2026-04-10",
       "riesgo": "Medio"
     },
@@ -16828,7 +16835,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 5,
       "ultima_compra": "2026-05-27",
-      "dias_sin_compra": 55,
+      "dias_sin_compra": 56,
       "ultima_compra_2026": "2026-05-27",
       "riesgo": "Bajo"
     },
@@ -16846,7 +16853,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-05-25",
-      "dias_sin_compra": 57,
+      "dias_sin_compra": 58,
       "ultima_compra_2026": "2026-05-25",
       "riesgo": "Bajo"
     },
@@ -16864,7 +16871,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 4,
       "ultima_compra": "2026-03-18",
-      "dias_sin_compra": 125,
+      "dias_sin_compra": 126,
       "ultima_compra_2026": "2026-03-18",
       "riesgo": "Alto"
     },
@@ -16882,7 +16889,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 2,
       "ultima_compra": "2026-01-21",
-      "dias_sin_compra": 181,
+      "dias_sin_compra": 182,
       "ultima_compra_2026": "2026-01-21",
       "riesgo": "Alto"
     },
@@ -16900,7 +16907,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-02-12",
-      "dias_sin_compra": 159,
+      "dias_sin_compra": 160,
       "ultima_compra_2026": "2026-02-12",
       "riesgo": "Alto"
     },
@@ -16918,7 +16925,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 3,
       "ultima_compra": "2026-05-29",
-      "dias_sin_compra": 53,
+      "dias_sin_compra": 54,
       "ultima_compra_2026": "2026-05-29",
       "riesgo": "Bajo"
     },
@@ -16936,7 +16943,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-03-17",
-      "dias_sin_compra": 126,
+      "dias_sin_compra": 127,
       "ultima_compra_2026": "2026-03-17",
       "riesgo": "Alto"
     },
@@ -16954,7 +16961,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 1,
       "ultima_compra": "2026-03-18",
-      "dias_sin_compra": 125,
+      "dias_sin_compra": 126,
       "ultima_compra_2026": "2026-03-18",
       "riesgo": "Alto"
     },
@@ -16972,7 +16979,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 2,
       "ultima_compra": "2026-02-06",
-      "dias_sin_compra": 165,
+      "dias_sin_compra": 166,
       "ultima_compra_2026": "2026-02-06",
       "riesgo": "Alto"
     },
@@ -16990,7 +16997,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-04-10",
-      "dias_sin_compra": 102,
+      "dias_sin_compra": 103,
       "ultima_compra_2026": "2026-04-10",
       "riesgo": "Medio"
     },
@@ -17008,7 +17015,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 6,
       "ultima_compra": "2026-06-02",
-      "dias_sin_compra": 49,
+      "dias_sin_compra": 50,
       "ultima_compra_2026": "2026-06-02",
       "riesgo": "Bajo"
     },
@@ -17026,7 +17033,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 3,
       "ultima_compra": "2026-04-28",
-      "dias_sin_compra": 84,
+      "dias_sin_compra": 85,
       "ultima_compra_2026": "2026-04-28",
       "riesgo": "Medio"
     },
@@ -17044,7 +17051,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-02-06",
-      "dias_sin_compra": 165,
+      "dias_sin_compra": 166,
       "ultima_compra_2026": "2026-02-06",
       "riesgo": "Alto"
     },
@@ -17062,7 +17069,7 @@
       "meses_activos_2026": 2,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-06-05",
-      "dias_sin_compra": 46,
+      "dias_sin_compra": 47,
       "ultima_compra_2026": "2026-06-05",
       "riesgo": "Bajo"
     },
@@ -17080,7 +17087,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-05-06",
-      "dias_sin_compra": 76,
+      "dias_sin_compra": 77,
       "ultima_compra_2026": "2026-05-06",
       "riesgo": "Medio"
     },
@@ -17098,7 +17105,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 5,
       "ultima_compra": "2026-02-03",
-      "dias_sin_compra": 168,
+      "dias_sin_compra": 169,
       "ultima_compra_2026": "2026-02-03",
       "riesgo": "Alto"
     },
@@ -17116,7 +17123,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 1,
       "ultima_compra": "2026-02-17",
-      "dias_sin_compra": 154,
+      "dias_sin_compra": 155,
       "ultima_compra_2026": "2026-02-17",
       "riesgo": "Alto"
     },
@@ -17134,7 +17141,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-01-19",
-      "dias_sin_compra": 183,
+      "dias_sin_compra": 184,
       "ultima_compra_2026": "2026-01-19",
       "riesgo": "Alto"
     },
@@ -17152,7 +17159,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-01-27",
-      "dias_sin_compra": 175,
+      "dias_sin_compra": 176,
       "ultima_compra_2026": "2026-01-27",
       "riesgo": "Alto"
     },
@@ -17170,7 +17177,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 1,
       "ultima_compra": "2026-01-16",
-      "dias_sin_compra": 186,
+      "dias_sin_compra": 187,
       "ultima_compra_2026": "2026-01-16",
       "riesgo": "Alto"
     },
@@ -17188,7 +17195,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-05-07",
-      "dias_sin_compra": 75,
+      "dias_sin_compra": 76,
       "ultima_compra_2026": "2026-05-07",
       "riesgo": "Medio"
     },
@@ -17206,7 +17213,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 8,
       "ultima_compra": "2026-03-26",
-      "dias_sin_compra": 117,
+      "dias_sin_compra": 118,
       "ultima_compra_2026": "2026-03-26",
       "riesgo": "Medio"
     },
@@ -17224,7 +17231,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 2,
       "ultima_compra": "2026-05-13",
-      "dias_sin_compra": 69,
+      "dias_sin_compra": 70,
       "ultima_compra_2026": "2026-05-13",
       "riesgo": "Medio"
     },
@@ -17242,7 +17249,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-06-09",
-      "dias_sin_compra": 42,
+      "dias_sin_compra": 43,
       "ultima_compra_2026": "2026-06-09",
       "riesgo": "Bajo"
     },
@@ -17260,7 +17267,7 @@
       "meses_activos_2026": 1,
       "meses_activos_2025": 0,
       "ultima_compra": "2026-04-17",
-      "dias_sin_compra": 95,
+      "dias_sin_compra": 96,
       "ultima_compra_2026": "2026-04-17",
       "riesgo": "Medio"
     },
@@ -17278,7 +17285,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 12,
       "ultima_compra": "2025-12-18",
-      "dias_sin_compra": 215,
+      "dias_sin_compra": 216,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -17296,7 +17303,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 1,
       "ultima_compra": "2025-07-21",
-      "dias_sin_compra": 365,
+      "dias_sin_compra": 366,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -17314,7 +17321,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 6,
       "ultima_compra": "2025-09-12",
-      "dias_sin_compra": 312,
+      "dias_sin_compra": 313,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -17332,7 +17339,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 2,
       "ultima_compra": "2025-07-14",
-      "dias_sin_compra": 372,
+      "dias_sin_compra": 373,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -17350,7 +17357,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 5,
       "ultima_compra": "2025-08-20",
-      "dias_sin_compra": 335,
+      "dias_sin_compra": 336,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -17368,7 +17375,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 10,
       "ultima_compra": "2025-12-18",
-      "dias_sin_compra": 215,
+      "dias_sin_compra": 216,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -17386,7 +17393,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 3,
       "ultima_compra": "2025-03-20",
-      "dias_sin_compra": 488,
+      "dias_sin_compra": 489,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -17404,7 +17411,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 1,
       "ultima_compra": "2025-06-27",
-      "dias_sin_compra": 389,
+      "dias_sin_compra": 390,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -17422,7 +17429,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 1,
       "ultima_compra": "2025-06-30",
-      "dias_sin_compra": 386,
+      "dias_sin_compra": 387,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -17440,7 +17447,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 1,
       "ultima_compra": "2025-09-26",
-      "dias_sin_compra": 298,
+      "dias_sin_compra": 299,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -17458,7 +17465,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 1,
       "ultima_compra": "2025-01-28",
-      "dias_sin_compra": 539,
+      "dias_sin_compra": 540,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -17476,7 +17483,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 1,
       "ultima_compra": "2025-07-28",
-      "dias_sin_compra": 358,
+      "dias_sin_compra": 359,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -17494,7 +17501,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 2,
       "ultima_compra": "2025-10-30",
-      "dias_sin_compra": 264,
+      "dias_sin_compra": 265,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -17512,7 +17519,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 4,
       "ultima_compra": "2025-12-01",
-      "dias_sin_compra": 232,
+      "dias_sin_compra": 233,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -17530,7 +17537,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 3,
       "ultima_compra": "2025-11-13",
-      "dias_sin_compra": 250,
+      "dias_sin_compra": 251,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -17548,7 +17555,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 5,
       "ultima_compra": "2025-12-24",
-      "dias_sin_compra": 209,
+      "dias_sin_compra": 210,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -17566,7 +17573,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 5,
       "ultima_compra": "2025-07-17",
-      "dias_sin_compra": 369,
+      "dias_sin_compra": 370,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -17584,7 +17591,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 1,
       "ultima_compra": "2025-12-18",
-      "dias_sin_compra": 215,
+      "dias_sin_compra": 216,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -17602,7 +17609,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 2,
       "ultima_compra": "2025-04-11",
-      "dias_sin_compra": 466,
+      "dias_sin_compra": 467,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -17620,7 +17627,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 1,
       "ultima_compra": "2025-10-30",
-      "dias_sin_compra": 264,
+      "dias_sin_compra": 265,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -17638,7 +17645,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 2,
       "ultima_compra": "2025-12-11",
-      "dias_sin_compra": 222,
+      "dias_sin_compra": 223,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -17656,7 +17663,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 8,
       "ultima_compra": "2025-11-27",
-      "dias_sin_compra": 236,
+      "dias_sin_compra": 237,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -17674,7 +17681,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 1,
       "ultima_compra": "2025-06-23",
-      "dias_sin_compra": 393,
+      "dias_sin_compra": 394,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -17692,7 +17699,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 9,
       "ultima_compra": "2025-09-29",
-      "dias_sin_compra": 295,
+      "dias_sin_compra": 296,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -17710,7 +17717,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 1,
       "ultima_compra": "2025-09-25",
-      "dias_sin_compra": 299,
+      "dias_sin_compra": 300,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -17728,7 +17735,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 7,
       "ultima_compra": "2025-08-21",
-      "dias_sin_compra": 334,
+      "dias_sin_compra": 335,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -17746,7 +17753,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 1,
       "ultima_compra": "2025-01-16",
-      "dias_sin_compra": 551,
+      "dias_sin_compra": 552,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -17764,7 +17771,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 6,
       "ultima_compra": "2025-08-29",
-      "dias_sin_compra": 326,
+      "dias_sin_compra": 327,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -17782,7 +17789,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 1,
       "ultima_compra": "2025-01-22",
-      "dias_sin_compra": 545,
+      "dias_sin_compra": 546,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -17800,7 +17807,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 3,
       "ultima_compra": "2025-11-04",
-      "dias_sin_compra": 259,
+      "dias_sin_compra": 260,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -17818,7 +17825,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 2,
       "ultima_compra": "2025-10-31",
-      "dias_sin_compra": 263,
+      "dias_sin_compra": 264,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -17836,7 +17843,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 1,
       "ultima_compra": "2025-11-27",
-      "dias_sin_compra": 236,
+      "dias_sin_compra": 237,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -17854,7 +17861,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 1,
       "ultima_compra": "2025-12-03",
-      "dias_sin_compra": 230,
+      "dias_sin_compra": 231,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -17872,7 +17879,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 1,
       "ultima_compra": "2025-12-05",
-      "dias_sin_compra": 228,
+      "dias_sin_compra": 229,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -17890,7 +17897,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 1,
       "ultima_compra": "2025-04-21",
-      "dias_sin_compra": 456,
+      "dias_sin_compra": 457,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -17908,7 +17915,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 1,
       "ultima_compra": "2025-04-21",
-      "dias_sin_compra": 456,
+      "dias_sin_compra": 457,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -17926,7 +17933,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 1,
       "ultima_compra": "2025-12-09",
-      "dias_sin_compra": 224,
+      "dias_sin_compra": 225,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -17944,7 +17951,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 5,
       "ultima_compra": "2025-12-29",
-      "dias_sin_compra": 204,
+      "dias_sin_compra": 205,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -17962,7 +17969,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 1,
       "ultima_compra": "2025-02-24",
-      "dias_sin_compra": 512,
+      "dias_sin_compra": 513,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -17980,7 +17987,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 8,
       "ultima_compra": "2025-08-25",
-      "dias_sin_compra": 330,
+      "dias_sin_compra": 331,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -17998,7 +18005,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 3,
       "ultima_compra": "2025-10-22",
-      "dias_sin_compra": 272,
+      "dias_sin_compra": 273,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -18016,7 +18023,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 1,
       "ultima_compra": "2025-12-12",
-      "dias_sin_compra": 221,
+      "dias_sin_compra": 222,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -18034,7 +18041,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 2,
       "ultima_compra": "2025-12-30",
-      "dias_sin_compra": 203,
+      "dias_sin_compra": 204,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -18052,7 +18059,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 1,
       "ultima_compra": "2025-12-10",
-      "dias_sin_compra": 223,
+      "dias_sin_compra": 224,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -18070,7 +18077,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 1,
       "ultima_compra": "2025-03-04",
-      "dias_sin_compra": 504,
+      "dias_sin_compra": 505,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -18088,7 +18095,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 10,
       "ultima_compra": "2025-11-26",
-      "dias_sin_compra": 237,
+      "dias_sin_compra": 238,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -18106,7 +18113,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 1,
       "ultima_compra": "2025-07-31",
-      "dias_sin_compra": 355,
+      "dias_sin_compra": 356,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -18124,7 +18131,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 2,
       "ultima_compra": "2025-03-31",
-      "dias_sin_compra": 477,
+      "dias_sin_compra": 478,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -18142,7 +18149,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 1,
       "ultima_compra": "2025-03-31",
-      "dias_sin_compra": 477,
+      "dias_sin_compra": 478,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -18160,7 +18167,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 2,
       "ultima_compra": "2025-09-10",
-      "dias_sin_compra": 314,
+      "dias_sin_compra": 315,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -18178,7 +18185,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 4,
       "ultima_compra": "2025-04-10",
-      "dias_sin_compra": 467,
+      "dias_sin_compra": 468,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -18196,7 +18203,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 1,
       "ultima_compra": "2025-06-12",
-      "dias_sin_compra": 404,
+      "dias_sin_compra": 405,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -18214,7 +18221,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 11,
       "ultima_compra": "2025-11-14",
-      "dias_sin_compra": 249,
+      "dias_sin_compra": 250,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -18232,7 +18239,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 2,
       "ultima_compra": "2025-10-17",
-      "dias_sin_compra": 277,
+      "dias_sin_compra": 278,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -18250,7 +18257,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 1,
       "ultima_compra": "2025-01-30",
-      "dias_sin_compra": 537,
+      "dias_sin_compra": 538,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -18268,7 +18275,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 1,
       "ultima_compra": "2025-02-04",
-      "dias_sin_compra": 532,
+      "dias_sin_compra": 533,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -18286,7 +18293,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 1,
       "ultima_compra": "2025-06-06",
-      "dias_sin_compra": 410,
+      "dias_sin_compra": 411,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -18304,7 +18311,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 7,
       "ultima_compra": "2025-11-24",
-      "dias_sin_compra": 239,
+      "dias_sin_compra": 240,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -18322,7 +18329,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 1,
       "ultima_compra": "2025-04-30",
-      "dias_sin_compra": 447,
+      "dias_sin_compra": 448,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -18340,7 +18347,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 5,
       "ultima_compra": "2025-07-25",
-      "dias_sin_compra": 361,
+      "dias_sin_compra": 362,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -18358,7 +18365,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 4,
       "ultima_compra": "2025-07-09",
-      "dias_sin_compra": 377,
+      "dias_sin_compra": 378,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -18376,7 +18383,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 10,
       "ultima_compra": "2025-12-23",
-      "dias_sin_compra": 210,
+      "dias_sin_compra": 211,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -18394,7 +18401,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 1,
       "ultima_compra": "2025-08-06",
-      "dias_sin_compra": 349,
+      "dias_sin_compra": 350,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -18412,7 +18419,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 1,
       "ultima_compra": "2025-02-07",
-      "dias_sin_compra": 529,
+      "dias_sin_compra": 530,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -18430,7 +18437,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 1,
       "ultima_compra": "2025-04-02",
-      "dias_sin_compra": 475,
+      "dias_sin_compra": 476,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -18448,7 +18455,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 4,
       "ultima_compra": "2025-07-22",
-      "dias_sin_compra": 364,
+      "dias_sin_compra": 365,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -18466,7 +18473,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 2,
       "ultima_compra": "2025-06-06",
-      "dias_sin_compra": 410,
+      "dias_sin_compra": 411,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -18484,7 +18491,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 9,
       "ultima_compra": "2025-12-24",
-      "dias_sin_compra": 209,
+      "dias_sin_compra": 210,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -18502,7 +18509,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 1,
       "ultima_compra": "2025-05-23",
-      "dias_sin_compra": 424,
+      "dias_sin_compra": 425,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -18520,7 +18527,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 2,
       "ultima_compra": "2025-05-20",
-      "dias_sin_compra": 427,
+      "dias_sin_compra": 428,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -18538,7 +18545,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 1,
       "ultima_compra": "2025-04-11",
-      "dias_sin_compra": 466,
+      "dias_sin_compra": 467,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -18556,7 +18563,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 4,
       "ultima_compra": "2025-11-18",
-      "dias_sin_compra": 245,
+      "dias_sin_compra": 246,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -18574,7 +18581,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 1,
       "ultima_compra": "2025-09-04",
-      "dias_sin_compra": 320,
+      "dias_sin_compra": 321,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -18592,7 +18599,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 7,
       "ultima_compra": "2025-10-21",
-      "dias_sin_compra": 273,
+      "dias_sin_compra": 274,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -18610,7 +18617,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 1,
       "ultima_compra": "2025-03-27",
-      "dias_sin_compra": 481,
+      "dias_sin_compra": 482,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -18628,7 +18635,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 1,
       "ultima_compra": "2025-07-11",
-      "dias_sin_compra": 375,
+      "dias_sin_compra": 376,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -18646,7 +18653,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 2,
       "ultima_compra": "2025-04-30",
-      "dias_sin_compra": 447,
+      "dias_sin_compra": 448,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -18664,7 +18671,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 1,
       "ultima_compra": "2025-01-30",
-      "dias_sin_compra": 537,
+      "dias_sin_compra": 538,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -18682,7 +18689,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 1,
       "ultima_compra": "2025-04-15",
-      "dias_sin_compra": 462,
+      "dias_sin_compra": 463,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -18700,7 +18707,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 5,
       "ultima_compra": "2025-11-14",
-      "dias_sin_compra": 249,
+      "dias_sin_compra": 250,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -18718,7 +18725,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 3,
       "ultima_compra": "2025-07-16",
-      "dias_sin_compra": 370,
+      "dias_sin_compra": 371,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -18736,7 +18743,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 9,
       "ultima_compra": "2025-10-21",
-      "dias_sin_compra": 273,
+      "dias_sin_compra": 274,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -18754,7 +18761,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 2,
       "ultima_compra": "2025-07-22",
-      "dias_sin_compra": 364,
+      "dias_sin_compra": 365,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -18772,7 +18779,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 9,
       "ultima_compra": "2025-09-18",
-      "dias_sin_compra": 306,
+      "dias_sin_compra": 307,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -18790,7 +18797,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 9,
       "ultima_compra": "2025-12-09",
-      "dias_sin_compra": 224,
+      "dias_sin_compra": 225,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -18808,7 +18815,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 1,
       "ultima_compra": "2025-08-11",
-      "dias_sin_compra": 344,
+      "dias_sin_compra": 345,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -18826,7 +18833,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 3,
       "ultima_compra": "2025-12-02",
-      "dias_sin_compra": 231,
+      "dias_sin_compra": 232,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -18844,7 +18851,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 4,
       "ultima_compra": "2025-09-26",
-      "dias_sin_compra": 298,
+      "dias_sin_compra": 299,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -18862,7 +18869,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 2,
       "ultima_compra": "2025-02-28",
-      "dias_sin_compra": 508,
+      "dias_sin_compra": 509,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -18880,7 +18887,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 4,
       "ultima_compra": "2025-05-19",
-      "dias_sin_compra": 428,
+      "dias_sin_compra": 429,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -18898,7 +18905,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 9,
       "ultima_compra": "2025-10-22",
-      "dias_sin_compra": 272,
+      "dias_sin_compra": 273,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -18916,7 +18923,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 1,
       "ultima_compra": "2025-03-18",
-      "dias_sin_compra": 490,
+      "dias_sin_compra": 491,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -18934,7 +18941,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 3,
       "ultima_compra": "2025-10-03",
-      "dias_sin_compra": 291,
+      "dias_sin_compra": 292,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -18952,7 +18959,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 3,
       "ultima_compra": "2025-06-06",
-      "dias_sin_compra": 410,
+      "dias_sin_compra": 411,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -18970,7 +18977,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 3,
       "ultima_compra": "2025-11-07",
-      "dias_sin_compra": 256,
+      "dias_sin_compra": 257,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -18988,7 +18995,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 2,
       "ultima_compra": "2025-05-23",
-      "dias_sin_compra": 424,
+      "dias_sin_compra": 425,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -19006,7 +19013,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 3,
       "ultima_compra": "2025-11-19",
-      "dias_sin_compra": 244,
+      "dias_sin_compra": 245,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -19024,7 +19031,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 1,
       "ultima_compra": "2025-05-08",
-      "dias_sin_compra": 439,
+      "dias_sin_compra": 440,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -19042,7 +19049,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 3,
       "ultima_compra": "2025-08-27",
-      "dias_sin_compra": 328,
+      "dias_sin_compra": 329,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -19060,7 +19067,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 6,
       "ultima_compra": "2025-10-03",
-      "dias_sin_compra": 291,
+      "dias_sin_compra": 292,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -19078,7 +19085,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 6,
       "ultima_compra": "2025-10-15",
-      "dias_sin_compra": 279,
+      "dias_sin_compra": 280,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -19096,7 +19103,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 1,
       "ultima_compra": "2025-06-06",
-      "dias_sin_compra": 410,
+      "dias_sin_compra": 411,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -19114,7 +19121,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 1,
       "ultima_compra": "2025-06-18",
-      "dias_sin_compra": 398,
+      "dias_sin_compra": 399,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -19132,7 +19139,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 2,
       "ultima_compra": "2025-07-03",
-      "dias_sin_compra": 383,
+      "dias_sin_compra": 384,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -19150,7 +19157,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 1,
       "ultima_compra": "2025-06-18",
-      "dias_sin_compra": 398,
+      "dias_sin_compra": 399,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -19168,7 +19175,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 1,
       "ultima_compra": "2025-06-20",
-      "dias_sin_compra": 396,
+      "dias_sin_compra": 397,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -19186,7 +19193,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 3,
       "ultima_compra": "2025-09-09",
-      "dias_sin_compra": 315,
+      "dias_sin_compra": 316,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -19204,7 +19211,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 1,
       "ultima_compra": "2025-06-23",
-      "dias_sin_compra": 393,
+      "dias_sin_compra": 394,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -19222,7 +19229,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 5,
       "ultima_compra": "2025-11-14",
-      "dias_sin_compra": 249,
+      "dias_sin_compra": 250,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -19240,7 +19247,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 2,
       "ultima_compra": "2025-08-08",
-      "dias_sin_compra": 347,
+      "dias_sin_compra": 348,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -19258,7 +19265,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 3,
       "ultima_compra": "2025-12-01",
-      "dias_sin_compra": 232,
+      "dias_sin_compra": 233,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -19276,7 +19283,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 3,
       "ultima_compra": "2025-12-11",
-      "dias_sin_compra": 222,
+      "dias_sin_compra": 223,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -19294,7 +19301,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 2,
       "ultima_compra": "2025-08-26",
-      "dias_sin_compra": 329,
+      "dias_sin_compra": 330,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -19312,7 +19319,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 1,
       "ultima_compra": "2025-08-20",
-      "dias_sin_compra": 335,
+      "dias_sin_compra": 336,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -19330,7 +19337,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 2,
       "ultima_compra": "2025-09-18",
-      "dias_sin_compra": 306,
+      "dias_sin_compra": 307,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -19348,7 +19355,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 2,
       "ultima_compra": "2025-11-04",
-      "dias_sin_compra": 259,
+      "dias_sin_compra": 260,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -19366,7 +19373,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 1,
       "ultima_compra": "2025-08-26",
-      "dias_sin_compra": 329,
+      "dias_sin_compra": 330,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -19384,7 +19391,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 2,
       "ultima_compra": "2025-11-18",
-      "dias_sin_compra": 245,
+      "dias_sin_compra": 246,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -19402,7 +19409,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 2,
       "ultima_compra": "2025-10-14",
-      "dias_sin_compra": 280,
+      "dias_sin_compra": 281,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -19420,7 +19427,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 1,
       "ultima_compra": "2025-09-18",
-      "dias_sin_compra": 306,
+      "dias_sin_compra": 307,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -19438,7 +19445,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 2,
       "ultima_compra": "2025-12-04",
-      "dias_sin_compra": 229,
+      "dias_sin_compra": 230,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -19456,7 +19463,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 3,
       "ultima_compra": "2025-12-22",
-      "dias_sin_compra": 211,
+      "dias_sin_compra": 212,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -19474,7 +19481,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 1,
       "ultima_compra": "2025-10-14",
-      "dias_sin_compra": 280,
+      "dias_sin_compra": 281,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -19492,7 +19499,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 1,
       "ultima_compra": "2025-10-14",
-      "dias_sin_compra": 280,
+      "dias_sin_compra": 281,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -19510,7 +19517,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 1,
       "ultima_compra": "2025-10-15",
-      "dias_sin_compra": 279,
+      "dias_sin_compra": 280,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -19528,7 +19535,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 1,
       "ultima_compra": "2025-10-23",
-      "dias_sin_compra": 271,
+      "dias_sin_compra": 272,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -19546,7 +19553,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 1,
       "ultima_compra": "2025-11-24",
-      "dias_sin_compra": 239,
+      "dias_sin_compra": 240,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -19564,7 +19571,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 2,
       "ultima_compra": "2025-12-11",
-      "dias_sin_compra": 222,
+      "dias_sin_compra": 223,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -19582,7 +19589,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 1,
       "ultima_compra": "2025-11-18",
-      "dias_sin_compra": 245,
+      "dias_sin_compra": 246,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -19600,7 +19607,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 1,
       "ultima_compra": "2025-12-03",
-      "dias_sin_compra": 230,
+      "dias_sin_compra": 231,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -19618,7 +19625,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 1,
       "ultima_compra": "2025-12-04",
-      "dias_sin_compra": 229,
+      "dias_sin_compra": 230,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -19636,7 +19643,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 1,
       "ultima_compra": "2025-12-11",
-      "dias_sin_compra": 222,
+      "dias_sin_compra": 223,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     },
@@ -19654,7 +19661,7 @@
       "meses_activos_2026": 0,
       "meses_activos_2025": 1,
       "ultima_compra": "2025-12-17",
-      "dias_sin_compra": 216,
+      "dias_sin_compra": 217,
       "ultima_compra_2026": null,
       "riesgo": "Alto"
     }
@@ -19706,7 +19713,7 @@
       "tipo": "danger",
       "categoria": "Clientes en Riesgo",
       "agente": null,
-      "mensaje": "191 clientes llevan más de 4 meses sin comprar.",
+      "mensaje": "193 clientes llevan más de 4 meses sin comprar.",
       "accion": "Contactar clientes en riesgo"
     },
     {

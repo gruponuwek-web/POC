@@ -22,6 +22,7 @@ const SHEETS = {
   incidencias:           { id: '1F9vgcHfA20dIm6caUZmH756fgSn562lCqoC0GdqgNRc', range: 'incidencias!A:Z' },
   oportunidadesOffline:  { id: '1F9vgcHfA20dIm6caUZmH756fgSn562lCqoC0GdqgNRc', range: 'oportunidades_offline!A:Z' },
   bscMetasPeor:          { id: '1F9vgcHfA20dIm6caUZmH756fgSn562lCqoC0GdqgNRc', range: 'bsc_metas_peor!A:Z' },
+  margenAge:             { id: '1F9vgcHfA20dIm6caUZmH756fgSn562lCqoC0GdqgNRc', range: 'marge_age!A:B' },
 };
 
 const outDir = path.join(__dirname, '..', 'src', 'data');
@@ -657,7 +658,7 @@ async function main() {
   const sheets = google.sheets({ version: 'v4', auth });
 
   console.log('📥 Descargando datos de Google Sheets...');
-  const [rawAnterior, rawActual, rawMetas, rawCartera, rawCliNR, rawEstratProd, rawVisitas, rawIncidencias, rawOportunidades, rawMetasPeor] = await Promise.all([
+  const [rawAnterior, rawActual, rawMetas, rawCartera, rawCliNR, rawEstratProd, rawVisitas, rawIncidencias, rawOportunidades, rawMetasPeor, rawMargenAge] = await Promise.all([
     getSheetData(sheets, SHEETS.ventasAnterior.id,        SHEETS.ventasAnterior.range),
     getSheetData(sheets, SHEETS.ventasActual.id,          SHEETS.ventasActual.range),
     getSheetData(sheets, SHEETS.metas.id,                 SHEETS.metas.range),
@@ -668,9 +669,20 @@ async function main() {
     getSheetData(sheets, SHEETS.incidencias.id,           SHEETS.incidencias.range),
     getSheetData(sheets, SHEETS.oportunidadesOffline.id,  SHEETS.oportunidadesOffline.range),
     getSheetData(sheets, SHEETS.bscMetasPeor.id,          SHEETS.bscMetasPeor.range),
+    // marge_age: col A = Agente, col B sin header = meta decimal (0.22 → 22%)
+    sheets.spreadsheets.values.get({ spreadsheetId: SHEETS.margenAge.id, range: SHEETS.margenAge.range, valueRenderOption: 'UNFORMATTED_VALUE' }).then(r => r.data.values || []),
   ]);
 
-  console.log(`✅ Datos: ${AÑO_ANTERIOR}=${rawAnterior.length} | ${AÑO_ACTUAL}=${rawActual.length} | metas=${rawMetas.length} | cartera=${rawCartera.length} | cliNR=${rawCliNR.length} | estratProd=${rawEstratProd.length} | visitas=${rawVisitas.length} | incidencias=${rawIncidencias.length} | oport=${rawOportunidades.length} | metasBSC=${rawMetasPeor.length}`);
+  // Parsear metas de margen por agente (lectura directa por índice — col B no tiene header)
+  const margenMetasPorAgente = {};
+  rawMargenAge.slice(1).forEach(row => {
+    if (!row[0] || row[1] === undefined) return;
+    const ag = normAgent(String(row[0]));
+    const meta = parseFloat(row[1]);
+    if (ag && !isNaN(meta)) margenMetasPorAgente[ag] = meta; // decimal: 0.22 = 22%
+  });
+
+  console.log(`✅ Datos: ${AÑO_ANTERIOR}=${rawAnterior.length} | ${AÑO_ACTUAL}=${rawActual.length} | metas=${rawMetas.length} | cartera=${rawCartera.length} | cliNR=${rawCliNR.length} | estratProd=${rawEstratProd.length} | visitas=${rawVisitas.length} | incidencias=${rawIncidencias.length} | oport=${rawOportunidades.length} | metasBSC=${rawMetasPeor.length} | margenAge=${Object.keys(margenMetasPorAgente).length}`);
 
   console.log('⚙️  Procesando ventas...');
   const ventas2025 = processVentas(rawAnterior, AÑO_ANTERIOR);
@@ -725,7 +737,8 @@ async function main() {
 
   const kpi2025 = buildKPIMensual(ventas2025c, 2025);
   const kpi2026 = buildKPIMensual(ventas2026c, 2026);
-  const kpiAgentes = buildKPIAgente(ventas2026c, ventas2025c, metas, cartera, clientesNR);
+  const kpiAgentes = buildKPIAgente(ventas2026c, ventas2025c, metas, cartera, clientesNR)
+    .map(a => ({ ...a, meta_margen_pct: margenMetasPorAgente[a.agente] ?? null }));
 
   // ── NR validados por mes y año para la gráfica ───────────────────────────────
   // Reutiliza los mismos Sets que se calculan abajo en resumen global
