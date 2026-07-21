@@ -96,31 +96,11 @@ export default function ChartVentasClientesNuevos({
       <div style={titleStyle}>🌱 Ventas de Clientes Nuevos</div>
 
       <div style={{ display:'flex', gap:0, alignItems:'stretch' }}>
-        {/* Sección 1 — Totales anuales estáticos */}
-        <div style={{ width:168, flexShrink:0, display:'flex', flexDirection:'column', justifyContent:'center', gap:8, paddingRight:20 }}>
-          <div style={{ fontSize:9, fontWeight:700, color:'#cbd5e1', textTransform:'uppercase', letterSpacing:'.08em', marginBottom:2 }}>Ventas anuales NR</div>
-          {[
-            { año:'2026', total:total26, ventaTotal:ventaTotalAnual2026, color:'#1a6cf0', trackBg:'#dbeafe' },
-            { año:'2025', total:total25, ventaTotal:ventaTotalAnual2025, color:'#94a3b8', trackBg:'#f1f5f9' }
-          ].map(({ año, total, ventaTotal, color, trackBg }) => {
-            const max = Math.max(total26, total25, 1)
-            const barPct = Math.round(total / max * 100)
-            const repPct = ventaTotal > 0 ? (total / ventaTotal * 100).toFixed(1) : '—'
-            return (
-              <div key={año} style={{ background:'#f8fafc', border:'1px solid #e2e8f0', borderRadius:8, padding:'9px 11px' }}>
-                <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:4 }}>
-                  <span style={{ fontSize:12, fontWeight:800, color, letterSpacing:'.01em' }}>{año}</span>
-                  <span style={{ fontSize:12, fontWeight:800, color:'#0f1f3d', fontVariantNumeric:'tabular-nums' }}>{fmt.moneda(total)}</span>
-                </div>
-                <div style={{ fontSize:10, color:'#94a3b8', marginBottom:6 }}>
-                  {repPct !== '—' ? `${repPct}% de la venta total` : '—'}
-                </div>
-                <div style={{ background:trackBg, borderRadius:4, height:6 }}>
-                  <div style={{ background:color, borderRadius:4, height:6, width:`${barPct}%` }} />
-                </div>
-              </div>
-            )
-          })}
+        {/* Sección 3 — Tiles (ahora a la izquierda) */}
+        <div style={{ display:'flex', flexDirection:'column', gap:10, width:170, flexShrink:0, justifyContent:'center', paddingRight:20 }}>
+          <Tile label={`Ventas clientes NR ${tileAño}`} value={fmt.moneda(tileTotal)} sub={pctDeVenta ? `${pctDeVenta}% de la venta` : null} color="#15803d" />
+          <Tile label={`Compras del periodo`}           value={tileClientes}              color="#1a6cf0" />
+          <Tile label="Promedio por compra"             value={fmt.moneda(tileTicket)}    color="#7c3aed" />
         </div>
 
         <div style={{ width:1, background:'#e2e8f0', alignSelf:'stretch', flexShrink:0 }} />
@@ -146,11 +126,31 @@ export default function ChartVentasClientesNuevos({
 
         <div style={{ width:1, background:'#e2e8f0', alignSelf:'stretch', flexShrink:0 }} />
 
-        {/* Sección 3 — Tiles */}
-        <div style={{ display:'flex', flexDirection:'column', gap:10, width:170, flexShrink:0, justifyContent:'center', paddingLeft:20 }}>
-          <Tile label={`Ventas clientes NR ${tileAño}`} value={fmt.moneda(tileTotal)} sub={pctDeVenta ? `${pctDeVenta}% de la venta` : null} color="#15803d" />
-          <Tile label={`Compras del periodo`}           value={tileClientes}              color="#1a6cf0" />
-          <Tile label="Promedio por compra"             value={fmt.moneda(tileTicket)}    color="#7c3aed" />
+        {/* Sección 1 — Totales anuales estáticos (ahora a la derecha) */}
+        <div style={{ width:168, flexShrink:0, display:'flex', flexDirection:'column', justifyContent:'center', gap:8, paddingLeft:20 }}>
+          <div style={{ fontSize:9, fontWeight:700, color:'#94a3b8', textTransform:'uppercase', letterSpacing:'.08em', marginBottom:2 }}>Ventas anuales NR</div>
+          {[
+            { año:'2026', total:total26, ventaTotal:ventaTotalAnual2026, color:'#1a6cf0', trackBg:'#dbeafe' },
+            { año:'2025', total:total25, ventaTotal:ventaTotalAnual2025, color:'#94a3b8', trackBg:'#f1f5f9' }
+          ].map(({ año, total, ventaTotal, color, trackBg }) => {
+            const max = Math.max(total26, total25, 1)
+            const barPct = Math.round(total / max * 100)
+            const repPct = ventaTotal > 0 ? (total / ventaTotal * 100).toFixed(1) : '—'
+            return (
+              <div key={año} style={{ background:'#f8fafc', border:'1px solid #e2e8f0', borderRadius:8, padding:'9px 11px' }}>
+                <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:4 }}>
+                  <span style={{ fontSize:12, fontWeight:800, color, letterSpacing:'.01em' }}>{año}</span>
+                  <span style={{ fontSize:12, fontWeight:800, color:'#0f1f3d', fontVariantNumeric:'tabular-nums' }}>{fmt.moneda(total)}</span>
+                </div>
+                <div style={{ fontSize:10, color:'#94a3b8', marginBottom:6 }}>
+                  {repPct !== '—' ? `${repPct}% de la venta total` : '—'}
+                </div>
+                <div style={{ background:trackBg, borderRadius:4, height:6 }}>
+                  <div style={{ background:color, borderRadius:4, height:6, width:`${barPct}%` }} />
+                </div>
+              </div>
+            )
+          })}
         </div>
       </div>
     </div>
