@@ -47,7 +47,7 @@ export default function TablaAgentes({ agentes, onSelectAgente, agenteSelecciona
     })
 
   const exportCSV = () => {
-    const cols = ['agente','ventas','meta','diferencia_meta','cumplimiento_pct','cartera_total','clientes_atendidos','cobertura_pct','clientes_nuevos','clientes_recuperados','tickets','ticket_promedio','costo','margen','margen_pct','meta_margen_pct']
+    const cols = ['agente','ventas','meta','diferencia_meta','cumplimiento_pct','cartera_total','clientes_atendidos','clientes_nuevos','clientes_recuperados','tickets','ticket_promedio','margen','margen_pct','meta_margen_pct']
     const header = cols.join(',')
     const rows = filtered.map(a => cols.map(c => a[c] ?? '').join(',')).join('\n')
     const blob = new Blob([header + '\n' + rows], { type: 'text/csv;charset=utf-8;' })
@@ -86,7 +86,7 @@ export default function TablaAgentes({ agentes, onSelectAgente, agenteSelecciona
         <table style={{ width:'100%',borderCollapse:'collapse' }}>
           <thead>
             <tr style={{ background:'#0f1f3d' }}>
-              {[['agente','Agente'],['ventas','Venta'],['meta','Meta'],['diferencia_meta','Dif. Meta'],['cumplimiento_pct','% Cumpl.'],['cartera_total','Cartera'],['clientes_atendidos','Atendidos'],['cobertura_pct','% Cob.'],['clientes_nuevos','Nuevos'],['clientes_recuperados','Recup.'],['tickets','Tickets'],['ticket_promedio','Tkt. Prom.'],['costo','Costo'],['margen','Margen $'],['margen_pct','Margen %'],['meta_margen_pct','Meta Mg.']].map(([col, label]) => (
+              {[['agente','Agente'],['ventas','Venta'],['meta','Meta'],['diferencia_meta','Dif. Meta'],['cumplimiento_pct','% Cumpl.'],['cartera_total','Cartera'],['clientes_atendidos','Atendidos'],['clientes_nuevos','Nuevos'],['clientes_recuperados','Recup.'],['tickets','Tickets'],['ticket_promedio','Tkt. Prom.'],['margen','Margen $'],['margen_pct','Margen %'],['meta_margen_pct','Meta Mg.']].map(([col, label]) => (
                 <th key={col} style={thStyle(col)} onClick={() => sort(col)}>
                   {label}{sortCol === col ? (sortDir > 0 ? ' ↑' : ' ↓') : ''}
                 </th>
@@ -121,16 +121,10 @@ export default function TablaAgentes({ agentes, onSelectAgente, agenteSelecciona
                   </td>
                   <td style={{ ...tdStyle, textAlign:'center' }}>{fmt.num(a.cartera_total)}</td>
                   <td style={{ ...tdStyle, textAlign:'center' }}>{fmt.num(a.clientes_atendidos)}</td>
-                  <td style={tdStyle}>
-                    <span style={{ background:semBg(semCob),color:semC(semCob),padding:'2px 8px',borderRadius:10,fontSize:11,fontWeight:700 }}>
-                      {fmt.pct(a.cobertura_pct)}
-                    </span>
-                  </td>
                   <td style={{ ...tdStyle, textAlign:'center', color:'#15803d', fontWeight:600 }}>{a.clientes_nuevos}</td>
                   <td style={{ ...tdStyle, textAlign:'center', color:'#1d4ed8', fontWeight:600 }}>{a.clientes_recuperados}</td>
                   <td style={{ ...tdStyle, textAlign:'center' }}>{fmt.num(a.tickets)}</td>
                   <td style={tdStyle}>{fmt.moneda(a.ticket_promedio)}</td>
-                  <td style={tdStyle}>{fmt.moneda(a.costo)}</td>
                   <td style={{ ...tdStyle, color:'#15803d' }}>{fmt.moneda(a.margen)}</td>
                   <td style={{ ...tdStyle, fontWeight:700 }}>
                     {(() => {
