@@ -348,8 +348,8 @@ export default function App() {
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
-            <AlertasPanel alertas={dataFiltrada.alertas} />
-            <LecturaTactica resumen={dataFiltrada.resumen} filtros={filtros} />
+            <AlertasPanel resumen={dataFiltrada.resumen} kpiAgentes={dataFiltrada.kpiAgentes} filtros={filtros} />
+            <LecturaTactica resumen={dataFiltrada.resumen} filtros={filtros} kpiAgentes={dataFiltrada.kpiAgentes} />
           </div>
 
           <CalidadDatos data={data} />
