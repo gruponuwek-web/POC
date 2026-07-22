@@ -17,6 +17,7 @@ import TablaClientes from './components/TablaClientes.jsx'
 import PanelIntel from './components/PanelIntel.jsx'
 import CalidadDatos from './components/CalidadDatos.jsx'
 import TablaClientesPerdidos from './components/TablaClientesPerdidos.jsx'
+import TablaTopProveedores from './components/TablaTopProveedores.jsx'
 import BalancedScorecard from './components/BalancedScorecard.jsx'
 
 export default function App() {
@@ -368,6 +369,10 @@ export default function App() {
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 16, marginBottom: 16 }}>
             <TablaAgentes agentes={dataFiltrada.kpiAgentes} onSelectAgente={(ag) => setFiltros(f => ({ ...f, agente: f.agente === ag ? 'todos' : ag }))} agenteSeleccionado={filtros.agente} filtros={filtros} />
+          </div>
+
+          <div style={{ marginBottom: 16 }}>
+            <TablaTopProveedores data={data} filtros={filtros} />
           </div>
 
           <div style={{ marginBottom: 16 }}>

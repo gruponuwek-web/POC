@@ -933,6 +933,50 @@ async function main() {
     kpi_agentes_por_proveedor[prov] = out
   })
 
+  // ── KPI por proveedor 2025 ────────────────────────────────────────────────────
+  const proveedores_2025 = [...new Set(
+    ventas2025c.filter(v => v.proveedor && !v.solo_presencia).map(v => v.proveedor)
+  )].sort()
+
+  const kpi_mensual_por_proveedor_2025 = {}
+  proveedores_2025.forEach(prov => {
+    const byMes = {}
+    ventas2025c.filter(v => v.proveedor === prov && !v.solo_presencia).forEach(v => {
+      if (!byMes[v.mes_num]) byMes[v.mes_num] = { ventas: 0, costo: 0, tset: new Set() }
+      byMes[v.mes_num].ventas += v.importe
+      byMes[v.mes_num].costo  += v.costo
+      byMes[v.mes_num].tset.add(v.folio_key)
+    })
+    kpi_mensual_por_proveedor_2025[prov] = Object.entries(byMes).map(([m, d]) => ({
+      mes_num: parseInt(m), mes_nombre: MESES_ES[parseInt(m)-1], año: AÑO_ANTERIOR,
+      ventas: Math.round(d.ventas), costo: Math.round(d.costo), tickets: d.tset.size,
+      margen: Math.round(d.ventas - d.costo),
+      margen_pct: d.ventas > 0 ? (d.ventas - d.costo) / d.ventas * 100 : 0
+    })).sort((a, b) => a.mes_num - b.mes_num)
+  })
+
+  const kpi_agentes_por_proveedor_2025 = {}
+  proveedores_2025.forEach(prov => {
+    const agMap = {}
+    ventas2025c.filter(v => v.proveedor === prov && !v.solo_presencia).forEach(v => {
+      const ag = v.agente_nombre
+      if (!agMap[ag]) agMap[ag] = { ventas_por_mes: {}, costo_por_mes: {}, tsets: {} }
+      agMap[ag].ventas_por_mes[v.mes_num] = (agMap[ag].ventas_por_mes[v.mes_num] || 0) + v.importe
+      agMap[ag].costo_por_mes[v.mes_num]  = (agMap[ag].costo_por_mes[v.mes_num]  || 0) + v.costo
+      if (!agMap[ag].tsets[v.mes_num]) agMap[ag].tsets[v.mes_num] = new Set()
+      agMap[ag].tsets[v.mes_num].add(v.folio_key)
+    })
+    const out = {}
+    Object.entries(agMap).forEach(([ag, d]) => {
+      const tickets_por_mes = {}
+      Object.entries(d.tsets).forEach(([m, s]) => { tickets_por_mes[parseInt(m)] = s.size })
+      Object.keys(d.ventas_por_mes).forEach(m => { d.ventas_por_mes[m] = Math.round(d.ventas_por_mes[m]) })
+      Object.keys(d.costo_por_mes).forEach(m => { d.costo_por_mes[m] = Math.round(d.costo_por_mes[m]) })
+      out[ag] = { ventas_por_mes: d.ventas_por_mes, costo_por_mes: d.costo_por_mes, tickets_por_mes }
+    })
+    kpi_agentes_por_proveedor_2025[prov] = out
+  })
+
   const agentes = [...AGENTES_COMERCIALES].sort().map((nombre, i) => ({ id: `AG${String(i+1).padStart(3,'0')}`, nombre, equipo: 'COMERCIAL' }));
 
   const clientes_sobre_3000_por_mes      = buildClientesSobre3000(ventas2026c);
@@ -1065,6 +1109,8 @@ const bsc_metas_por_mes = {};
     proveedores_disponibles,
     kpi_mensual_por_proveedor,
     kpi_agentes_por_proveedor,
+    kpi_mensual_por_proveedor_2025,
+    kpi_agentes_por_proveedor_2025,
   };
 
   const outFile = path.join(outDir, 'dashboard_data.json');
