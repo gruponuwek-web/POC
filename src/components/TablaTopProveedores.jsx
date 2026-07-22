@@ -37,6 +37,26 @@ function computeRows(data, filtros) {
   .sort((a, b) => b.ventas - a.ventas)
 }
 
+function exportCSV(rows, totalVenta, año) {
+  const headers = ['#','Proveedor','Ventas','% del Total','Tickets','Ticket Promedio','Margen $','Margen %']
+  const lines = rows.map((r, i) => [
+    i + 1,
+    `"${r.prov}"`,
+    r.ventas,
+    (totalVenta > 0 ? (r.ventas / totalVenta * 100) : 0).toFixed(1) + '%',
+    r.tickets,
+    Math.round(r.ticket_prom),
+    r.margen,
+    r.margen_pct.toFixed(1) + '%',
+  ].join(','))
+  const csv = [headers.join(','), ...lines].join('\n')
+  const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url; a.download = `top_proveedores_${año}.csv`; a.click()
+  URL.revokeObjectURL(url)
+}
+
 export default function TablaTopProveedores({ data, filtros }) {
   const [limite, setLimite] = useState(10)
 
@@ -60,8 +80,16 @@ export default function TablaTopProveedores({ data, filtros }) {
         <div style={{ fontSize: 12, fontWeight: 700, color: '#0f1f3d', textTransform: 'uppercase', letterSpacing: '.4px' }}>
           🏭 Top Proveedores por Venta — {año}
         </div>
-        <div style={{ fontSize: 11, color: '#94a3b8', fontWeight: 500 }}>
-          {rows.length} proveedores activos
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <span style={{ fontSize: 11, color: '#94a3b8', fontWeight: 500 }}>{rows.length} proveedores activos</span>
+          {rows.length > 0 && (
+            <button
+              onClick={() => exportCSV(rows, totalVenta, año)}
+              style={{ fontSize: 11, fontWeight: 600, color: '#1a6cf0', background: '#eff6ff', border: '1.5px solid #bfdbfe', borderRadius: 6, padding: '4px 12px', cursor: 'pointer' }}
+            >
+              ⬇️ CSV
+            </button>
+          )}
         </div>
       </div>
 
