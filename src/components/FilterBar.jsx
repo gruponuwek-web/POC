@@ -125,6 +125,25 @@ export default function FilterBar({ data, filtros, onChange, onLimpiar }) {
         </select>
       </div>
 
+      {/* Proveedor */}
+      {proveedores.length > 0 && (
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          <label style={{ fontSize: 11, color: '#64748b', fontWeight: 600, display: 'flex', alignItems: 'center', whiteSpace: 'nowrap' }}>
+            Proveedor
+            <InfoTip text="Filtra todas las gráficas y KPIs de venta para mostrar únicamente los productos del proveedor seleccionado." />
+            :
+          </label>
+          <select
+            value={filtros.proveedor || 'todos'}
+            onChange={e => onChange({ ...filtros, proveedor: e.target.value })}
+            style={{ ...selectStyle, maxWidth: 180 }}
+          >
+            <option value="todos">Todos</option>
+            {proveedores.map(p => <option key={p} value={p}>{p}</option>)}
+          </select>
+        </div>
+      )}
+
       {/* Año */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
         <label style={{ fontSize: 11, color: '#64748b', fontWeight: 600, display: 'flex', alignItems: 'center' }}>
@@ -156,25 +175,6 @@ export default function FilterBar({ data, filtros, onChange, onLimpiar }) {
           onChange={meses => onChange({ ...filtros, meses })}
         />
       </div>
-
-      {/* Proveedor */}
-      {proveedores.length > 0 && (
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-          <label style={{ fontSize: 11, color: '#64748b', fontWeight: 600, display: 'flex', alignItems: 'center', whiteSpace: 'nowrap' }}>
-            Proveedor
-            <InfoTip text="Filtra todas las gráficas y KPIs de venta para mostrar únicamente los productos del proveedor seleccionado." />
-            :
-          </label>
-          <select
-            value={filtros.proveedor || 'todos'}
-            onChange={e => onChange({ ...filtros, proveedor: e.target.value })}
-            style={{ ...selectStyle, maxWidth: 180 }}
-          >
-            <option value="todos">Todos</option>
-            {proveedores.map(p => <option key={p} value={p}>{p}</option>)}
-          </select>
-        </div>
-      )}
 
       {hayFiltros && (
         <button onClick={onLimpiar} style={{

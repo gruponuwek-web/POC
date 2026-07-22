@@ -3,9 +3,9 @@ import { fmt } from '../utils/format.js'
 
 function computeRows(data, filtros) {
   const es2025 = filtros.año === '2025'
-  const mesProv    = es2025 ? (data.kpi_mensual_por_proveedor_2025    || {}) : (data.kpi_mensual_por_proveedor    || {})
-  const agProv     = es2025 ? (data.kpi_agentes_por_proveedor_2025    || {}) : (data.kpi_agentes_por_proveedor    || {})
-  const allProvs   = Object.keys(mesProv)
+  const mesProv  = es2025 ? (data.kpi_mensual_por_proveedor_2025 || {}) : (data.kpi_mensual_por_proveedor || {})
+  const agProv   = es2025 ? (data.kpi_agentes_por_proveedor_2025 || {}) : (data.kpi_agentes_por_proveedor || {})
+  const allProvs = Object.keys(mesProv)
 
   return allProvs.map(prov => {
     let ventas = 0, costo = 0, tickets = 0
@@ -37,8 +37,8 @@ function computeRows(data, filtros) {
   .sort((a, b) => b.ventas - a.ventas)
 }
 
-function exportCSV(rows, totalVenta, año) {
-  const headers = ['#','Proveedor','Ventas','% del Total','Tickets','Ticket Promedio','Margen $','Margen %']
+function doExportCSV(rows, totalVenta, año) {
+  const headers = ['#', 'Proveedor', 'Ventas', '% del Total', 'Tickets', 'Ticket Promedio', 'Margen $', 'Margen %']
   const lines = rows.map((r, i) => [
     i + 1,
     `"${r.prov}"`,
@@ -57,8 +57,24 @@ function exportCSV(rows, totalVenta, año) {
   URL.revokeObjectURL(url)
 }
 
+const tdStyle = { padding: '7px 10px', fontSize: 11.5, color: '#334155', whiteSpace: 'nowrap', borderBottom: '1px solid #f1f5f9' }
+
+const thStyle = {
+  padding: '8px 10px', fontSize: 10, fontWeight: 700,
+  textTransform: 'uppercase', letterSpacing: '.4px',
+  color: '#93c5fd', whiteSpace: 'nowrap', userSelect: 'none',
+  background: 'transparent'
+}
+
+const semC  = (pct) => pct >= 22 ? '#15803d' : pct >= 18 ? '#a16207' : '#b91c1c'
+const semBg = (pct) => pct >= 22 ? '#dcfce7' : pct >= 18 ? '#fef9c3' : '#fee2e2'
+
+const MEDALLAS = ['🥇', '🥈', '🥉']
+
 export default function TablaTopProveedores({ data, filtros }) {
   const [limite, setLimite] = useState(10)
+  const [sortCol, setSortCol] = useState('ventas')
+  const [sortDir, setSortDir] = useState(-1)
 
   const { rows, totalVenta } = useMemo(() => {
     const rows = computeRows(data, filtros)
@@ -66,31 +82,44 @@ export default function TablaTopProveedores({ data, filtros }) {
     return { rows, totalVenta }
   }, [data, filtros])
 
-  const visibles = rows.slice(0, limite)
+  const sorted = [...rows].sort((a, b) => {
+    const va = a[sortCol] ?? -Infinity
+    const vb = b[sortCol] ?? -Infinity
+    return (va > vb ? 1 : -1) * sortDir
+  })
+
+  const visibles = sorted.slice(0, limite)
   const provSeleccionado = filtros.proveedor !== 'todos' ? filtros.proveedor : null
+  const año = filtros.año === '2025' ? '2025' : '2026'
+
+  const sort = (col) => {
+    if (sortCol === col) setSortDir(d => -d)
+    else { setSortCol(col); setSortDir(-1) }
+  }
+
+  const thS = (col) => ({ ...thStyle, color: sortCol === col ? '#4da3ff' : '#93c5fd', cursor: 'pointer' })
 
   if (!data.proveedores_disponibles?.length) return null
 
-  const año = filtros.año === '2025' ? '2025' : '2026'
-
   return (
     <div style={{ background: '#fff', borderRadius: 10, border: '1.5px solid #e2e8f0', boxShadow: '0 1px 4px rgba(0,0,0,.05)', overflow: 'hidden' }}>
-      {/* Header */}
-      <div style={{ padding: '14px 18px', borderBottom: '1px solid #f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
-        <div style={{ fontSize: 12, fontWeight: 700, color: '#0f1f3d', textTransform: 'uppercase', letterSpacing: '.4px' }}>
+
+      {/* Header — mismo estilo que TablaAgentes */}
+      <div style={{ background: '#0f1f3d', padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+        <span style={{ fontSize: 12, fontWeight: 700, color: '#fff', textTransform: 'uppercase', letterSpacing: '.5px' }}>
           🏭 Top Proveedores por Venta — {año}
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <span style={{ fontSize: 11, color: '#94a3b8', fontWeight: 500 }}>{rows.length} proveedores activos</span>
-          {rows.length > 0 && (
-            <button
-              onClick={() => exportCSV(rows, totalVenta, año)}
-              style={{ fontSize: 11, fontWeight: 600, color: '#1a6cf0', background: '#eff6ff', border: '1.5px solid #bfdbfe', borderRadius: 6, padding: '4px 12px', cursor: 'pointer' }}
-            >
-              ⬇️ CSV
-            </button>
-          )}
-        </div>
+        </span>
+        <span style={{ fontSize: 11, color: 'rgba(255,255,255,.45)', fontWeight: 500 }}>
+          {rows.length} proveedores activos
+        </span>
+        {rows.length > 0 && (
+          <button
+            onClick={() => doExportCSV(sorted, totalVenta, año)}
+            style={{ marginLeft: 'auto', padding: '5px 12px', borderRadius: 6, border: '1px solid rgba(255,255,255,.2)', background: 'rgba(255,255,255,.1)', color: '#fff', fontSize: 11, fontWeight: 600, cursor: 'pointer' }}
+          >
+            ⬇️ Exportar CSV
+          </button>
+        )}
       </div>
 
       {rows.length === 0 ? (
@@ -99,37 +128,38 @@ export default function TablaTopProveedores({ data, filtros }) {
         </div>
       ) : (
         <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
-              <tr style={{ background: '#f8fafc' }}>
-                <Th w={32} center>#</Th>
-                <Th>Proveedor</Th>
-                <Th right>Ventas</Th>
-                <Th w={140}>% del total</Th>
-                <Th right>Tickets</Th>
-                <Th right>Ticket Prom.</Th>
-                <Th right>Margen %</Th>
+              <tr style={{ background: '#0f1f3d' }}>
+                <th style={{ ...thStyle, textAlign: 'center' }}>#</th>
+                {[['prov','Proveedor'],['ventas','Ventas'],['margen_pct','% del total'],['tickets','Tickets'],['ticket_prom','Ticket Prom.'],['margen','Margen $'],['margen_pct2','Margen %']].map(([col, label]) => (
+                  <th key={col} style={thS(col === 'margen_pct2' ? 'margen_pct' : col)} onClick={() => sort(col === 'margen_pct2' ? 'margen_pct' : col)}>
+                    {label}{sortCol === (col === 'margen_pct2' ? 'margen_pct' : col) ? (sortDir > 0 ? ' ↑' : ' ↓') : ''}
+                  </th>
+                ))}
               </tr>
             </thead>
             <tbody>
               {visibles.map((r, i) => {
                 const pct = totalVenta > 0 ? r.ventas / totalVenta * 100 : 0
                 const isSelected = provSeleccionado === r.prov
-                const rowBg = isSelected ? '#eff6ff' : i % 2 === 0 ? '#fff' : '#fafafa'
+                const rankOriginal = sorted.indexOf(r)
                 return (
-                  <tr key={r.prov} style={{ background: rowBg, borderBottom: '1px solid #f1f5f9' }}>
-                    <td style={{ padding: '9px 10px', textAlign: 'center', color: '#94a3b8', fontWeight: 700, fontSize: 11 }}>
-                      {i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : i + 1}
+                  <tr
+                    key={r.prov}
+                    style={{
+                      background: isSelected ? '#eff6ff' : i % 2 === 0 ? '#fff' : '#f8fafc',
+                      outline: isSelected ? '2px solid #1a6cf0' : 'none'
+                    }}
+                  >
+                    <td style={{ ...tdStyle, textAlign: 'center', fontWeight: 700, color: '#94a3b8', fontSize: 11 }}>
+                      {rankOriginal < 3 ? MEDALLAS[rankOriginal] : rankOriginal + 1}
                     </td>
-                    <td style={{ padding: '9px 12px', maxWidth: 220 }}>
-                      <div style={{ fontWeight: 600, color: isSelected ? '#1a6cf0' : '#0f1f3d', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                        {r.prov}
-                      </div>
+                    <td style={{ ...tdStyle, fontWeight: 700, color: isSelected ? '#1a6cf0' : '#0f1f3d', maxWidth: 260, overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                      {r.prov}
                     </td>
-                    <td style={{ padding: '9px 14px', textAlign: 'right', fontWeight: 700, color: '#0f1f3d', fontVariantNumeric: 'tabular-nums', whiteSpace: 'nowrap' }}>
-                      {fmt.moneda(r.ventas)}
-                    </td>
-                    <td style={{ padding: '9px 14px' }}>
+                    <td style={{ ...tdStyle, fontWeight: 700 }}>{fmt.moneda(r.ventas)}</td>
+                    <td style={{ ...tdStyle, minWidth: 140 }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
                         <div style={{ flex: 1, background: '#e2e8f0', borderRadius: 4, height: 6, overflow: 'hidden' }}>
                           <div style={{ width: `${pct}%`, background: isSelected ? '#1a6cf0' : '#60a5fa', height: '100%', borderRadius: 4 }} />
@@ -139,17 +169,11 @@ export default function TablaTopProveedores({ data, filtros }) {
                         </span>
                       </div>
                     </td>
-                    <td style={{ padding: '9px 14px', textAlign: 'right', color: '#334155', fontVariantNumeric: 'tabular-nums' }}>
-                      {r.tickets.toLocaleString('es-MX')}
-                    </td>
-                    <td style={{ padding: '9px 14px', textAlign: 'right', color: '#334155', fontVariantNumeric: 'tabular-nums', whiteSpace: 'nowrap' }}>
-                      {fmt.moneda(r.ticket_prom)}
-                    </td>
-                    <td style={{ padding: '9px 14px', textAlign: 'right' }}>
-                      <span style={{
-                        fontWeight: 700, fontSize: 11,
-                        color: r.margen_pct >= 22 ? '#15803d' : r.margen_pct >= 18 ? '#a16207' : '#b91c1c'
-                      }}>
+                    <td style={{ ...tdStyle, textAlign: 'center' }}>{r.tickets.toLocaleString('es-MX')}</td>
+                    <td style={tdStyle}>{fmt.moneda(r.ticket_prom)}</td>
+                    <td style={{ ...tdStyle, color: '#15803d' }}>{fmt.moneda(r.margen)}</td>
+                    <td style={tdStyle}>
+                      <span style={{ background: semBg(r.margen_pct), color: semC(r.margen_pct), padding: '2px 8px', borderRadius: 10, fontSize: 11, fontWeight: 700 }}>
                         {r.margen_pct.toFixed(1)}%
                       </span>
                     </td>
@@ -171,19 +195,12 @@ export default function TablaTopProveedores({ data, filtros }) {
           )}
         </div>
       )}
-    </div>
-  )
-}
 
-function Th({ children, right, center, w }) {
-  return (
-    <th style={{
-      padding: '9px 14px', textAlign: right ? 'right' : center ? 'center' : 'left',
-      fontSize: 10, fontWeight: 700, color: '#64748b', textTransform: 'uppercase',
-      letterSpacing: '.04em', whiteSpace: 'nowrap', width: w || undefined,
-      borderBottom: '1.5px solid #e2e8f0',
-    }}>
-      {children}
-    </th>
+      {provSeleccionado && (
+        <div style={{ padding: '8px 16px', background: '#eff6ff', fontSize: 11, color: '#1d4ed8', borderTop: '1px solid #bfdbfe' }}>
+          Filtrando por proveedor: <strong>{provSeleccionado}</strong>
+        </div>
+      )}
+    </div>
   )
 }
