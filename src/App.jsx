@@ -32,6 +32,7 @@ export default function App() {
     meses: [],
     agente: 'todos',
     tipoCliente: 'todos',
+    proveedor: 'todos',
   })
 
   useEffect(() => {
@@ -55,6 +56,33 @@ export default function App() {
     let kpi2025 = data.kpi_mensual_anterior
     let clientes = data.tabla_clientes
     let alertas = data.alertas
+
+    if (filtros.proveedor !== 'todos') {
+      const provKPIMes = data.kpi_mensual_por_proveedor?.[filtros.proveedor] || []
+      const provKPIAg  = data.kpi_agentes_por_proveedor?.[filtros.proveedor] || {}
+      kpi2026 = provKPIMes
+      kpiAgentes = kpiAgentes.map(a => {
+        const pd = provKPIAg[a.agente] || {}
+        const vpm = pd.ventas_por_mes || {}
+        const cpm = pd.costo_por_mes  || {}
+        const tpm = pd.tickets_por_mes || {}
+        const ventas  = Object.values(vpm).reduce((s, v) => s + v, 0)
+        const costo   = Object.values(cpm).reduce((s, v) => s + v, 0)
+        const tickets = Object.values(tpm).reduce((s, v) => s + v, 0)
+        return {
+          ...a,
+          ventas, costo, tickets,
+          margen: ventas - costo,
+          margen_pct: ventas > 0 ? (ventas - costo) / ventas * 100 : 0,
+          ticket_promedio: tickets > 0 ? ventas / tickets : 0,
+          diferencia_meta: ventas - (a.meta || 0),
+          cumplimiento_pct: (a.meta || 0) > 0 ? ventas / a.meta * 100 : null,
+          ventas_por_mes: vpm,
+          costo_por_mes: cpm,
+          tickets_por_mes: tpm,
+        }
+      })
+    }
 
     if (filtros.agente !== 'todos') {
       kpiAgentes = kpiAgentes.filter(a => a.agente === filtros.agente)
@@ -255,7 +283,7 @@ export default function App() {
   }, [data, filtros])
 
   const [mesPerdidoSel, setMesPerdidoSel] = useState(null)
-  const limpiarFiltros = () => { setFiltros({ año: 'todos', meses: [], agente: 'todos', tipoCliente: 'todos' }); setMesPerdidoSel(null) }
+  const limpiarFiltros = () => { setFiltros({ año: 'todos', meses: [], agente: 'todos', tipoCliente: 'todos', proveedor: 'todos' }); setMesPerdidoSel(null) }
 
   if (!session) return <Login onLogin={setSession} />
 
