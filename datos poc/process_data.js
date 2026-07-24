@@ -109,7 +109,7 @@ const MESES_ES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio',
 
 // ── Agentes comerciales ──────────────────────────────────────────────────────
 const AGENTES_COMERCIALES = new Set([
-  'HORTENCIA VILLA',
+  'ASTRID POZOS',
   'ELIZABETH DIAZ AGUIRRE',
   'EDWIN HERNANDEZ',
   'ADRIANA CASAS PINEDA',

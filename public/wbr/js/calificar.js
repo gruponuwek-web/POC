@@ -7,7 +7,7 @@ const TUMBA = {
 // ── ACOMPAÑAMIENTO TAG-INPUT ──────────────────────────────
 
 const ACOMP_OPCIONES = [
-  { grupo: 'Equipo',   items: ['Hortencia','Elizabeth','Adriana','Amairani','Edwin','Verónica','Itzel','David'] },
+  { grupo: 'Equipo',   items: ['Astrid','Elizabeth','Adriana','Amairani','Edwin','Verónica','Itzel','David'] },
   { grupo: 'Externos', items: ['Luis Alberto','Oscar','Nidia','Rocío','Blanca','Vanessa','Fabiola','Jessica','Adrián'] },
 ]
 
