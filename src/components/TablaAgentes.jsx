@@ -39,6 +39,10 @@ export default function TablaAgentes({ agentes, onSelectAgente, agenteSelecciona
 
   const filtered = agentes
     .map(av)
+    .map(a => {
+      const metaMg = a.meta_margen_pct != null ? a.meta_margen_pct * 100 : null
+      return { ...a, meta_margen_cumpl_pct: metaMg > 0 ? a.margen_pct / metaMg * 100 : null }
+    })
     .filter(a => a.agente.toLowerCase().includes(search.toLowerCase()))
     .sort((a, b) => {
       const va = a[sortCol] ?? -Infinity
@@ -47,7 +51,7 @@ export default function TablaAgentes({ agentes, onSelectAgente, agenteSelecciona
     })
 
   const exportCSV = () => {
-    const cols = ['agente','ventas','meta','diferencia_meta','cumplimiento_pct','cartera_total','clientes_atendidos','clientes_nuevos','clientes_recuperados','tickets','ticket_promedio','margen','margen_pct','meta_margen_pct']
+    const cols = ['agente','ventas','meta','diferencia_meta','cumplimiento_pct','cartera_total','clientes_atendidos','clientes_nuevos','clientes_recuperados','tickets','ticket_promedio','margen','margen_pct','meta_margen_pct','meta_margen_cumpl_pct']
     const header = cols.join(',')
     const rows = filtered.map(a => cols.map(c => a[c] ?? '').join(',')).join('\n')
     const blob = new Blob([header + '\n' + rows], { type: 'text/csv;charset=utf-8;' })
@@ -86,7 +90,7 @@ export default function TablaAgentes({ agentes, onSelectAgente, agenteSelecciona
         <table style={{ width:'100%',borderCollapse:'collapse' }}>
           <thead>
             <tr style={{ background:'#0f1f3d' }}>
-              {[['agente','Agente'],['ventas','Venta'],['meta','Meta'],['diferencia_meta','Dif. Meta'],['cumplimiento_pct','% Cumpl.'],['cartera_total','Cartera'],['clientes_atendidos','Atendidos'],['clientes_nuevos','Nuevos'],['clientes_recuperados','Recup.'],['tickets','Tickets'],['ticket_promedio','Tkt. Prom.'],['margen','Margen $'],['margen_pct','Margen %'],['meta_margen_pct','Meta Mg.']].map(([col, label]) => (
+              {[['agente','Agente'],['ventas','Venta'],['meta','Meta'],['diferencia_meta','Dif. Meta'],['cumplimiento_pct','% Cumpl.'],['cartera_total','Cartera'],['clientes_atendidos','Atendidos'],['clientes_nuevos','Nuevos'],['clientes_recuperados','Recup.'],['tickets','Tickets'],['ticket_promedio','Tkt. Prom.'],['margen','Margen $'],['margen_pct','Margen %'],['meta_margen_pct','Meta Mg.'],['meta_margen_cumpl_pct','% Cumpl. Mg.']].map(([col, label]) => (
                 <th key={col} style={thStyle(col)} onClick={() => sort(col)}>
                   {label}{sortCol === col ? (sortDir > 0 ? ' ↑' : ' ↓') : ''}
                 </th>
@@ -137,6 +141,14 @@ export default function TablaAgentes({ agentes, onSelectAgente, agenteSelecciona
                   </td>
                   <td style={{ ...tdStyle, color:'#64748b' }}>
                     {a.meta_margen_pct != null ? fmt.pct(a.meta_margen_pct * 100) : '—'}
+                  </td>
+                  <td style={{ ...tdStyle, textAlign:'center' }}>
+                    {a.meta_margen_cumpl_pct != null
+                      ? (() => {
+                          const semMgC = semaforo(a.meta_margen_cumpl_pct, SEM_VENTA)
+                          return <span style={{ background:semBg(semMgC), color:semC(semMgC), padding:'2px 8px', borderRadius:10, fontSize:11, fontWeight:700 }}>{fmt.pct(a.meta_margen_cumpl_pct)}</span>
+                        })()
+                      : '—'}
                   </td>
                 </tr>
               )
