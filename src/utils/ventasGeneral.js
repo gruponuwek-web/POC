@@ -20,6 +20,7 @@ export function computeVG(fact, filtros) {
   const vendMap = new Map()         // vi -> {nombre,equipo,venta,costo,n}
   const provMap = new Map()         // pi -> {nombre,venta,costo,n}
   const cliMap = new Map()          // ci -> {nombre,num,venta}
+  const porSucursal = {}            // si -> {com,resto} (IGNORA el filtro de sucursal)
   const comparar = año === '2026'
 
   for (let i = 0; i < rows.length; i++) {
@@ -27,7 +28,6 @@ export function computeVG(fact, filtros) {
     const ry = r[0], rm = r[1], si = r[2], pi = r[3], li = r[4], vi = r[5], ci = r[6]
     const venta = r[7], costo = r[8], n = r[9]
 
-    if (sucIdx >= 0 && si !== sucIdx) continue
     if (provIdx >= 0 && pi !== provIdx) continue
     if (lineaIdx >= 0 && li !== lineaIdx) continue
     const vend = dims.vendedores[vi]
@@ -36,6 +36,16 @@ export function computeVG(fact, filtros) {
     if (equipo === 'resto' && esCom) continue
 
     const inMeses = !mesesSet || mesesSet.has(rm)
+    const passYear = !(año === '2025' && ry !== 2025) && !(año === '2026' && ry !== 2026)
+
+    // Venta por sucursal (ignora el filtro de sucursal; respeta año/mes/equipo/prov/línea)
+    if (passYear && inMeses) {
+      let ps = porSucursal[si]; if (!ps) { ps = { com: 0, resto: 0 }; porSucursal[si] = ps }
+      if (esCom) ps.com += venta; else ps.resto += venta
+    }
+
+    // A partir de aquí, todo respeta el filtro de sucursal
+    if (sucIdx >= 0 && si !== sucIdx) continue
 
     // Desglose por año-mes (ambos años, respeta el resto de filtros menos año)
     if (inMeses) {
@@ -80,6 +90,12 @@ export function computeVG(fact, filtros) {
   const total = comV + restoV
   const prev = comparar ? { comV: prevComV, restoV: prevRestoV, total: prevComV + prevRestoV } : null
 
+  // Venta por sucursal (para las donas): nombre + split comercial/resto
+  const sucursalesVenta = Object.keys(porSucursal).map(si => {
+    const p = porSucursal[si]
+    return { nombre: dims.sucursales[si], com: p.com, resto: p.resto, total: p.com + p.resto }
+  }).filter(s => s.total > 0).sort((a, b) => b.total - a.total)
+
   // Ticket promedio (desde cubo de tickets únicos; responde a año/mes/sucursal/equipo, no a prov/línea)
   let tkVenta = 0, tkCount = 0
   if (fact.ticketsCubo) {
@@ -110,7 +126,7 @@ export function computeVG(fact, filtros) {
 
   return {
     comV, restoV, comN, restoN, total, totalN: comN + restoN, prev,
-    porMes, meses, porMesY, mesesY, vendedores, proveedores, clientes, topResto,
+    porMes, meses, porMesY, mesesY, vendedores, proveedores, clientes, topResto, sucursalesVenta,
     ticketProm, tickets: tkCount, perdidos, perdidosTotal, perdidosPct: perdidosTotal > 0 ? perdidos / perdidosTotal * 100 : 0,
   }
 }
