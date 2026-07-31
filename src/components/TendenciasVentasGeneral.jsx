@@ -86,9 +86,9 @@ export default function TendenciasVentasGeneral({ g, filtros }) {
 
   return (
     <div style={{ background: '#fff', borderRadius: 10, border: '1.5px solid #e2e8f0', boxShadow: '0 1px 4px rgba(0,0,0,.05)', overflow: 'hidden', marginBottom: 16 }}>
-      <div style={{ background: '#0f1f3d', padding: '12px 16px', display: 'flex', alignItems: 'center' }}>
-        <span style={{ fontSize: 12, fontWeight: 700, color: '#fff', textTransform: 'uppercase', letterSpacing: '.5px' }}>📈 Tendencias — {alcance}</span>
-        <InfoTip text="Venta mensual del año en curso en barras con su línea de tendencia (regresión), más la variación del último mes con datos frente al mes anterior." light />
+      <div style={{ padding: '14px 16px 0', display: 'flex', alignItems: 'center' }}>
+        <span style={{ fontSize: 12, fontWeight: 700, color: '#0f1f3d', textTransform: 'uppercase', letterSpacing: '.4px' }}>📈 Tendencias — {alcance}</span>
+        <InfoTip text="Venta mensual del año en curso en barras con su línea de tendencia (regresión), más la variación del último mes con datos frente al mes anterior." />
       </div>
 
       <div style={{ padding: 16 }}>

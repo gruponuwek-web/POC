@@ -7,12 +7,12 @@ const MESES3 = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', '
 
 function Card({ titulo, info, children }) {
   return (
-    <div style={{ background: '#fff', border: '1.5px solid #e2e8f0', borderRadius: 10, boxShadow: '0 1px 4px rgba(0,0,0,.05)', overflow: 'hidden' }}>
-      <div style={{ background: '#0f1f3d', padding: '12px 16px', display: 'flex', alignItems: 'center' }}>
-        <span style={{ fontSize: 12, fontWeight: 700, color: '#fff', textTransform: 'uppercase', letterSpacing: '.5px' }}>{titulo}</span>
-        {info && <InfoTip text={info} light />}
+    <div style={{ background: '#fff', border: '1.5px solid #e2e8f0', borderRadius: 10, boxShadow: '0 1px 4px rgba(0,0,0,.05)', padding: 16 }}>
+      <div style={{ display: 'flex', alignItems: 'center', marginBottom: 12 }}>
+        <span style={{ fontSize: 12, fontWeight: 700, color: '#0f1f3d', textTransform: 'uppercase', letterSpacing: '.4px' }}>{titulo}</span>
+        {info && <InfoTip text={info} />}
       </div>
-      <div style={{ padding: '14px 16px' }}>{children}</div>
+      {children}
     </div>
   )
 }
@@ -56,6 +56,15 @@ export default function VentasGeneralCharts({ g, filtros }) {
   const maxOps = Math.max(...visibles.flatMap(r => agrupado ? [r.a.n, r.b.n] : [r.single.n]), 1)
   const maxMg = Math.max(...visibles.flatMap(r => agrupado ? [r.a.mgPct, r.b.mgPct] : [r.single.mgPct]), 1)
   const H = 150
+  const ab = n => n >= 1000 ? Math.round(n / 1000) + 'k' : String(Math.round(n))
+
+  // Barra agrupada con etiqueta de valor arriba
+  const BarLab = ({ val, height, color, txt }) => (
+    <div style={{ width: '42%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end' }}>
+      <span style={{ fontSize: 8, fontWeight: 700, color, marginBottom: 1, whiteSpace: 'nowrap' }}>{txt}</span>
+      <div style={{ width: '100%', height: Math.max(0, height) || 0, background: color, borderRadius: '3px 3px 0 0' }} title={txt} />
+    </div>
+  )
 
   const Ejes = ({ items }) => (
     <div style={{ display: 'flex', gap: agrupado ? 8 : 10, marginTop: 4 }}>
@@ -71,8 +80,8 @@ export default function VentasGeneralCharts({ g, filtros }) {
           {visibles.map(r => agrupado ? (
             <div key={r.mes} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end' }}>
               <div style={{ display: 'flex', alignItems: 'flex-end', gap: 2, height: H, width: '100%', justifyContent: 'center' }}>
-                <div style={{ width: '40%', height: Math.max(0, r.a.n / maxOps * H) || 0, background: '#c4b5fd', borderRadius: '3px 3px 0 0' }} title={`2025: ${fmt.num(r.a.n)}`} />
-                <div style={{ width: '40%', height: Math.max(0, r.b.n / maxOps * H) || 0, background: '#7c3aed', borderRadius: '3px 3px 0 0' }} title={`2026: ${fmt.num(r.b.n)}`} />
+                <BarLab val={r.a.n} height={r.a.n / maxOps * H} color="#a78bdb" txt={ab(r.a.n)} />
+                <BarLab val={r.b.n} height={r.b.n / maxOps * H} color="#7c3aed" txt={ab(r.b.n)} />
               </div>
             </div>
           ) : (
@@ -94,8 +103,8 @@ export default function VentasGeneralCharts({ g, filtros }) {
           {visibles.map(r => agrupado ? (
             <div key={r.mes} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end' }}>
               <div style={{ display: 'flex', alignItems: 'flex-end', gap: 2, height: H, width: '100%', justifyContent: 'center' }}>
-                <div style={{ width: '40%', height: Math.max(0, r.a.mgPct / maxMg * H) || 0, background: '#86efac', borderRadius: '3px 3px 0 0' }} title={`2025: ${r.a.mgPct.toFixed(1)}%`} />
-                <div style={{ width: '40%', height: Math.max(0, r.b.mgPct / maxMg * H) || 0, background: '#16a34a', borderRadius: '3px 3px 0 0' }} title={`2026: ${r.b.mgPct.toFixed(1)}%`} />
+                <BarLab val={r.a.mgPct} height={r.a.mgPct / maxMg * H} color="#4ade80" txt={`${r.a.mgPct.toFixed(0)}%`} />
+                <BarLab val={r.b.mgPct} height={r.b.mgPct / maxMg * H} color="#16a34a" txt={`${r.b.mgPct.toFixed(0)}%`} />
               </div>
             </div>
           ) : (

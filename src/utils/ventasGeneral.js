@@ -21,6 +21,7 @@ export function computeVG(fact, filtros) {
   const provMap = new Map()         // pi -> {nombre,venta,costo,n}
   const cliMap = new Map()          // ci -> {nombre,num,venta}
   const porSucursal = {}            // si -> {com,resto} (IGNORA el filtro de sucursal)
+  const cliLast = new Map()         // ci -> última compra (mes relativo) dentro del alcance actual
   const comparar = año === '2026'
 
   for (let i = 0; i < rows.length; i++) {
@@ -46,6 +47,12 @@ export function computeVG(fact, filtros) {
 
     // A partir de aquí, todo respeta el filtro de sucursal
     if (sucIdx >= 0 && si !== sucIdx) continue
+
+    // Última compra por cliente (para perdidos): respeta sucursal/equipo/proveedor/línea,
+    // ignora año/mes (recencia relativa al último mes global). 2026: mes; 2025: mes-12.
+    const rel = ry === 2026 ? rm : rm - 12
+    const prevRel = cliLast.get(ci)
+    if (prevRel === undefined || rel > prevRel) cliLast.set(ci, rel)
 
     // Desglose por año-mes (ambos años, respeta el resto de filtros menos año)
     if (inMeses) {
@@ -112,17 +119,11 @@ export function computeVG(fact, filtros) {
   }
   const ticketProm = tkCount > 0 ? tkVenta / tkCount : 0
 
-  // Clientes perdidos (compraron en 2025 y no en 2026; responde a sucursal/equipo)
+  // Clientes perdidos (regla +4 meses) calculado desde la fact table:
+  // responde a sucursal, equipo, proveedor y línea. Base = clientes del alcance con historial.
+  const corte = (fact.mesMax2026 || 7) - 4
   let perdidos = 0, perdidosTotal = 0
-  if (fact.perdidosCubo) {
-    for (const k in fact.perdidosCubo) {
-      const [si, eb] = k.split('|').map(Number)
-      if (sucIdx >= 0 && si !== sucIdx) continue
-      if (equipo === 'comercial' && eb !== 0) continue
-      if (equipo === 'resto' && eb !== 1) continue
-      const p = fact.perdidosCubo[k]; perdidos += p.perdidos; perdidosTotal += p.total
-    }
-  }
+  cliLast.forEach(rel => { perdidosTotal++; if (rel <= corte) perdidos++ })
 
   return {
     comV, restoV, comN, restoN, total, totalN: comN + restoN, prev,

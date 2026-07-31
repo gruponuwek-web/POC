@@ -39,8 +39,8 @@ export default function VentaMensualComparativa({ g, filtros }) {
 
   return (
     <div style={{ background: '#fff', borderRadius: 10, border: '1.5px solid #e2e8f0', boxShadow: '0 1px 4px rgba(0,0,0,.05)', overflow: 'hidden', marginBottom: 16 }}>
-      <div style={{ background: '#0f1f3d', padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-        <span style={{ fontSize: 12, fontWeight: 700, color: '#fff', textTransform: 'uppercase', letterSpacing: '.5px' }}>📊 Venta mensual {agrupado ? '— 2025 vs 2026' : añoFiltro} — {alcance}</span>
+      <div style={{ padding: '14px 16px 0', display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+        <span style={{ fontSize: 12, fontWeight: 700, color: '#0f1f3d', textTransform: 'uppercase', letterSpacing: '.4px' }}>📊 Venta mensual {agrupado ? '— 2025 vs 2026' : añoFiltro} — {alcance}</span>
       </div>
 
       <div style={{ padding: 16, display: 'grid', gridTemplateColumns: mostrarTopResto ? '1.3fr 1fr' : '1fr', gap: 16, alignItems: 'start' }}>
@@ -49,11 +49,17 @@ export default function VentaMensualComparativa({ g, filtros }) {
           <div style={{ display: 'flex', alignItems: 'flex-end', gap: agrupado ? 8 : 10, height: H + 20, paddingTop: 6 }}>
             {agrupado ? chart.map(c => {
               const ha = Math.max(0, c.a / maxT * H) || 0, hb = Math.max(0, c.b / maxT * H) || 0
+              const lab = (v, col) => (
+                <div style={{ width: '42%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end' }}>
+                  <span style={{ fontSize: 8, fontWeight: 700, color: col, marginBottom: 1, whiteSpace: 'nowrap' }}>${(v / 1e6).toFixed(1)}M</span>
+                  <div style={{ width: '100%', height: Math.max(0, v / maxT * H) || 0, background: col, borderRadius: '3px 3px 0 0' }} title={fmt.moneda(v)} />
+                </div>
+              )
               return (
                 <div key={c.mes} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end' }}>
                   <div style={{ display: 'flex', alignItems: 'flex-end', gap: 2, height: H, width: '100%', justifyContent: 'center' }}>
-                    <div style={{ width: '40%', height: ha, background: '#bfdbfe', borderRadius: '3px 3px 0 0' }} title={`2025: ${fmt.moneda(c.a)}`} />
-                    <div style={{ width: '40%', height: hb, background: '#1a6cf0', borderRadius: '3px 3px 0 0' }} title={`2026: ${fmt.moneda(c.b)}`} />
+                    {lab(c.a, '#93c5fd')}
+                    {lab(c.b, '#1a6cf0')}
                   </div>
                 </div>
               )

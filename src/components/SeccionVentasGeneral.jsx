@@ -70,13 +70,12 @@ export default function SeccionVentasGeneral({ g, filtros }) {
 
   return (
     <div style={{ marginBottom: 16 }}>
-      <div style={{ background: '#0f1f3d', padding: '12px 16px', borderRadius: '10px 10px 0 0', display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-        <span style={{ fontSize: 13, fontWeight: 700, color: '#fff', textTransform: 'uppercase', letterSpacing: '.5px' }}>🏢 Ventas General · Resumen</span>
-        <span style={{ fontSize: 12, fontWeight: 700, color: filtrado ? '#4da3ff' : 'rgba(255,255,255,.85)' }}>— {alcance}</span>
-        <span style={{ fontSize: 11, color: 'rgba(255,255,255,.5)', fontWeight: 500 }}>{subtitulo}</span>
-      </div>
-
-      <div style={{ border: '1.5px solid #e2e8f0', borderTop: 'none', borderRadius: '0 0 10px 10px', padding: 16, background: '#fbfcfe' }}>
+      <div style={{ background: '#fff', border: '1.5px solid #e2e8f0', borderRadius: 10, boxShadow: '0 1px 4px rgba(0,0,0,.05)', padding: 16 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', marginBottom: 12 }}>
+          <span style={{ fontSize: 13, fontWeight: 700, color: '#0f1f3d', textTransform: 'uppercase', letterSpacing: '.4px' }}>🏢 Ventas General · Resumen</span>
+          <span style={{ fontSize: 12, fontWeight: 700, color: filtrado ? '#1a6cf0' : '#94a3b8' }}>— {alcance}</span>
+          <span style={{ fontSize: 11, color: '#94a3b8', fontWeight: 500 }}>{subtitulo}</span>
+        </div>
 
         <div style={{ background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: 8, padding: '9px 14px', marginBottom: 16, fontSize: 12.5, color: '#1e3a5f', lineHeight: 1.5 }}>
           💡 {insight}
@@ -112,7 +111,7 @@ export default function SeccionVentasGeneral({ g, filtros }) {
             info="Venta ÷ tickets únicos (folio). Responde a año, mes, sucursal y equipo; no varía por proveedor o línea." />
           <MiniKPI icon="📉" label="Clientes perdidos" valor={fmt.num(g.perdidos)} color="#b91c1c"
             sub={`Regla +4 meses · ${fmt.pct(g.perdidosPct)} de ${fmt.num(g.perdidosTotal)} clientes`}
-            info="Mismo método que el Dashboard Táctico: clientes sin compra en los últimos 4 meses. Base = todos los clientes con historial. Responde a sucursal y equipo; no varía por mes/proveedor/línea." />
+            info="Mismo método que el Dashboard Táctico: clientes sin compra en los últimos 4 meses. Base = clientes del alcance con historial. Responde a sucursal, equipo, proveedor y línea (es una foto de recencia; no varía por año/mes)." />
         </div>
 
         {scoped === 'todos' && (

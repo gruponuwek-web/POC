@@ -244,7 +244,7 @@ function buildVentasGeneralFact(rowsByYear) {
     if (ca.lastRel <= cortePerdido) p.perdidos += 1;
   });
 
-  return { dims: { sucursales: dSuc, proveedores: dProv, lineas: dLinea, vendedores: dVend, clientes: dCli }, rows, ticketsCubo, perdidosCubo, perdidosRegla: MESES_PERDIDO };
+  return { dims: { sucursales: dSuc, proveedores: dProv, lineas: dLinea, vendedores: dVend, clientes: dCli }, rows, ticketsCubo, perdidosCubo, perdidosRegla: MESES_PERDIDO, mesMax2026 };
 }
 
 // ── Ventas General (versión previa por-año, ya no se usa — se conserva por referencia) ──
