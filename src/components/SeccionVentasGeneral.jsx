@@ -72,7 +72,7 @@ export default function SeccionVentasGeneral({ g, filtros }) {
     <div style={{ marginBottom: 16 }}>
       <div style={{ background: '#fff', border: '1.5px solid #e2e8f0', borderRadius: 10, boxShadow: '0 1px 4px rgba(0,0,0,.05)', padding: 16 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', marginBottom: 12 }}>
-          <span style={{ fontSize: 13, fontWeight: 700, color: '#0f1f3d', textTransform: 'uppercase', letterSpacing: '.4px' }}>🏢 Ventas General · Resumen</span>
+          <span style={{ fontSize: 13, fontWeight: 700, color: '#0f1f3d', textTransform: 'uppercase', letterSpacing: '.4px' }}>🏢 Empresa Completa · Resumen</span>
           <span style={{ fontSize: 12, fontWeight: 700, color: filtrado ? '#1a6cf0' : '#94a3b8' }}>— {alcance}</span>
           <span style={{ fontSize: 11, color: '#94a3b8', fontWeight: 500 }}>{subtitulo}</span>
         </div>
