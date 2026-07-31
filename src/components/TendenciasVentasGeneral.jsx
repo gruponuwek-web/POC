@@ -66,34 +66,29 @@ export default function TendenciasVentasGeneral({ g, filtros }) {
   }
   const nombreMesUlt = mesesAct.length ? MESES3[mesesAct[mesesAct.length - 1] - 1] : ''
 
-  // Gráfica de líneas (SVG) — venta mensual 2025 vs 2026
-  const W = 720, H = 210, padL = 8, padR = 12, padT = 14, padB = 22
-  const meses = g.mesesY
-  const minM = meses[0], maxM = meses[meses.length - 1]
-  const spanM = Math.max(1, maxM - minM)
-  const maxV = Math.max(
-    ...meses.map(m => (s2025[m]?.venta || 0)),
-    ...meses.map(m => (s2026[m]?.venta || 0)),
-    1
-  )
-  const xFor = m => padL + (m - minM) / spanM * (W - padL - padR)
-  const yFor = v => padT + (1 - v / maxV) * (H - padT - padB)
-  const linea = (serie, color, dash) => {
-    const pts = meses.filter(m => serie[m]).map(m => `${xFor(m).toFixed(1)},${yFor(serie[m].venta).toFixed(1)}`)
-    if (pts.length < 1) return null
-    return (
-      <g>
-        <polyline points={pts.join(' ')} fill="none" stroke={color} strokeWidth="2.5" strokeDasharray={dash || 'none'} strokeLinecap="round" strokeLinejoin="round" />
-        {meses.filter(m => serie[m]).map(m => <circle key={m} cx={xFor(m)} cy={yFor(serie[m].venta)} r="3" fill={color} />)}
-      </g>
-    )
-  }
+  // Barras de venta mensual (año en curso) + línea de tendencia (regresión lineal)
+  const barData = mesesAct.map(m => ({ mes: m, v: serieAct[m].venta }))
+  const nB = barData.length
+  let sx = 0, sy = 0, sxy = 0, sxx = 0
+  barData.forEach((d, i) => { sx += i; sy += d.v; sxy += i * d.v; sxx += i * i })
+  const slope = nB > 1 ? (nB * sxy - sx * sy) / (nB * sxx - sx * sx || 1) : 0
+  const intercept = nB > 0 ? (sy - slope * sx) / nB : 0
+  const trendAt = i => Math.max(0, intercept + slope * i)
+  const trendUp = slope >= 0
+
+  const W = 720, H = 210, padL = 10, padR = 12, padT = 18, padB = 24
+  const maxBar = Math.max(...barData.map(d => d.v), trendAt(0), trendAt(nB - 1), 1)
+  const slot = (W - padL - padR) / Math.max(1, nB)
+  const xC = i => padL + (i + 0.5) * slot
+  const barW = Math.min(46, slot * 0.55)
+  const yBase = H - padB
+  const yTop = v => yBase - (v / maxBar) * (H - padT - padB)
 
   return (
     <div style={{ background: '#fff', borderRadius: 10, border: '1.5px solid #e2e8f0', boxShadow: '0 1px 4px rgba(0,0,0,.05)', overflow: 'hidden', marginBottom: 16 }}>
       <div style={{ background: '#0f1f3d', padding: '12px 16px', display: 'flex', alignItems: 'center' }}>
         <span style={{ fontSize: 12, fontWeight: 700, color: '#fff', textTransform: 'uppercase', letterSpacing: '.5px' }}>📈 Tendencias — {alcance}</span>
-        <InfoTip text="Trayectoria mensual de la venta (línea) y variación del último mes con datos frente al mes anterior." light />
+        <InfoTip text="Venta mensual del año en curso en barras con su línea de tendencia (regresión), más la variación del último mes con datos frente al mes anterior." light />
       </div>
 
       <div style={{ padding: 16 }}>
@@ -106,19 +101,30 @@ export default function TendenciasVentasGeneral({ g, filtros }) {
           </div>
         )}
 
-        {/* Gráfica de líneas */}
-        <div style={{ fontSize: 10.5, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '.4px', marginBottom: 6 }}>Trayectoria de venta mensual</div>
+        {/* Barras de venta mensual + línea de tendencia */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6, flexWrap: 'wrap' }}>
+          <span style={{ fontSize: 10.5, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '.4px' }}>Venta mensual {añoAct} con línea de tendencia</span>
+          <span style={{ background: trendUp ? '#dcfce7' : '#fee2e2', color: trendUp ? '#15803d' : '#b91c1c', padding: '1px 8px', borderRadius: 8, fontSize: 10.5, fontWeight: 700 }}>
+            {trendUp ? '▲ Tendencia al alza' : '▼ Tendencia a la baja'}
+          </span>
+        </div>
         <div style={{ width: '100%', overflowX: 'auto' }}>
           <svg viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', minWidth: 480, display: 'block' }}>
             {[0.25, 0.5, 0.75].map(f => <line key={f} x1={padL} x2={W - padR} y1={padT + f * (H - padT - padB)} y2={padT + f * (H - padT - padB)} stroke="#f1f5f9" strokeWidth="1" />)}
-            {linea(s2025, '#93c5fd')}
-            {linea(s2026, '#1a6cf0')}
-            {meses.map(m => <text key={m} x={xFor(m)} y={H - 6} fontSize="10" fill="#94a3b8" textAnchor="middle">{MESES3[m - 1]}</text>)}
+            {barData.map((d, i) => (
+              <g key={d.mes}>
+                <rect x={xC(i) - barW / 2} y={yTop(d.v)} width={barW} height={Math.max(0, yBase - yTop(d.v))} rx="3" fill="#1a6cf0" />
+                <text x={xC(i)} y={yTop(d.v) - 4} fontSize="9.5" fill="#64748b" textAnchor="middle" fontWeight="600">${(d.v / 1e6).toFixed(1)}M</text>
+              </g>
+            ))}
+            <polyline points={barData.map((d, i) => `${xC(i).toFixed(1)},${yTop(trendAt(i)).toFixed(1)}`).join(' ')} fill="none" stroke="#f59e0b" strokeWidth="2.5" strokeDasharray="5 4" strokeLinecap="round" />
+            {barData.map((d, i) => <circle key={d.mes} cx={xC(i)} cy={yTop(trendAt(i))} r="2.5" fill="#f59e0b" />)}
+            {barData.map(d => <text key={d.mes} x={xC(barData.indexOf(d))} y={H - 6} fontSize="10" fill="#94a3b8" textAnchor="middle">{MESES3[d.mes - 1]}</text>)}
           </svg>
         </div>
         <div style={{ display: 'flex', gap: 16, marginTop: 6, fontSize: 10.5, color: '#64748b' }}>
-          <span><span style={{ display: 'inline-block', width: 14, height: 3, background: '#93c5fd', borderRadius: 2, marginRight: 5, verticalAlign: 'middle' }} />2025</span>
-          <span><span style={{ display: 'inline-block', width: 14, height: 3, background: '#1a6cf0', borderRadius: 2, marginRight: 5, verticalAlign: 'middle' }} />2026 (a jul)</span>
+          <span><span style={{ display: 'inline-block', width: 10, height: 10, background: '#1a6cf0', borderRadius: 2, marginRight: 5, verticalAlign: 'middle' }} />Venta {añoAct}</span>
+          <span><span style={{ display: 'inline-block', width: 14, height: 0, borderTop: '2.5px dashed #f59e0b', marginRight: 5, verticalAlign: 'middle' }} />Línea de tendencia</span>
         </div>
       </div>
     </div>

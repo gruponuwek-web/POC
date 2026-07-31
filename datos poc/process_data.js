@@ -173,7 +173,8 @@ function buildVentasGeneralFact(rowsByYear) {
 
   // Auxiliares para ticket promedio y clientes perdidos (no dependen de prov/línea)
   const tkCubo = new Map();   // "año|mes|si|eb" -> { tks:Set, v }
-  const cliYr = new Map();    // cliKey -> { b25, b26, si25, eb25 }
+  const cliAct = new Map();   // cliKey -> { lastRel, si, eb } (última compra en escala relativa)
+  let mesMax2026 = 0;         // último mes con datos de 2026 (para la regla de 4 meses)
 
   rowsByYear.forEach(({ año, rows }) => {
     rows.forEach(r => {
@@ -210,10 +211,14 @@ function buildVentasGeneralFact(rowsByYear) {
       tc.tks.add(`${r['FOLIO']}-${r['LETRA']}-${cliNum}`);
       tc.v += imp;
 
-      // Clientes perdidos: actividad por año del cliente
-      let cy = cliYr.get(cliKey); if (!cy) { cy = { b25: false, b26: false, si25: si, eb25: eb }; cliYr.set(cliKey, cy); }
-      if (año === 2025) { cy.b25 = true; cy.si25 = si; cy.eb25 = eb; }
-      else if (año === 2026) { cy.b26 = true; }
+      // Clientes perdidos (método Dashboard): última compra en escala relativa continua
+      // 2026 → mes (1-12); 2025 → mes-12 (dic-2025=0, ene-2025=-11). Se guarda sucursal/equipo
+      // de la última compra para poder filtrar.
+      const rel = año === 2026 ? mes : mes - 12;
+      if (año === 2026 && mes > mesMax2026) mesMax2026 = mes;
+      let ca = cliAct.get(cliKey);
+      if (!ca) { ca = { lastRel: rel, si, eb }; cliAct.set(cliKey, ca); }
+      else if (rel > ca.lastRel) { ca.lastRel = rel; ca.si = si; ca.eb = eb; }
     });
   });
 
@@ -227,17 +232,19 @@ function buildVentasGeneralFact(rowsByYear) {
   const ticketsCubo = {};
   tkCubo.forEach((val, k) => { ticketsCubo[k] = { t: val.tks.size, v: Math.round(val.v) }; });
 
-  // Clientes perdidos = compraron en 2025 y NO en 2026. Base = clientes de 2025.
+  // Clientes perdidos (método Dashboard): sin compra en 4+ meses.
+  // Perdido si su última compra (rel) <= mesMax2026 - 4. Base = todos los clientes con historial.
+  const MESES_PERDIDO = 4;
+  const cortePerdido = mesMax2026 - MESES_PERDIDO;
   const perdidosCubo = {};
-  cliYr.forEach(cy => {
-    if (!cy.b25) return;
-    const k = `${cy.si25}|${cy.eb25}`;
+  cliAct.forEach(ca => {
+    const k = `${ca.si}|${ca.eb}`;
     let p = perdidosCubo[k]; if (!p) { p = { perdidos: 0, total: 0 }; perdidosCubo[k] = p; }
     p.total += 1;
-    if (!cy.b26) p.perdidos += 1;
+    if (ca.lastRel <= cortePerdido) p.perdidos += 1;
   });
 
-  return { dims: { sucursales: dSuc, proveedores: dProv, lineas: dLinea, vendedores: dVend, clientes: dCli }, rows, ticketsCubo, perdidosCubo };
+  return { dims: { sucursales: dSuc, proveedores: dProv, lineas: dLinea, vendedores: dVend, clientes: dCli }, rows, ticketsCubo, perdidosCubo, perdidosRegla: MESES_PERDIDO };
 }
 
 // ── Ventas General (versión previa por-año, ya no se usa — se conserva por referencia) ──
