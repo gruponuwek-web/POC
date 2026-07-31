@@ -114,7 +114,7 @@ export default function SeccionVentasGeneral({ g, filtros }) {
           <MiniKPI icon="📉" label="Clientes perdidos" valor={fmt.num(g.perdidos)} color="#b91c1c"
             sub={`Regla +4 meses · ${fmt.pct(g.perdidosPct)} de ${fmt.num(g.perdidosTotal)} clientes`}
             scopeNote="Año, Mes, Sucursal, Equipo, Proveedor, Línea"
-            info="Mismo método que el Dashboard Táctico: clientes sin compra en los últimos 4 meses. Si filtras Año/Mes, la fecha de corte se mueve a ese punto ('¿quién estaba perdido a esa fecha?'); si dejas 'Todos', usa el mes más reciente con datos." />
+            info="Misma regla de +4 meses que el Dashboard Táctico, pero con una base distinta: aquí solo se cuentan clientes con historial REAL de compra en el alcance filtrado (no cartera asignada sin compra). El Dashboard Táctico usa cartera asignada al agente + clientes 2025, que puede incluir clientes que nunca compraron — por eso ese número puede ser mayor aunque cubra menos agentes. Si filtras Año/Mes aquí, la fecha de corte se mueve a ese punto ('¿quién estaba perdido a esa fecha?'); con 'Todos' usa el mes más reciente con datos." />
         </div>
 
         {scoped === 'todos' && (

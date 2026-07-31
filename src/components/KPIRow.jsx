@@ -56,7 +56,7 @@ export default function KPIRow({ resumen: r }) {
         )
       })()}
       <KPI color="#ef4444" icon="🔴" label="Clientes Perdidos"
-        tooltip="Clientes que llevan más de 4 meses sin realizar ninguna compra. Al filtrar por mes se ven los clientes que cruzaron ese umbral en ese mes específico (no el acumulado)."
+        tooltip="Clientes que llevan más de 4 meses sin realizar ninguna compra. Base: cartera asignada al agente + clientes que compraron en 2025 con ese agente (incluye clientes asignados que nunca compraron). Al filtrar por mes se ven los clientes que cruzaron ese umbral en ese mes específico (no el acumulado). Nota: esta base es distinta a la de 'Empresa Completa', que solo cuenta clientes con historial real de compra — por eso los números no son directamente comparables."
         value={fmt.num(r.clientes_perdidos)}
         sub="Sin compra en el periodo"
         badge={{ text: 'Regla: +4 meses', color: r.clientes_perdidos > 10 ? 'red' : 'yellow' }}
