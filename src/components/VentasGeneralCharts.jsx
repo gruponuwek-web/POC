@@ -18,15 +18,6 @@ function Card({ titulo, sub, info, children }) {
   )
 }
 
-function LeyendaAños() {
-  return (
-    <div style={{ display: 'flex', gap: 16, marginTop: 8, fontSize: 10.5, color: '#64748b' }}>
-      <span><span style={{ display: 'inline-block', width: 10, height: 10, background: '#bfdbfe', borderRadius: 2, marginRight: 5 }} />2025</span>
-      <span><span style={{ display: 'inline-block', width: 10, height: 10, background: '#1a6cf0', borderRadius: 2, marginRight: 5 }} />2026 (a jul)</span>
-    </div>
-  )
-}
-
 export default function VentasGeneralCharts({ g, filtros }) {
   if (!g || !g.mesesY.length) return null
 
@@ -94,7 +85,7 @@ export default function VentasGeneralCharts({ g, filtros }) {
         </div>
         <Ejes items={visibles} />
         {agrupado && <div style={{ display: 'flex', gap: 16, marginTop: 8, fontSize: 10.5, color: '#64748b' }}>
-          <span><span style={{ display: 'inline-block', width: 10, height: 10, background: '#c4b5fd', borderRadius: 2, marginRight: 5 }} />2025</span>
+          <span><span style={{ display: 'inline-block', width: 10, height: 10, background: '#a78bdb', borderRadius: 2, marginRight: 5 }} />2025</span>
           <span><span style={{ display: 'inline-block', width: 10, height: 10, background: '#7c3aed', borderRadius: 2, marginRight: 5 }} />2026 (a jul)</span>
         </div>}
       </Card>

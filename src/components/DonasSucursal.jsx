@@ -1,5 +1,6 @@
 import React from 'react'
 import { fmt } from '../utils/format.js'
+import { scopeLabel } from '../utils/ventasGeneral.js'
 import InfoTip from './InfoTip.jsx'
 
 const COMc = '#1a6cf0', RESTOc = '#f59e0b', TRACK = '#eef2f7'
@@ -69,15 +70,16 @@ function Dona({ s, totalEmpresa }) {
   )
 }
 
-export default function DonasSucursal({ g }) {
+export default function DonasSucursal({ g, filtros }) {
   if (!g || !g.sucursalesVenta || g.sucursalesVenta.length === 0) return null
   const totalEmpresa = g.sucursalesVenta.reduce((s, x) => s + x.total, 0)
+  const alcance = scopeLabel({ ...filtros, sucursal: 'todas' })
 
   return (
     <div style={{ background: '#fff', borderRadius: 10, border: '1.5px solid #e2e8f0', boxShadow: '0 1px 4px rgba(0,0,0,.05)', overflow: 'hidden', marginBottom: 16 }}>
-      <div style={{ padding: '14px 18px 0', display: 'flex', alignItems: 'center' }}>
-        <span style={{ fontSize: 12, fontWeight: 700, color: '#0f1f3d', textTransform: 'uppercase', letterSpacing: '.4px' }}>🍩 Venta por Sucursal — Comercial vs El resto</span>
-        <InfoTip text="Una dona por sucursal con su split comercial/resto y su participación en la empresa. Compara todas las sucursales (no depende del filtro de Sucursal) pero sí de año, mes, equipo, línea y proveedor." />
+      <div style={{ padding: '14px 18px 0', display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+        <span style={{ fontSize: 12, fontWeight: 700, color: '#0f1f3d', textTransform: 'uppercase', letterSpacing: '.4px' }}>🍩 Venta por Sucursal — {alcance}</span>
+        <InfoTip text="Una dona por sucursal con su split comercial/resto y su participación en la empresa. Compara todas las sucursales (ignora el filtro de Sucursal) pero sí respeta año, mes, equipo, línea y proveedor." />
       </div>
       <div style={{ padding: 18 }}>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(200px,1fr))', gap: 16 }}>

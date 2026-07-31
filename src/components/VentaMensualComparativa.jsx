@@ -149,8 +149,8 @@ export default function VentaMensualComparativa({ g, filtros }) {
                 </g>
               ))}
 
-              {trend25 && <TrendLine pts={trend25Pts} color="#7c3aed" id="t25" thin />}
-              {trend && <TrendLine pts={trendPts} color="#f59e0b" id="t26" />}
+              {trend25 && <TrendLine pts={trend25Pts} color="#94a3b8" id="t25" thin />}
+              {trend && <TrendLine pts={trendPts} color="#0f1f3d" id="t26" />}
 
               {chart.map((c, i) => <text key={c.mes} x={xC(i)} y={H - 8} fontSize="10" fill="#94a3b8" textAnchor="middle">{MESES3[c.mes - 1]}</text>)}
             </svg>
@@ -163,8 +163,8 @@ export default function VentaMensualComparativa({ g, filtros }) {
               <span><span style={{ display: 'inline-block', width: 10, height: 10, background: '#1a6cf0', borderRadius: 2, marginRight: 5 }} />Comercial</span>
               <span><span style={{ display: 'inline-block', width: 10, height: 10, background: '#f59e0b', borderRadius: 2, marginRight: 5 }} />El resto</span>
             </>}
-            {trend && <span><span style={{ display: 'inline-block', width: 14, height: 0, borderTop: '3px dashed #f59e0b', marginRight: 5, verticalAlign: 'middle' }} />Tendencia {agrupado ? '2026' : ''}</span>}
-            {trend25 && <span><span style={{ display: 'inline-block', width: 14, height: 0, borderTop: '2px dashed #7c3aed', marginRight: 5, verticalAlign: 'middle' }} />Tendencia 2025</span>}
+            {trend && <span><span style={{ display: 'inline-block', width: 14, height: 0, borderTop: '3px dashed #0f1f3d', marginRight: 5, verticalAlign: 'middle' }} />Tendencia {agrupado ? '2026' : ''}</span>}
+            {trend25 && <span><span style={{ display: 'inline-block', width: 14, height: 0, borderTop: '2px dashed #94a3b8', marginRight: 5, verticalAlign: 'middle' }} />Tendencia 2025</span>}
           </div>
         </div>
 

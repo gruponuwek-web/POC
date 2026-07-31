@@ -18,7 +18,7 @@ function Tarjeta({ icon, label, valor, sub, borde, comp }) {
   )
 }
 
-function MiniKPI({ icon, label, valor, sub, info, color }) {
+function MiniKPI({ icon, label, valor, sub, info, color, scopeNote }) {
   return (
     <div style={{ background: '#fff', border: '1.5px solid #e2e8f0', borderRadius: 9, padding: '10px 12px' }}>
       <div style={{ fontSize: 10, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '.4px', display: 'flex', alignItems: 'center' }}>
@@ -26,6 +26,7 @@ function MiniKPI({ icon, label, valor, sub, info, color }) {
       </div>
       <div style={{ fontSize: 19, fontWeight: 800, color: color || '#0f1f3d', margin: '3px 0 2px' }}>{valor}</div>
       <div style={{ fontSize: 10.5, color: '#94a3b8' }}>{sub}</div>
+      {scopeNote && <div style={{ fontSize: 9.5, color: '#b0b8c4', marginTop: 3 }}>Filtros: {scopeNote}</div>}
     </div>
   )
 }
@@ -87,10 +88,10 @@ export default function SeccionVentasGeneral({ g, filtros }) {
               sub={`${fmt.num(g.totalN)} operaciones`}
               comp={g.prev && <Comparacion cur={g.total} prev={g.prev.total} />} />
             <Tarjeta icon="👥" label="Equipo Comercial" valor={g.comV} borde="#0f1f3d"
-              sub={<>{fmt.num(g.comN)} ops · <span style={{ background: '#dbeafe', color: '#1d4ed8', padding: '1px 7px', borderRadius: 9, fontWeight: 700 }}>{fmt.pct(pctCom)}</span></>}
+              sub={<>{fmt.num(g.comN)} operaciones · <span style={{ background: '#dbeafe', color: '#1d4ed8', padding: '1px 7px', borderRadius: 9, fontWeight: 700 }}>{fmt.pct(pctCom)}</span></>}
               comp={g.prev && <Comparacion cur={g.comV} prev={g.prev.comV} />} />
             <Tarjeta icon="🏭" label="El Resto" valor={g.restoV} borde="#f59e0b"
-              sub={<>{fmt.num(g.restoN)} ops · <span style={{ background: '#fef3c7', color: '#b45309', padding: '1px 7px', borderRadius: 9, fontWeight: 700 }}>{fmt.pct(pctResto)}</span></>}
+              sub={<>{fmt.num(g.restoN)} operaciones · <span style={{ background: '#fef3c7', color: '#b45309', padding: '1px 7px', borderRadius: 9, fontWeight: 700 }}>{fmt.pct(pctResto)}</span></>}
               comp={g.prev && <Comparacion cur={g.restoV} prev={g.prev.restoV} />} />
           </div>
         ) : (
@@ -99,7 +100,7 @@ export default function SeccionVentasGeneral({ g, filtros }) {
               icon={esComercial ? '👥' : '🏭'}
               label={esComercial ? 'Venta Equipo Comercial' : 'Venta El Resto'}
               valor={esComercial ? g.comV : g.restoV} borde={esComercial ? '#0f1f3d' : '#f59e0b'}
-              sub={<>{fmt.num(esComercial ? g.comN : g.restoN)} ops · <span style={{ background: esComercial ? '#dbeafe' : '#fef3c7', color: esComercial ? '#1d4ed8' : '#b45309', padding: '1px 7px', borderRadius: 9, fontWeight: 700 }}>{fmt.pct(esComercial ? pctCom : pctResto)} del total</span></>}
+              sub={<>{fmt.num(esComercial ? g.comN : g.restoN)} operaciones · <span style={{ background: esComercial ? '#dbeafe' : '#fef3c7', color: esComercial ? '#1d4ed8' : '#b45309', padding: '1px 7px', borderRadius: 9, fontWeight: 700 }}>{fmt.pct(esComercial ? pctCom : pctResto)} del total</span></>}
               comp={g.prev && <Comparacion cur={esComercial ? g.comV : g.restoV} prev={esComercial ? g.prev.comV : g.prev.restoV} />} />
           </div>
         )}
@@ -108,9 +109,11 @@ export default function SeccionVentasGeneral({ g, filtros }) {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(190px,1fr))', gap: 12, marginBottom: scoped === 'todos' ? 16 : 0 }}>
           <MiniKPI icon="🎫" label="Ticket promedio" valor={fmt.moneda(g.ticketProm)}
             sub={`${fmt.num(g.tickets)} tickets únicos`}
+            scopeNote="Año, Mes, Sucursal, Equipo"
             info="Venta ÷ tickets únicos (folio). Responde a año, mes, sucursal y equipo; no varía por proveedor o línea." />
           <MiniKPI icon="📉" label="Clientes perdidos" valor={fmt.num(g.perdidos)} color="#b91c1c"
             sub={`Regla +4 meses · ${fmt.pct(g.perdidosPct)} de ${fmt.num(g.perdidosTotal)} clientes`}
+            scopeNote="Sucursal, Equipo, Proveedor, Línea"
             info="Mismo método que el Dashboard Táctico: clientes sin compra en los últimos 4 meses. Base = clientes del alcance con historial. Responde a sucursal, equipo, proveedor y línea (es una foto de recencia; no varía por año/mes)." />
         </div>
 

@@ -425,7 +425,7 @@ export default function App() {
           {vgComputed ? (
             <>
               <SeccionVentasGeneral g={vgComputed} filtros={filtros} />
-              <DonasSucursal g={vgComputed} />
+              <DonasSucursal g={vgComputed} filtros={filtros} />
               <VentaMensualComparativa g={vgComputed} filtros={filtros} />
               <VentasGeneralCharts g={vgComputed} filtros={filtros} />
               <TablasVentasGeneral g={vgComputed} filtros={filtros} />

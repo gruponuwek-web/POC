@@ -1,4 +1,5 @@
 import React from 'react'
+import InfoTip from './InfoTip.jsx'
 
 const MESES = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
 
@@ -8,10 +9,12 @@ const selectStyle = {
   outline: 'none', cursor: 'pointer'
 }
 
-function Campo({ label, children }) {
+function Campo({ label, info, children }) {
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-      <label style={{ fontSize: 11, color: '#64748b', fontWeight: 600, whiteSpace: 'nowrap' }}>{label}:</label>
+      <label style={{ fontSize: 11, color: '#64748b', fontWeight: 600, whiteSpace: 'nowrap', display: 'flex', alignItems: 'center' }}>
+        {label}{info && <InfoTip text={info} />}:
+      </label>
       {children}
     </div>
   )
@@ -39,14 +42,14 @@ export default function FiltroVentasGeneral({ filtros, onChange, sucursales = []
       <span style={{ fontSize: 11, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '.5px' }}>Filtros</span>
 
       {/* ── Periodo ── */}
-      <Campo label="Año">
+      <Campo label="Año" info="Filtra el periodo de todas las tarjetas y gráficas. 'Todos' suma 2025 + 2026.">
         <select value={filtros.año} onChange={e => onChange({ ...filtros, año: e.target.value })} style={selectStyle}>
           <option value="todos">Todos</option>
           <option value="2025">2025</option>
           <option value="2026">2026</option>
         </select>
       </Campo>
-      <Campo label="Mes">
+      <Campo label="Mes" info="Filtra al mes seleccionado. No afecta a Clientes Perdidos, que es una foto de recencia sin importar el mes.">
         <select value={mesSel} onChange={e => onChange({ ...filtros, meses: e.target.value === 'todos' ? [] : [Number(e.target.value)] })} style={selectStyle}>
           <option value="todos">Todos</option>
           {MESES.map((m, i) => <option key={i + 1} value={i + 1}>{m}</option>)}
@@ -56,7 +59,7 @@ export default function FiltroVentasGeneral({ filtros, onChange, sucursales = []
       <Sep />
 
       {/* ── Segmento ── */}
-      <Campo label="Equipo">
+      <Campo label="Equipo" info="Compara el equipo comercial gestionado contra el resto de la operación de la empresa.">
         <select value={equipo} onChange={e => onChange({ ...filtros, equipo: e.target.value })} style={selectStyle}>
           <option value="todos">Todos</option>
           <option value="comercial">Equipo comercial</option>
@@ -64,7 +67,7 @@ export default function FiltroVentasGeneral({ filtros, onChange, sucursales = []
         </select>
       </Campo>
       {sucursales.length > 0 && (
-        <Campo label="Sucursal">
+        <Campo label="Sucursal" info="Filtra por sucursal. La sección de donas la ignora a propósito para poder comparar todas las sucursales entre sí.">
           <select value={sucursal} onChange={e => onChange({ ...filtros, sucursal: e.target.value })} style={selectStyle}>
             <option value="todas">Todas</option>
             {sucursales.map(s => <option key={s} value={s}>{s}</option>)}
@@ -76,7 +79,7 @@ export default function FiltroVentasGeneral({ filtros, onChange, sucursales = []
 
       {/* ── Producto ── */}
       {lineaOrden.length > 0 && (
-        <Campo label="Línea">
+        <Campo label="Línea" info="Filtra por línea de producto. No afecta a Ticket Promedio, calculado sobre tickets completos.">
           <select value={vgLinea} onChange={e => onChange({ ...filtros, vgLinea: e.target.value })} style={selectStyle}>
             <option value="todas">Todas</option>
             {lineaOrden.map(l => <option key={l} value={l}>{l}</option>)}
@@ -84,7 +87,7 @@ export default function FiltroVentasGeneral({ filtros, onChange, sucursales = []
         </Campo>
       )}
       {provOrden.length > 0 && (
-        <Campo label="Proveedor">
+        <Campo label="Proveedor" info="Filtra por proveedor. No afecta a Ticket Promedio, calculado sobre tickets completos.">
           <select value={vgProveedor} onChange={e => onChange({ ...filtros, vgProveedor: e.target.value })} style={{ ...selectStyle, maxWidth: 200 }}>
             <option value="todos">Todos</option>
             {provOrden.map(p => <option key={p} value={p}>{p}</option>)}
