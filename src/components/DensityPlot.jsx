@@ -19,17 +19,17 @@ function Curva({ pts, minX, maxX, maxY, W, H, padL, padR, padT, padB, color }) {
   )
 }
 
-function Panel({ titulo, info, valores25, valores26, fmtX, logScale }) {
+function Panel({ titulo, info, valores25, valores26, fmtX, logScale, nXTicks = 6, rotateLabels = false }) {
   const t25 = useMemo(() => logScale ? valores25.map(v => Math.log10(Math.max(1, v) + 1)) : valores25, [valores25, logScale])
   const t26 = useMemo(() => logScale ? valores26.map(v => Math.log10(Math.max(1, v) + 1)) : valores26, [valores26, logScale])
   const k25 = useMemo(() => kde(t25), [t25])
   const k26 = useMemo(() => kde(t26), [t26])
-  const W = 360, H = 190, padL = 30, padR = 12, padT = 12, padB = 22
+  const W = 360, H = rotateLabels ? 208 : 190, padL = 30, padR = 12, padT = 12, padB = rotateLabels ? 40 : 22
   const minX = Math.min(k25.min, k26.min, 0)
   const maxX = Math.max(k25.max, k26.max, 1)
   const maxY = Math.max(...k25.points.map(p => p.y), ...k26.points.map(p => p.y), 0.001) * 1.08
   const yTicks = [0.25, 0.5, 0.75, 1].map(f => f * maxY)
-  const xTicks = Array.from({ length: 6 }, (_, i) => minX + (maxX - minX) * i / 5)
+  const xTicks = Array.from({ length: nXTicks }, (_, i) => minX + (maxX - minX) * i / (nXTicks - 1))
 
   return (
     <div style={{ background: '#fff', border: '1.5px solid #e2e8f0', borderRadius: 10, padding: 14 }}>
@@ -45,9 +45,13 @@ function Panel({ titulo, info, valores25, valores26, fmtX, logScale }) {
         <Curva pts={k25.points} minX={minX} maxX={maxX} maxY={maxY} W={W} H={H} padL={padL} padR={padR} padT={padT} padB={padB} color={C25} />
         <Curva pts={k26.points} minX={minX} maxX={maxX} maxY={maxY} W={W} H={H} padL={padL} padR={padR} padT={padT} padB={padB} color={C26} />
         <line x1={padL} x2={W - padR} y1={H - padB} y2={H - padB} stroke="#cbd5e1" strokeWidth="1" />
-        {xTicks.map((x, i) => (
-          <text key={i} x={padL + (x - minX) / (maxX - minX || 1) * (W - padL - padR)} y={H - 6} fontSize="8.5" fill="#94a3b8" textAnchor="middle">{fmtX(logScale ? Math.pow(10, x) - 1 : x)}</text>
-        ))}
+        {xTicks.map((x, i) => {
+          const xx = padL + (x - minX) / (maxX - minX || 1) * (W - padL - padR)
+          const label = fmtX(logScale ? Math.pow(10, x) - 1 : x)
+          return rotateLabels
+            ? <text key={i} x={xx} y={H - padB + 12} fontSize="8" fill="#94a3b8" textAnchor="end" transform={`rotate(-40 ${xx} ${H - padB + 12})`}>{label}</text>
+            : <text key={i} x={xx} y={H - 6} fontSize="8.5" fill="#94a3b8" textAnchor="middle">{label}</text>
+        })}
       </svg>
       <div style={{ display: 'flex', gap: 14, marginTop: 4, fontSize: 10.5, color: '#64748b' }}>
         <span><span style={{ display: 'inline-block', width: 10, height: 10, background: C25, borderRadius: 2, marginRight: 5, opacity: .75 }} />2025</span>
@@ -79,7 +83,9 @@ export default function DensityPlot({ ap }) {
           titulo="Monto de compra (venta total por cliente, escala log)"
           info="Venta total anual por cliente. Escala logarítmica porque el gasto está muy sesgado (unos pocos clientes mayoristas gastan mucho más que la mayoría). Un pico más a la derecha indica clientes con mayor gasto."
           valores25={d25.montos} valores26={d26.montos}
-          fmtX={x => x >= 1000 ? `$${Math.round(x / 1000)}k` : `$${Math.round(x)}`}
+          fmtX={x => `$${Math.round(x).toLocaleString('es-MX')}`}
+          nXTicks={5}
+          rotateLabels
           logScale
         />
       </div>

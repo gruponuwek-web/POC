@@ -256,7 +256,7 @@ function buildAnaliticaProductos(rowsByYear) {
   const cliFreq    = { '2025': mk(), '2026': mk(), todos: mk() } // ci -> {tickets:Set, monto}
   const lineaProd  = { '2025': mk(), '2026': mk(), todos: mk() } // linea -> Map(producto -> {venta,cantidad})
   const prodTotal  = { '2025': mk(), '2026': mk(), todos: mk() } // producto -> venta acumulada
-  const cliProdSet = { '2025': mk(), '2026': mk(), todos: mk() } // ci -> Set(producto)
+  const folioProdSet = { '2025': mk(), '2026': mk(), todos: mk() } // folio -> Set(producto)
 
   rowsByYear.forEach(({ año, rows }) => {
     const scopeKey = String(año)
@@ -282,8 +282,8 @@ function buildAnaliticaProductos(rowsByYear) {
 
         prodTotal[k].set(producto, (prodTotal[k].get(producto) || 0) + imp)
 
-        let cs = cliProdSet[k].get(cliKey); if (!cs) { cs = new Set(); cliProdSet[k].set(cliKey, cs) }
-        cs.add(producto)
+        let fs2 = folioProdSet[k].get(folioKey); if (!fs2) { fs2 = new Set(); folioProdSet[k].set(folioKey, fs2) }
+        fs2.add(producto)
       })
     })
   })
@@ -318,21 +318,23 @@ function buildAnaliticaProductos(rowsByYear) {
     sunburst[k] = lineas
   })
 
-  // Chord: top-24 productos globales por venta + matriz de co-ocurrencia (clientes en común)
-  const TOP_N_CHORD = 24
+  // Chord: top-16 productos globales por venta + matriz de co-ocurrencia por FOLIO
+  // (folios de compra únicos donde aparecen ambos productos juntos — análisis de canasta)
+  const TOP_N_CHORD = 16
   const chord = {}
   scopes.forEach(k => {
     const topProductos = [...prodTotal[k].entries()].sort((a, b) => b[1] - a[1]).slice(0, TOP_N_CHORD).map(([nombre]) => nombre)
     const idx = new Map(topProductos.map((n, i) => [n, i]))
     const n = topProductos.length
     const matrix = Array.from({ length: n }, () => new Array(n).fill(0))
-    cliProdSet[k].forEach(set => {
+    folioProdSet[k].forEach(set => {
       const inTop = [...set].filter(p => idx.has(p)).map(p => idx.get(p))
       for (let i = 0; i < inTop.length; i++) {
         for (let j = i + 1; j < inTop.length; j++) { matrix[inTop[i]][inTop[j]]++; matrix[inTop[j]][inTop[i]]++ }
       }
     })
-    chord[k] = { productos: topProductos, matrix }
+    const grado = matrix.map(fila => fila.reduce((s, v) => s + v, 0))
+    chord[k] = { productos: topProductos, matrix, grado }
   })
 
   return { densidad, sunburst, chord }

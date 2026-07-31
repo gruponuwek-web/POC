@@ -37,6 +37,10 @@ export default function SunburstProductos({ ap, filtros }) {
 
   if (!lineas.length) return null
   const topLineas = [...lineas].sort((a, b) => b.venta - a.venta).slice(0, 8)
+  const topProductos = lineas
+    .flatMap(l => l.productos.filter(p => !/^Otros \(/.test(p.nombre)).map(p => ({ ...p, linea: l.nombre })))
+    .sort((a, b) => b.venta - a.venta)
+    .slice(0, 10)
 
   return (
     <div style={{ background: '#fff', borderRadius: 10, border: '1.5px solid #e2e8f0', boxShadow: '0 1px 4px rgba(0,0,0,.05)', overflow: 'hidden', marginBottom: 16 }}>
@@ -79,6 +83,20 @@ export default function SunburstProductos({ ap, filtros }) {
                 </div>
               )
             })}
+          </div>
+
+          <div style={{ fontSize: 10.5, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '.4px', margin: '16px 0 8px' }}>Top 10 productos individuales</div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+            {topProductos.map((p, i) => (
+              <div key={p.nombre + p.linea} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 11, padding: '3px 0', borderBottom: '1px solid #f1f5f9' }}>
+                <span style={{ color: '#94a3b8', fontWeight: 700, width: 14, flexShrink: 0 }}>{i + 1}</span>
+                <span style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ color: '#334155', fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{titulo(p.nombre)}</div>
+                  <div style={{ color: '#94a3b8', fontSize: 9.5 }}>{titulo(p.linea)}</div>
+                </span>
+                <span style={{ color: '#0f1f3d', fontWeight: 700, flexShrink: 0, textAlign: 'right' }}>{fmt.moneda(p.venta)}</span>
+              </div>
+            ))}
           </div>
         </div>
       </div>
