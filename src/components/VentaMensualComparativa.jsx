@@ -19,6 +19,37 @@ function regresion(points) {
   return { at: idx => Math.max(0, intercept + slope * idx), up: slope >= 0 }
 }
 
+// Path suavizado (curva) a través de una lista de puntos {x,y}
+function smoothPath(pts) {
+  if (pts.length === 0) return ''
+  if (pts.length === 1) return `M ${pts[0].x},${pts[0].y}`
+  let d = `M ${pts[0].x.toFixed(1)},${pts[0].y.toFixed(1)}`
+  for (let i = 1; i < pts.length; i++) {
+    const xc = (pts[i - 1].x + pts[i].x) / 2
+    const yc = (pts[i - 1].y + pts[i].y) / 2
+    d += ` Q ${pts[i - 1].x.toFixed(1)},${pts[i - 1].y.toFixed(1)} ${xc.toFixed(1)},${yc.toFixed(1)}`
+  }
+  const last = pts[pts.length - 1]
+  d += ` L ${last.x.toFixed(1)},${last.y.toFixed(1)}`
+  return d
+}
+
+// Línea de tendencia con brillo (glow) + puntos con anillo blanco
+function TrendLine({ pts, color, id, thin }) {
+  if (!pts || pts.length < 2) return null
+  const d = smoothPath(pts)
+  const w = thin ? 1.8 : 3
+  return (
+    <g>
+      <path d={d} fill="none" stroke={color} strokeWidth={w + 3} strokeLinecap="round" strokeLinejoin="round" opacity="0.16" />
+      <path d={d} fill="none" stroke={color} strokeWidth={w} strokeDasharray={thin ? '3 4' : '6 4'} strokeLinecap="round" strokeLinejoin="round" />
+      {pts.map((p, i) => (
+        <circle key={id + i} cx={p.x} cy={p.y} r={thin ? 2.6 : 3.6} fill={color} stroke="#fff" strokeWidth={thin ? 1.2 : 1.6} />
+      ))}
+    </g>
+  )
+}
+
 export default function VentaMensualComparativa({ g, filtros }) {
   if (!g || !g.mesesY.length) return null
 
@@ -45,9 +76,12 @@ export default function VentaMensualComparativa({ g, filtros }) {
   const maxTop = g.topResto.length ? g.topResto[0].venta : 1
   const mostrarTopResto = scoped !== 'comercial' && g.topResto.length > 0
 
-  // Línea de tendencia: sobre la serie "actual" (2026 en modo agrupado, o el total en modo año único)
+  // Tendencia principal: 2026 en modo agrupado (o el total en modo año único)
   const trendPoints = agrupado ? chart.filter(c => c.b > 0).map(c => ({ mes: c.mes, v: c.b })) : chart.map(c => ({ mes: c.mes, v: c.total }))
   const trend = regresion(trendPoints)
+  // Tendencia de referencia 2025 (solo en modo agrupado)
+  const trend25Points = agrupado ? chart.filter(c => c.a > 0).map(c => ({ mes: c.mes, v: c.a })) : []
+  const trend25 = regresion(trend25Points)
 
   // Geometría SVG
   const N = chart.length
@@ -55,16 +89,27 @@ export default function VentaMensualComparativa({ g, filtros }) {
   const slot = (W - padL - padR) / Math.max(1, N)
   const xC = i => padL + (i + 0.5) * slot
   const yBase = H - padB
-  const maxV = Math.max(...chart.map(c => agrupado ? Math.max(c.a, c.b) : c.total), trend ? trend.at(trendPoints.length - 1) : 0, 1)
+  const maxV = Math.max(
+    ...chart.map(c => agrupado ? Math.max(c.a, c.b) : c.total),
+    trend ? trend.at(trendPoints.length - 1) : 0,
+    trend25 ? trend25.at(trend25Points.length - 1) : 0,
+    1
+  )
   const yTop = v => yBase - (v / maxV) * (H - padT - padB)
 
   const barWPair = Math.min(22, slot * 0.36)
   const barWSingle = Math.min(46, slot * 0.6)
 
-  // Posiciones x de los puntos de tendencia (alineadas al centro de la barra correspondiente)
-  const trendX = trendPoints.map(p => {
+  const aX = i => xC(i) - barWPair / 2 - 1.5
+  const bX = i => xC(i) + barWPair / 2 + 1.5
+
+  const trendPts = trendPoints.map((p, idx) => {
     const i = chart.findIndex(c => c.mes === p.mes)
-    return agrupado ? xC(i) + barWPair / 2 + 1.5 : xC(i)
+    return { x: agrupado ? bX(i) : xC(i), y: yTop(trend.at(idx)) }
+  })
+  const trend25Pts = trend25Points.map((p, idx) => {
+    const i = chart.findIndex(c => c.mes === p.mes)
+    return { x: aX(i), y: yTop(trend25.at(idx)) }
   })
 
   return (
@@ -73,7 +118,7 @@ export default function VentaMensualComparativa({ g, filtros }) {
         <span style={{ fontSize: 12, fontWeight: 700, color: '#0f1f3d', textTransform: 'uppercase', letterSpacing: '.4px' }}>📊 Venta mensual {agrupado ? '— 2025 vs 2026' : añoFiltro} — {alcance}</span>
         {trend && (
           <span style={{ background: trend.up ? '#dcfce7' : '#fee2e2', color: trend.up ? '#15803d' : '#b91c1c', padding: '1px 8px', borderRadius: 8, fontSize: 10.5, fontWeight: 700 }}>
-            {trend.up ? '▲ Tendencia al alza' : '▼ Tendencia a la baja'}
+            {trend.up ? '▲ Tendencia al alza' : '▼ Tendencia a la baja'} {agrupado ? '2026' : ''}
           </span>
         )}
       </div>
@@ -104,13 +149,8 @@ export default function VentaMensualComparativa({ g, filtros }) {
                 </g>
               ))}
 
-              {trend && (
-                <>
-                  <polyline points={trendPoints.map((p, idx) => `${trendX[idx].toFixed(1)},${yTop(trend.at(idx)).toFixed(1)}`).join(' ')}
-                    fill="none" stroke="#f59e0b" strokeWidth="2.5" strokeDasharray="5 4" strokeLinecap="round" />
-                  {trendPoints.map((p, idx) => <circle key={p.mes} cx={trendX[idx]} cy={yTop(trend.at(idx))} r="2.5" fill="#f59e0b" />)}
-                </>
-              )}
+              {trend25 && <TrendLine pts={trend25Pts} color="#7c3aed" id="t25" thin />}
+              {trend && <TrendLine pts={trendPts} color="#f59e0b" id="t26" />}
 
               {chart.map((c, i) => <text key={c.mes} x={xC(i)} y={H - 8} fontSize="10" fill="#94a3b8" textAnchor="middle">{MESES3[c.mes - 1]}</text>)}
             </svg>
@@ -123,7 +163,8 @@ export default function VentaMensualComparativa({ g, filtros }) {
               <span><span style={{ display: 'inline-block', width: 10, height: 10, background: '#1a6cf0', borderRadius: 2, marginRight: 5 }} />Comercial</span>
               <span><span style={{ display: 'inline-block', width: 10, height: 10, background: '#f59e0b', borderRadius: 2, marginRight: 5 }} />El resto</span>
             </>}
-            {trend && <span><span style={{ display: 'inline-block', width: 14, height: 0, borderTop: '2.5px dashed #f59e0b', marginRight: 5, verticalAlign: 'middle' }} />Línea de tendencia</span>}
+            {trend && <span><span style={{ display: 'inline-block', width: 14, height: 0, borderTop: '3px dashed #f59e0b', marginRight: 5, verticalAlign: 'middle' }} />Tendencia {agrupado ? '2026' : ''}</span>}
+            {trend25 && <span><span style={{ display: 'inline-block', width: 14, height: 0, borderTop: '2px dashed #7c3aed', marginRight: 5, verticalAlign: 'middle' }} />Tendencia 2025</span>}
           </div>
         </div>
 
