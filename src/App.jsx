@@ -424,7 +424,7 @@ export default function App() {
             <>
               <SeccionVentasGeneral g={vgComputed} filtros={filtros} />
               <VentasGeneralCharts g={vgComputed} filtros={filtros} />
-              <TablasVentasGeneral g={vgComputed} />
+              <TablasVentasGeneral g={vgComputed} filtros={filtros} />
             </>
           ) : (
             <div style={{ padding: 40, textAlign: 'center', color: '#94a3b8', fontSize: 14 }}>Cargando ventas generales…</div>

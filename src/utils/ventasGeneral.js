@@ -15,7 +15,8 @@ export function computeVG(fact, filtros) {
 
   let comV = 0, comC = 0, comN = 0, restoV = 0, restoC = 0, restoN = 0
   let prevComV = 0, prevRestoV = 0
-  const porMes = {}                 // { mes: {comV,restoV,comC,restoC,comN,restoN} }
+  const porMes = {}                 // { mes: {comV,restoV,comC,restoC,comN,restoN} } (respeta año)
+  const porMesY = {}                // { mes: {2025:{vc,vr,cc,cr,nc,nr}, 2026:{...}} } (ambos años)
   const vendMap = new Map()         // vi -> {nombre,equipo,venta,costo,n}
   const provMap = new Map()         // pi -> {nombre,venta,costo,n}
   const cliMap = new Map()          // ci -> {nombre,num,venta}
@@ -35,6 +36,13 @@ export function computeVG(fact, filtros) {
     if (equipo === 'resto' && esCom) continue
 
     const inMeses = !mesesSet || mesesSet.has(rm)
+
+    // Desglose por año-mes (ambos años, respeta el resto de filtros menos año)
+    if (inMeses) {
+      let pmy = porMesY[rm]; if (!pmy) { pmy = { 2025: { vc: 0, vr: 0, cc: 0, cr: 0, nc: 0, nr: 0 }, 2026: { vc: 0, vr: 0, cc: 0, cr: 0, nc: 0, nr: 0 } }; porMesY[rm] = pmy }
+      const slot = pmy[ry]
+      if (slot) { if (esCom) { slot.vc += venta; slot.cc += costo; slot.nc += n } else { slot.vr += venta; slot.cr += costo; slot.nr += n } }
+    }
 
     // Comparación vs año anterior (solo vista 2026): acumula 2025 en mismos meses/scope
     if (comparar && ry === 2025 && inMeses) {
@@ -68,8 +76,20 @@ export function computeVG(fact, filtros) {
   const topResto = vendedores.filter(v => v.equipo === 'resto').slice(0, 7)
 
   const meses = Object.keys(porMes).map(Number).sort((a, b) => a - b)
+  const mesesY = Object.keys(porMesY).map(Number).sort((a, b) => a - b)
   const total = comV + restoV
   const prev = comparar ? { comV: prevComV, restoV: prevRestoV, total: prevComV + prevRestoV } : null
 
-  return { comV, restoV, comN, restoN, total, totalN: comN + restoN, prev, porMes, meses, vendedores, proveedores, clientes, topResto }
+  return { comV, restoV, comN, restoN, total, totalN: comN + restoN, prev, porMes, meses, porMesY, mesesY, vendedores, proveedores, clientes, topResto }
+}
+
+// Etiqueta legible del alcance según los filtros activos (para encabezados).
+export function scopeLabel(filtros) {
+  const partes = []
+  if (filtros.sucursal && filtros.sucursal !== 'todas') partes.push(filtros.sucursal)
+  if (filtros.vgLinea && filtros.vgLinea !== 'todas') partes.push(filtros.vgLinea)
+  if (filtros.vgProveedor && filtros.vgProveedor !== 'todos') partes.push(filtros.vgProveedor)
+  if (filtros.equipo === 'comercial') partes.push('Equipo comercial')
+  else if (filtros.equipo === 'resto') partes.push('El resto')
+  return partes.length ? partes.join(' · ') : 'Toda la empresa'
 }

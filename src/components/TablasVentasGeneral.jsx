@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { fmt } from '../utils/format.js'
+import { scopeLabel } from '../utils/ventasGeneral.js'
 
 function titulo(s) {
   return String(s || '').toLowerCase().replace(/\b\w/g, c => c.toUpperCase())
@@ -50,12 +51,13 @@ function VerMas({ total, limite, onMas }) {
   )
 }
 
-export default function TablasVentasGeneral({ g }) {
+export default function TablasVentasGeneral({ g, filtros }) {
   const [limV, setLimV] = useState(10)
   const [limP, setLimP] = useState(10)
   const [limC, setLimC] = useState(10)
 
   if (!g) return null
+  const suf = scopeLabel(filtros || {})
   const vendedores = g.vendedores || []
   const proveedores = g.proveedores || []
   const clientes = g.clientes || []
@@ -69,7 +71,7 @@ export default function TablasVentasGeneral({ g }) {
   return (
     <>
       {/* Desempeño por vendedor — TODOS */}
-      <Marco titulo="🧑‍💼 Desempeño por Vendedor — Toda la empresa"
+      <Marco titulo={`🧑‍💼 Desempeño por Vendedor — ${suf}`}
         extra={<>
           <span style={{ fontSize: 11, color: 'rgba(255,255,255,.45)', fontWeight: 500 }}>{vendedores.length} vendedores</span>
           <BotonCSV onClick={() => exportCSV('vendedores_general.csv',
@@ -104,7 +106,7 @@ export default function TablasVentasGeneral({ g }) {
       </Marco>
 
       {/* Top Proveedores */}
-      <Marco titulo="🏭 Top Proveedores — Toda la empresa"
+      <Marco titulo={`🏭 Top Proveedores — ${suf}`}
         extra={<>
           <span style={{ fontSize: 11, color: 'rgba(255,255,255,.45)', fontWeight: 500 }}>{proveedores.length} proveedores</span>
           <BotonCSV onClick={() => exportCSV('proveedores_general.csv',
@@ -142,7 +144,7 @@ export default function TablasVentasGeneral({ g }) {
       </Marco>
 
       {/* Top Clientes */}
-      <Marco titulo="🛒 Top Clientes — Toda la empresa"
+      <Marco titulo={`🛒 Top Clientes — ${suf}`}
         extra={<>
           <span style={{ fontSize: 11, color: 'rgba(255,255,255,.45)', fontWeight: 500 }}>{clientes.length} clientes</span>
           <BotonCSV onClick={() => exportCSV('clientes_general.csv',
