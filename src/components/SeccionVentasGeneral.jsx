@@ -113,8 +113,8 @@ export default function SeccionVentasGeneral({ g, filtros }) {
             info="Venta ÷ tickets únicos (folio). Responde a año, mes, sucursal y equipo; no varía por proveedor o línea." />
           <MiniKPI icon="📉" label="Clientes perdidos" valor={fmt.num(g.perdidos)} color="#b91c1c"
             sub={`Regla +4 meses · ${fmt.pct(g.perdidosPct)} de ${fmt.num(g.perdidosTotal)} clientes`}
-            scopeNote="Sucursal, Equipo, Proveedor, Línea"
-            info="Mismo método que el Dashboard Táctico: clientes sin compra en los últimos 4 meses. Base = clientes del alcance con historial. Responde a sucursal, equipo, proveedor y línea (es una foto de recencia; no varía por año/mes)." />
+            scopeNote="Año, Mes, Sucursal, Equipo, Proveedor, Línea"
+            info="Mismo método que el Dashboard Táctico: clientes sin compra en los últimos 4 meses. Si filtras Año/Mes, la fecha de corte se mueve a ese punto ('¿quién estaba perdido a esa fecha?'); si dejas 'Todos', usa el mes más reciente con datos." />
         </div>
 
         {scoped === 'todos' && (

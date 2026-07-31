@@ -103,14 +103,14 @@ export default function VentaMensualComparativa({ g, filtros }) {
   const aX = i => xC(i) - barWPair / 2 - 1.5
   const bX = i => xC(i) + barWPair / 2 + 1.5
 
-  const trendPts = trendPoints.map((p, idx) => {
+  const trendPts = trend ? trendPoints.map((p, idx) => {
     const i = chart.findIndex(c => c.mes === p.mes)
     return { x: agrupado ? bX(i) : xC(i), y: yTop(trend.at(idx)) }
-  })
-  const trend25Pts = trend25Points.map((p, idx) => {
+  }) : []
+  const trend25Pts = trend25 ? trend25Points.map((p, idx) => {
     const i = chart.findIndex(c => c.mes === p.mes)
     return { x: aX(i), y: yTop(trend25.at(idx)) }
-  })
+  }) : []
 
   return (
     <div style={{ background: '#fff', borderRadius: 10, border: '1.5px solid #e2e8f0', boxShadow: '0 1px 4px rgba(0,0,0,.05)', overflow: 'hidden', marginBottom: 16 }}>

@@ -13,6 +13,15 @@ export function computeVG(fact, filtros) {
   const provIdx = (filtros.vgProveedor && filtros.vgProveedor !== 'todos') ? dims.proveedores.indexOf(filtros.vgProveedor) : -1
   const lineaIdx = (filtros.vgLinea && filtros.vgLinea !== 'todas') ? dims.lineas.indexOf(filtros.vgLinea) : -1
 
+  // Punto de referencia ("a la fecha de...") para Clientes Perdidos, en la escala relativa
+  // 2026=mes, 2025=mes-12. Permite que Año/Mes muevan la fecha de corte de recencia.
+  const mesMax2026 = fact.mesMax2026 || 7
+  const mesesArr = filtros.meses || []
+  const soloMes = mesesArr.length === 1 ? mesesArr[0] : null
+  const refRel = año === '2025' ? (soloMes != null ? soloMes - 12 : 0)
+    : año === '2026' ? (soloMes != null ? soloMes : mesMax2026)
+    : (soloMes != null ? soloMes : mesMax2026)
+
   let comV = 0, comC = 0, comN = 0, restoV = 0, restoC = 0, restoN = 0
   let prevComV = 0, prevRestoV = 0
   const porMes = {}                 // { mes: {comV,restoV,comC,restoC,comN,restoN} } (respeta año)
@@ -49,10 +58,13 @@ export function computeVG(fact, filtros) {
     if (sucIdx >= 0 && si !== sucIdx) continue
 
     // Última compra por cliente (para perdidos): respeta sucursal/equipo/proveedor/línea,
-    // ignora año/mes (recencia relativa al último mes global). 2026: mes; 2025: mes-12.
+    // y se calcula "a la fecha de" refRel (Año/Mes mueven ese punto de referencia).
+    // 2026: mes; 2025: mes-12 — misma escala relativa continua.
     const rel = ry === 2026 ? rm : rm - 12
-    const prevRel = cliLast.get(ci)
-    if (prevRel === undefined || rel > prevRel) cliLast.set(ci, rel)
+    if (rel <= refRel) {
+      const prevRel = cliLast.get(ci)
+      if (prevRel === undefined || rel > prevRel) cliLast.set(ci, rel)
+    }
 
     // Desglose por año-mes (ambos años, respeta el resto de filtros menos año)
     if (inMeses) {
@@ -120,8 +132,9 @@ export function computeVG(fact, filtros) {
   const ticketProm = tkCount > 0 ? tkVenta / tkCount : 0
 
   // Clientes perdidos (regla +4 meses) calculado desde la fact table:
-  // responde a sucursal, equipo, proveedor y línea. Base = clientes del alcance con historial.
-  const corte = (fact.mesMax2026 || 7) - 4
+  // responde a sucursal, equipo, proveedor, línea, año y mes (vía refRel).
+  // Base = clientes del alcance con historial de compra a la fecha de referencia.
+  const corte = refRel - 4
   let perdidos = 0, perdidosTotal = 0
   cliLast.forEach(rel => { perdidosTotal++; if (rel <= corte) perdidos++ })
 

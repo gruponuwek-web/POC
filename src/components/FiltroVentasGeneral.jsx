@@ -49,7 +49,7 @@ export default function FiltroVentasGeneral({ filtros, onChange, sucursales = []
           <option value="2026">2026</option>
         </select>
       </Campo>
-      <Campo label="Mes" info="Filtra al mes seleccionado. No afecta a Clientes Perdidos, que es una foto de recencia sin importar el mes.">
+      <Campo label="Mes" info="Filtra al mes seleccionado. En Clientes Perdidos, un mes específico mueve la fecha de corte ('¿quién estaba perdido a esa fecha?').">
         <select value={mesSel} onChange={e => onChange({ ...filtros, meses: e.target.value === 'todos' ? [] : [Number(e.target.value)] })} style={selectStyle}>
           <option value="todos">Todos</option>
           {MESES.map((m, i) => <option key={i + 1} value={i + 1}>{m}</option>)}
