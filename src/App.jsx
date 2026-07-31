@@ -21,6 +21,7 @@ import TablaTopProveedores from './components/TablaTopProveedores.jsx'
 import SeccionVentasGeneral from './components/SeccionVentasGeneral.jsx'
 import FiltroVentasGeneral from './components/FiltroVentasGeneral.jsx'
 import VentasGeneralCharts from './components/VentasGeneralCharts.jsx'
+import TendenciasVentasGeneral from './components/TendenciasVentasGeneral.jsx'
 import TablasVentasGeneral from './components/TablasVentasGeneral.jsx'
 import { computeVG } from './utils/ventasGeneral.js'
 import BalancedScorecard from './components/BalancedScorecard.jsx'
@@ -423,6 +424,7 @@ export default function App() {
           {vgComputed ? (
             <>
               <SeccionVentasGeneral g={vgComputed} filtros={filtros} />
+              <TendenciasVentasGeneral g={vgComputed} filtros={filtros} />
               <VentasGeneralCharts g={vgComputed} filtros={filtros} />
               <TablasVentasGeneral g={vgComputed} filtros={filtros} />
             </>
