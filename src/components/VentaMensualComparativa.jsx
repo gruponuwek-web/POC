@@ -51,8 +51,8 @@ export default function VentaMensualComparativa({ g, filtros }) {
               const ha = Math.max(0, c.a / maxT * H) || 0, hb = Math.max(0, c.b / maxT * H) || 0
               const lab = (v, col) => (
                 <div style={{ width: '42%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end' }}>
-                  <span style={{ fontSize: 8, fontWeight: 700, color: col, marginBottom: 1, whiteSpace: 'nowrap' }}>${(v / 1e6).toFixed(1)}M</span>
-                  <div style={{ width: '100%', height: Math.max(0, v / maxT * H) || 0, background: col, borderRadius: '3px 3px 0 0' }} title={fmt.moneda(v)} />
+                  {v > 0 && <span style={{ fontSize: 8, fontWeight: 700, color: col, marginBottom: 1, whiteSpace: 'nowrap' }}>${(v / 1e6).toFixed(1)}M</span>}
+                  <div style={{ width: '100%', height: Math.max(0, v / maxT * H) || 0, background: v > 0 ? col : 'transparent', borderRadius: '3px 3px 0 0' }} title={v > 0 ? fmt.moneda(v) : ''} />
                 </div>
               )
               return (

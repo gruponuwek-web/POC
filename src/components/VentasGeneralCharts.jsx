@@ -5,13 +5,14 @@ import InfoTip from './InfoTip.jsx'
 
 const MESES3 = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']
 
-function Card({ titulo, info, children }) {
+function Card({ titulo, sub, info, children }) {
   return (
     <div style={{ background: '#fff', border: '1.5px solid #e2e8f0', borderRadius: 10, boxShadow: '0 1px 4px rgba(0,0,0,.05)', padding: 16 }}>
-      <div style={{ display: 'flex', alignItems: 'center', marginBottom: 12 }}>
+      <div style={{ display: 'flex', alignItems: 'center', marginBottom: sub ? 1 : 12 }}>
         <span style={{ fontSize: 12, fontWeight: 700, color: '#0f1f3d', textTransform: 'uppercase', letterSpacing: '.4px' }}>{titulo}</span>
         {info && <InfoTip text={info} />}
       </div>
+      {sub && <div style={{ fontSize: 10.5, color: '#94a3b8', fontStyle: 'italic', marginBottom: 12 }}>{sub}</div>}
       {children}
     </div>
   )
@@ -58,11 +59,11 @@ export default function VentasGeneralCharts({ g, filtros }) {
   const H = 150
   const ab = n => n >= 1000 ? Math.round(n / 1000) + 'k' : String(Math.round(n))
 
-  // Barra agrupada con etiqueta de valor arriba
+  // Barra agrupada con etiqueta de valor arriba (sin etiqueta ni barra si el valor es 0)
   const BarLab = ({ val, height, color, txt }) => (
     <div style={{ width: '42%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end' }}>
-      <span style={{ fontSize: 8, fontWeight: 700, color, marginBottom: 1, whiteSpace: 'nowrap' }}>{txt}</span>
-      <div style={{ width: '100%', height: Math.max(0, height) || 0, background: color, borderRadius: '3px 3px 0 0' }} title={txt} />
+      {val > 0 && <span style={{ fontSize: 7.5, fontWeight: 700, color, marginBottom: 1, whiteSpace: 'nowrap' }}>{txt}</span>}
+      <div style={{ width: '100%', height: Math.max(0, height) || 0, background: val > 0 ? color : 'transparent', borderRadius: '3px 3px 0 0' }} title={val > 0 ? txt : ''} />
     </div>
   )
 
@@ -75,13 +76,13 @@ export default function VentasGeneralCharts({ g, filtros }) {
   return (
     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
 
-      <Card titulo={`🎟️ Operaciones por mes — ${sufijo}`} info="Una 'operación' es una línea de venta (partida). Al filtrar por proveedor o línea se cuentan líneas, no tickets únicos.">
+      <Card titulo={`🎟️ Operaciones por mes — ${sufijo}`} sub="Operaciones = líneas de venta (partidas)" info="Una 'operación' es una línea de venta (partida). Al filtrar por proveedor o línea se cuentan líneas, no tickets únicos.">
         <div style={{ display: 'flex', alignItems: 'flex-end', gap: agrupado ? 8 : 10, height: H + 20, paddingTop: 6 }}>
           {visibles.map(r => agrupado ? (
             <div key={r.mes} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end' }}>
               <div style={{ display: 'flex', alignItems: 'flex-end', gap: 2, height: H, width: '100%', justifyContent: 'center' }}>
-                <BarLab val={r.a.n} height={r.a.n / maxOps * H} color="#a78bdb" txt={ab(r.a.n)} />
-                <BarLab val={r.b.n} height={r.b.n / maxOps * H} color="#7c3aed" txt={ab(r.b.n)} />
+                <BarLab val={r.a.n} height={r.a.n / maxOps * H} color="#a78bdb" txt={fmt.num(r.a.n)} />
+                <BarLab val={r.b.n} height={r.b.n / maxOps * H} color="#7c3aed" txt={fmt.num(r.b.n)} />
               </div>
             </div>
           ) : (
@@ -98,7 +99,7 @@ export default function VentasGeneralCharts({ g, filtros }) {
         </div>}
       </Card>
 
-      <Card titulo={`📈 Margen por mes — ${sufijo}`} info="Margen % = (venta − costo) ÷ venta. Incluye toda la operación del alcance seleccionado.">
+      <Card titulo={`📈 Margen por mes — ${sufijo}`} sub="Margen % = (venta − costo) ÷ venta" info="Margen % = (venta − costo) ÷ venta. Incluye toda la operación del alcance seleccionado.">
         <div style={{ display: 'flex', alignItems: 'flex-end', gap: agrupado ? 8 : 10, height: H + 20, paddingTop: 6 }}>
           {visibles.map(r => agrupado ? (
             <div key={r.mes} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end' }}>
