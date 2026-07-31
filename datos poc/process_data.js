@@ -171,6 +171,10 @@ function buildVentasGeneralFact(rowsByYear) {
   const idxSimple = (map, list, key) => { if (map.has(key)) return map.get(key); const i = list.length; map.set(key, i); list.push(key); return i; };
   const agg = new Map(); // "año|mes|si|pi|li|vi|ci" -> [venta, costo, n]
 
+  // Auxiliares para ticket promedio y clientes perdidos (no dependen de prov/línea)
+  const tkCubo = new Map();   // "año|mes|si|eb" -> { tks:Set, v }
+  const cliYr = new Map();    // cliKey -> { b25, b26, si25, eb25 }
+
   rowsByYear.forEach(({ año, rows }) => {
     rows.forEach(r => {
       const tipo = (r['TIPO DOCUMENTO'] || '').trim();
@@ -198,6 +202,18 @@ function buildVentasGeneralFact(rowsByYear) {
       const key = `${año}|${mes}|${si}|${pi}|${li}|${vi}|${ci}`;
       let a = agg.get(key); if (!a) { a = [0, 0, 0]; agg.set(key, a); }
       a[0] += imp; a[1] += cost; a[2] += 1;
+
+      // Ticket promedio: tickets únicos por (año, mes, sucursal, equipo)
+      const eb = esCom ? 0 : 1;
+      const tkKey = `${año}|${mes}|${si}|${eb}`;
+      let tc = tkCubo.get(tkKey); if (!tc) { tc = { tks: new Set(), v: 0 }; tkCubo.set(tkKey, tc); }
+      tc.tks.add(`${r['FOLIO']}-${r['LETRA']}-${cliNum}`);
+      tc.v += imp;
+
+      // Clientes perdidos: actividad por año del cliente
+      let cy = cliYr.get(cliKey); if (!cy) { cy = { b25: false, b26: false, si25: si, eb25: eb }; cliYr.set(cliKey, cy); }
+      if (año === 2025) { cy.b25 = true; cy.si25 = si; cy.eb25 = eb; }
+      else if (año === 2026) { cy.b26 = true; }
     });
   });
 
@@ -207,7 +223,21 @@ function buildVentasGeneralFact(rowsByYear) {
     rows.push([año, mes, si, pi, li, vi, ci, Math.round(v[0]), Math.round(v[1]), v[2]]);
   });
 
-  return { dims: { sucursales: dSuc, proveedores: dProv, lineas: dLinea, vendedores: dVend, clientes: dCli }, rows };
+  // Cubo de tickets → { "año|mes|si|eb": {t, v} }
+  const ticketsCubo = {};
+  tkCubo.forEach((val, k) => { ticketsCubo[k] = { t: val.tks.size, v: Math.round(val.v) }; });
+
+  // Clientes perdidos = compraron en 2025 y NO en 2026. Base = clientes de 2025.
+  const perdidosCubo = {};
+  cliYr.forEach(cy => {
+    if (!cy.b25) return;
+    const k = `${cy.si25}|${cy.eb25}`;
+    let p = perdidosCubo[k]; if (!p) { p = { perdidos: 0, total: 0 }; perdidosCubo[k] = p; }
+    p.total += 1;
+    if (!cy.b26) p.perdidos += 1;
+  });
+
+  return { dims: { sucursales: dSuc, proveedores: dProv, lineas: dLinea, vendedores: dVend, clientes: dCli }, rows, ticketsCubo, perdidosCubo };
 }
 
 // ── Ventas General (versión previa por-año, ya no se usa — se conserva por referencia) ──

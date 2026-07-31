@@ -1,6 +1,7 @@
 import React from 'react'
 import { fmt } from '../utils/format.js'
 import { scopeLabel } from '../utils/ventasGeneral.js'
+import InfoTip from './InfoTip.jsx'
 
 const MESES3 = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic']
 
@@ -15,6 +16,18 @@ function Tarjeta({ icon, label, valor, sub, borde, comp }) {
       <div style={{ fontSize: 24, fontWeight: 800, color: '#0f1f3d', margin: '4px 0 2px' }}>{fmt.moneda(valor)}</div>
       <div style={{ fontSize: 11, color: '#94a3b8' }}>{sub}</div>
       {comp}
+    </div>
+  )
+}
+
+function MiniKPI({ icon, label, valor, sub, info, color }) {
+  return (
+    <div style={{ background: '#fff', border: '1.5px solid #e2e8f0', borderRadius: 9, padding: '10px 12px' }}>
+      <div style={{ fontSize: 10, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '.4px', display: 'flex', alignItems: 'center' }}>
+        {icon} {label}{info && <InfoTip text={info} />}
+      </div>
+      <div style={{ fontSize: 19, fontWeight: 800, color: color || '#0f1f3d', margin: '3px 0 2px' }}>{valor}</div>
+      <div style={{ fontSize: 10.5, color: '#94a3b8' }}>{sub}</div>
     </div>
   )
 }
@@ -117,6 +130,16 @@ export default function SeccionVentasGeneral({ g, filtros }) {
               comp={g.prev && <Comparacion cur={esComercial ? g.comV : g.restoV} prev={esComercial ? g.prev.comV : g.prev.restoV} />} />
           </div>
         )}
+
+        {/* KPIs operativos: ticket promedio y clientes perdidos */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(190px,1fr))', gap: 12, marginBottom: 16 }}>
+          <MiniKPI icon="🎫" label="Ticket promedio" valor={fmt.moneda(g.ticketProm)}
+            sub={`${fmt.num(g.tickets)} tickets únicos`}
+            info="Venta ÷ tickets únicos (folio). Responde a año, mes, sucursal y equipo; no varía por proveedor o línea." />
+          <MiniKPI icon="📉" label="Clientes perdidos" valor={fmt.num(g.perdidos)} color="#b91c1c"
+            sub={`${fmt.pct(g.perdidosPct)} de ${fmt.num(g.perdidosTotal)} clientes de 2025`}
+            info="Clientes que compraron en 2025 y no han comprado en 2026. Responde a sucursal y equipo; es una foto anual, no varía por mes/proveedor/línea." />
+        </div>
 
         {scoped === 'todos' && (
           <div style={{ background: '#fff', border: '1.5px solid #e2e8f0', borderRadius: 9, padding: '12px 14px', marginBottom: 16 }}>

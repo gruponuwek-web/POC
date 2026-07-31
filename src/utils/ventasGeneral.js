@@ -80,7 +80,39 @@ export function computeVG(fact, filtros) {
   const total = comV + restoV
   const prev = comparar ? { comV: prevComV, restoV: prevRestoV, total: prevComV + prevRestoV } : null
 
-  return { comV, restoV, comN, restoN, total, totalN: comN + restoN, prev, porMes, meses, porMesY, mesesY, vendedores, proveedores, clientes, topResto }
+  // Ticket promedio (desde cubo de tickets únicos; responde a año/mes/sucursal/equipo, no a prov/línea)
+  let tkVenta = 0, tkCount = 0
+  if (fact.ticketsCubo) {
+    for (const k in fact.ticketsCubo) {
+      const [ry, rm, si, eb] = k.split('|').map(Number)
+      if (año === '2025' && ry !== 2025) continue
+      if (año === '2026' && ry !== 2026) continue
+      if (mesesSet && !mesesSet.has(rm)) continue
+      if (sucIdx >= 0 && si !== sucIdx) continue
+      if (equipo === 'comercial' && eb !== 0) continue
+      if (equipo === 'resto' && eb !== 1) continue
+      const c = fact.ticketsCubo[k]; tkVenta += c.v; tkCount += c.t
+    }
+  }
+  const ticketProm = tkCount > 0 ? tkVenta / tkCount : 0
+
+  // Clientes perdidos (compraron en 2025 y no en 2026; responde a sucursal/equipo)
+  let perdidos = 0, perdidosTotal = 0
+  if (fact.perdidosCubo) {
+    for (const k in fact.perdidosCubo) {
+      const [si, eb] = k.split('|').map(Number)
+      if (sucIdx >= 0 && si !== sucIdx) continue
+      if (equipo === 'comercial' && eb !== 0) continue
+      if (equipo === 'resto' && eb !== 1) continue
+      const p = fact.perdidosCubo[k]; perdidos += p.perdidos; perdidosTotal += p.total
+    }
+  }
+
+  return {
+    comV, restoV, comN, restoN, total, totalN: comN + restoN, prev,
+    porMes, meses, porMesY, mesesY, vendedores, proveedores, clientes, topResto,
+    ticketProm, tickets: tkCount, perdidos, perdidosTotal, perdidosPct: perdidosTotal > 0 ? perdidos / perdidosTotal * 100 : 0,
+  }
 }
 
 // Etiqueta legible del alcance según los filtros activos (para encabezados).
