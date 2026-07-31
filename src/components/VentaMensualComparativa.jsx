@@ -8,6 +8,17 @@ function titulo(s) {
   return String(s || '').toLowerCase().replace(/\b\w/g, c => c.toUpperCase())
 }
 
+// Regresión lineal simple sobre puntos {i, v} (i = índice secuencial 0..n-1)
+function regresion(points) {
+  const n = points.length
+  if (n < 2) return null
+  let sx = 0, sy = 0, sxy = 0, sxx = 0
+  points.forEach((p, idx) => { sx += idx; sy += p.v; sxy += idx * p.v; sxx += idx * idx })
+  const slope = (n * sxy - sx * sy) / (n * sxx - sx * sx || 1)
+  const intercept = (sy - slope * sx) / n
+  return { at: idx => Math.max(0, intercept + slope * idx), up: slope >= 0 }
+}
+
 export default function VentaMensualComparativa({ g, filtros }) {
   if (!g || !g.mesesY.length) return null
 
@@ -15,7 +26,6 @@ export default function VentaMensualComparativa({ g, filtros }) {
   const scoped = equipo === 'comercial' ? 'comercial' : equipo === 'resto' ? 'resto' : 'todos'
   const alcance = scopeLabel(filtros)
   const añoFiltro = filtros.año || 'todos'
-  const H = 170
 
   const vYear = (d, year) => {
     const s = d && d[year]; if (!s) return { com: 0, resto: 0, total: 0 }
@@ -25,66 +35,95 @@ export default function VentaMensualComparativa({ g, filtros }) {
   }
 
   const agrupado = añoFiltro === 'todos'
-  let chart, maxT
+  let chart
   if (agrupado) {
     chart = g.mesesY.map(m => { const d = g.porMesY[m]; return { mes: m, a: vYear(d, 2025).total, b: vYear(d, 2026).total } })
-    maxT = Math.max(...chart.map(c => Math.max(c.a, c.b)), 1)
   } else {
     const yr = añoFiltro === '2025' ? 2025 : 2026
     chart = g.mesesY.map(m => { const v = vYear(g.porMesY[m], yr); return { mes: m, com: v.com, resto: v.resto, total: v.total } }).filter(c => c.total > 0)
-    maxT = Math.max(...chart.map(c => c.total), 1)
   }
   const maxTop = g.topResto.length ? g.topResto[0].venta : 1
   const mostrarTopResto = scoped !== 'comercial' && g.topResto.length > 0
+
+  // Línea de tendencia: sobre la serie "actual" (2026 en modo agrupado, o el total en modo año único)
+  const trendPoints = agrupado ? chart.filter(c => c.b > 0).map(c => ({ mes: c.mes, v: c.b })) : chart.map(c => ({ mes: c.mes, v: c.total }))
+  const trend = regresion(trendPoints)
+
+  // Geometría SVG
+  const N = chart.length
+  const W = 760, H = 210, padL = 12, padR = 12, padT = 20, padB = 26
+  const slot = (W - padL - padR) / Math.max(1, N)
+  const xC = i => padL + (i + 0.5) * slot
+  const yBase = H - padB
+  const maxV = Math.max(...chart.map(c => agrupado ? Math.max(c.a, c.b) : c.total), trend ? trend.at(trendPoints.length - 1) : 0, 1)
+  const yTop = v => yBase - (v / maxV) * (H - padT - padB)
+
+  const barWPair = Math.min(22, slot * 0.36)
+  const barWSingle = Math.min(46, slot * 0.6)
+
+  // Posiciones x de los puntos de tendencia (alineadas al centro de la barra correspondiente)
+  const trendX = trendPoints.map(p => {
+    const i = chart.findIndex(c => c.mes === p.mes)
+    return agrupado ? xC(i) + barWPair / 2 + 1.5 : xC(i)
+  })
 
   return (
     <div style={{ background: '#fff', borderRadius: 10, border: '1.5px solid #e2e8f0', boxShadow: '0 1px 4px rgba(0,0,0,.05)', overflow: 'hidden', marginBottom: 16 }}>
       <div style={{ padding: '14px 16px 0', display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
         <span style={{ fontSize: 12, fontWeight: 700, color: '#0f1f3d', textTransform: 'uppercase', letterSpacing: '.4px' }}>📊 Venta mensual {agrupado ? '— 2025 vs 2026' : añoFiltro} — {alcance}</span>
+        {trend && (
+          <span style={{ background: trend.up ? '#dcfce7' : '#fee2e2', color: trend.up ? '#15803d' : '#b91c1c', padding: '1px 8px', borderRadius: 8, fontSize: 10.5, fontWeight: 700 }}>
+            {trend.up ? '▲ Tendencia al alza' : '▼ Tendencia a la baja'}
+          </span>
+        )}
       </div>
 
       <div style={{ padding: 16, display: 'grid', gridTemplateColumns: mostrarTopResto ? '1.3fr 1fr' : '1fr', gap: 16, alignItems: 'start' }}>
 
         <div>
-          <div style={{ display: 'flex', alignItems: 'flex-end', gap: agrupado ? 8 : 10, height: H + 20, paddingTop: 6 }}>
-            {agrupado ? chart.map(c => {
-              const ha = Math.max(0, c.a / maxT * H) || 0, hb = Math.max(0, c.b / maxT * H) || 0
-              const lab = (v, col) => (
-                <div style={{ width: '42%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end' }}>
-                  {v > 0 && <span style={{ fontSize: 8, fontWeight: 700, color: col, marginBottom: 1, whiteSpace: 'nowrap' }}>${(v / 1e6).toFixed(1)}M</span>}
-                  <div style={{ width: '100%', height: Math.max(0, v / maxT * H) || 0, background: v > 0 ? col : 'transparent', borderRadius: '3px 3px 0 0' }} title={v > 0 ? fmt.moneda(v) : ''} />
-                </div>
-              )
-              return (
-                <div key={c.mes} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end' }}>
-                  <div style={{ display: 'flex', alignItems: 'flex-end', gap: 2, height: H, width: '100%', justifyContent: 'center' }}>
-                    {lab(c.a, '#93c5fd')}
-                    {lab(c.b, '#1a6cf0')}
-                  </div>
-                </div>
-              )
-            }) : chart.map(c => {
-              const hc = Math.max(0, c.com / maxT * H) || 0, hr = Math.max(0, c.resto / maxT * H) || 0
-              return (
-                <div key={c.mes} style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', alignItems: 'center' }}>
-                  <div style={{ fontSize: 9, color: '#64748b', marginBottom: 3, fontWeight: 600 }}>${(c.total / 1e6).toFixed(1)}M</div>
-                  {c.resto > 0 && <div style={{ width: '70%', height: hr, background: '#f59e0b', borderRadius: '4px 4px 0 0' }} />}
-                  {c.com > 0 && <div style={{ width: '70%', height: hc, background: '#1a6cf0', borderRadius: c.resto > 0 ? 0 : '4px 4px 0 0' }} />}
-                </div>
-              )
-            })}
+          <div style={{ width: '100%', overflowX: 'auto' }}>
+            <svg viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', minWidth: 520, display: 'block' }}>
+              {[0.25, 0.5, 0.75].map(f => <line key={f} x1={padL} x2={W - padR} y1={padT + f * (H - padT - padB)} y2={padT + f * (H - padT - padB)} stroke="#f1f5f9" strokeWidth="1" />)}
+
+              {agrupado ? chart.map((c, i) => (
+                <g key={c.mes}>
+                  {c.a > 0 && <>
+                    <rect x={xC(i) - barWPair - 1.5} y={yTop(c.a)} width={barWPair} height={Math.max(0, yBase - yTop(c.a))} rx="2.5" fill="#93c5fd" />
+                    <text x={xC(i) - barWPair / 2 - 1.5} y={yTop(c.a) - 4} fontSize="8" fill="#64748b" textAnchor="middle" fontWeight="700">${(c.a / 1e6).toFixed(1)}M</text>
+                  </>}
+                  {c.b > 0 && <>
+                    <rect x={xC(i) + 1.5} y={yTop(c.b)} width={barWPair} height={Math.max(0, yBase - yTop(c.b))} rx="2.5" fill="#1a6cf0" />
+                    <text x={xC(i) + barWPair / 2 + 1.5} y={yTop(c.b) - 4} fontSize="8" fill="#1a6cf0" textAnchor="middle" fontWeight="700">${(c.b / 1e6).toFixed(1)}M</text>
+                  </>}
+                </g>
+              )) : chart.map((c, i) => (
+                <g key={c.mes}>
+                  {c.resto > 0 && <rect x={xC(i) - barWSingle / 2} y={yTop(c.resto)} width={barWSingle} height={Math.max(0, yBase - yTop(c.resto))} rx="3" fill="#f59e0b" />}
+                  {c.com > 0 && <rect x={xC(i) - barWSingle / 2} y={yTop(c.total)} width={barWSingle} height={Math.max(0, yTop(c.resto) - yTop(c.total))} rx={c.resto > 0 ? 0 : 3} fill="#1a6cf0" />}
+                  <text x={xC(i)} y={yTop(c.total) - 4} fontSize="9" fill="#64748b" textAnchor="middle" fontWeight="600">${(c.total / 1e6).toFixed(1)}M</text>
+                </g>
+              ))}
+
+              {trend && (
+                <>
+                  <polyline points={trendPoints.map((p, idx) => `${trendX[idx].toFixed(1)},${yTop(trend.at(idx)).toFixed(1)}`).join(' ')}
+                    fill="none" stroke="#f59e0b" strokeWidth="2.5" strokeDasharray="5 4" strokeLinecap="round" />
+                  {trendPoints.map((p, idx) => <circle key={p.mes} cx={trendX[idx]} cy={yTop(trend.at(idx))} r="2.5" fill="#f59e0b" />)}
+                </>
+              )}
+
+              {chart.map((c, i) => <text key={c.mes} x={xC(i)} y={H - 8} fontSize="10" fill="#94a3b8" textAnchor="middle">{MESES3[c.mes - 1]}</text>)}
+            </svg>
           </div>
-          <div style={{ display: 'flex', gap: agrupado ? 8 : 10, marginTop: 4 }}>
-            {chart.map(c => <div key={c.mes} style={{ flex: 1, textAlign: 'center', fontSize: 10, color: '#94a3b8' }}>{MESES3[c.mes - 1]}</div>)}
-          </div>
-          <div style={{ display: 'flex', gap: 16, marginTop: 8, fontSize: 10.5, color: '#64748b' }}>
+          <div style={{ display: 'flex', gap: 16, marginTop: 4, fontSize: 10.5, color: '#64748b', flexWrap: 'wrap' }}>
             {agrupado ? <>
-              <span><span style={{ display: 'inline-block', width: 10, height: 10, background: '#bfdbfe', borderRadius: 2, marginRight: 5 }} />2025</span>
+              <span><span style={{ display: 'inline-block', width: 10, height: 10, background: '#93c5fd', borderRadius: 2, marginRight: 5 }} />2025</span>
               <span><span style={{ display: 'inline-block', width: 10, height: 10, background: '#1a6cf0', borderRadius: 2, marginRight: 5 }} />2026 (a jul)</span>
             </> : <>
               <span><span style={{ display: 'inline-block', width: 10, height: 10, background: '#1a6cf0', borderRadius: 2, marginRight: 5 }} />Comercial</span>
               <span><span style={{ display: 'inline-block', width: 10, height: 10, background: '#f59e0b', borderRadius: 2, marginRight: 5 }} />El resto</span>
             </>}
+            {trend && <span><span style={{ display: 'inline-block', width: 14, height: 0, borderTop: '2.5px dashed #f59e0b', marginRight: 5, verticalAlign: 'middle' }} />Línea de tendencia</span>}
           </div>
         </div>
 
