@@ -24,6 +24,9 @@ import VentasGeneralCharts from './components/VentasGeneralCharts.jsx'
 import VentaMensualComparativa from './components/VentaMensualComparativa.jsx'
 import DonasSucursal from './components/DonasSucursal.jsx'
 import TablasVentasGeneral from './components/TablasVentasGeneral.jsx'
+import DensityPlot from './components/DensityPlot.jsx'
+import SunburstProductos from './components/SunburstProductos.jsx'
+import CorrelacionProductos from './components/CorrelacionProductos.jsx'
 import { computeVG } from './utils/ventasGeneral.js'
 import BalancedScorecard from './components/BalancedScorecard.jsx'
 
@@ -34,6 +37,7 @@ export default function App() {
   const [activeModule, setActiveModule] = useState('dashboard')
   const [wbrMounted, setWbrMounted] = useState(false)
   const [ventasGeneral, setVentasGeneral] = useState(null) // archivo propio, independiente de `data`
+  const [analiticaProductos, setAnaliticaProductos] = useState(null) // archivo propio: densidad/sunburst/chord
 
   // Filtros
   const [filtros, setFiltros] = useState({
@@ -67,6 +71,15 @@ export default function App() {
       .then(setVentasGeneral)
       .catch(() => {})
   }, [activeModule, ventasGeneral])
+
+  // Lectura independiente de Análisis de Productos — si falla, solo afecta a esa sección
+  useEffect(() => {
+    if (activeModule !== 'general' || analiticaProductos) return
+    fetch(import.meta.env.BASE_URL + 'data/analitica_productos.json')
+      .then(r => r.json())
+      .then(setAnaliticaProductos)
+      .catch(() => {})
+  }, [activeModule, analiticaProductos])
 
   const dataFiltrada = useMemo(() => {
     if (!data) return null
@@ -429,6 +442,13 @@ export default function App() {
               <VentaMensualComparativa g={vgComputed} filtros={filtros} />
               <VentasGeneralCharts g={vgComputed} filtros={filtros} />
               <TablasVentasGeneral g={vgComputed} filtros={filtros} />
+              {analiticaProductos && (
+                <>
+                  <DensityPlot ap={analiticaProductos} />
+                  <SunburstProductos ap={analiticaProductos} filtros={filtros} />
+                  <CorrelacionProductos ap={analiticaProductos} filtros={filtros} />
+                </>
+              )}
             </>
           ) : (
             <div style={{ padding: 40, textAlign: 'center', color: '#94a3b8', fontSize: 14 }}>Cargando ventas generales…</div>

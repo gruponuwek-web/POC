@@ -247,6 +247,97 @@ function buildVentasGeneralFact(rowsByYear) {
   return { dims: { sucursales: dSuc, proveedores: dProv, lineas: dLinea, vendedores: dVend, clientes: dCli }, rows, ticketsCubo, perdidosCubo, perdidosRegla: MESES_PERDIDO, mesMax2026 };
 }
 
+// ── Análisis de Productos: densidad de compra, sunburst y correlación (chord) ──
+// Estructuras ligeras (NO pivotables por todos los filtros como la fact table) para
+// mantener el archivo pequeño. Se calculan por año ('2025'/'2026') y 'todos' (acumulado).
+function buildAnaliticaProductos(rowsByYear) {
+  const scopes = ['2025', '2026', 'todos']
+  const mk = () => new Map()
+  const cliFreq    = { '2025': mk(), '2026': mk(), todos: mk() } // ci -> {tickets:Set, monto}
+  const lineaProd  = { '2025': mk(), '2026': mk(), todos: mk() } // linea -> Map(producto -> {venta,cantidad})
+  const prodTotal  = { '2025': mk(), '2026': mk(), todos: mk() } // producto -> venta acumulada
+  const cliProdSet = { '2025': mk(), '2026': mk(), todos: mk() } // ci -> Set(producto)
+
+  rowsByYear.forEach(({ año, rows }) => {
+    const scopeKey = String(año)
+    rows.forEach(r => {
+      const tipo = (r['TIPO DOCUMENTO'] || '').trim()
+      if (!tipo) return
+      const f = parseDate(r['FECHA'])
+      if (!f || f.getFullYear() !== año) return
+      const cliKey = (r['CLIENTE'] || '').trim() || normClient(r['NOMBRE CLIENTE'])
+      const producto = (r['DESCRIPCION'] || '').trim() || '(Sin descripción)'
+      const linea = (r['DECRIP. LINEA'] || r['DESCRIP. LINEA'] || '(Sin línea)').trim() || '(Sin línea)'
+      const imp = parseNum(r['IMPORTE'])
+      const cant = parseNum(r['CANTIDAD']) || 0
+      const folioKey = `${r['FOLIO']}-${r['LETRA']}-${cliKey}`
+
+      ;[scopeKey, 'todos'].forEach(k => {
+        let cf = cliFreq[k].get(cliKey); if (!cf) { cf = { tickets: new Set(), monto: 0 }; cliFreq[k].set(cliKey, cf) }
+        cf.tickets.add(folioKey); cf.monto += imp
+
+        let lm = lineaProd[k].get(linea); if (!lm) { lm = new Map(); lineaProd[k].set(linea, lm) }
+        let pd = lm.get(producto); if (!pd) { pd = { venta: 0, cantidad: 0 }; lm.set(producto, pd) }
+        pd.venta += imp; pd.cantidad += cant
+
+        prodTotal[k].set(producto, (prodTotal[k].get(producto) || 0) + imp)
+
+        let cs = cliProdSet[k].get(cliKey); if (!cs) { cs = new Set(); cliProdSet[k].set(cliKey, cs) }
+        cs.add(producto)
+      })
+    })
+  })
+
+  // Densidad: arrays de frecuencia (tickets) y monto total por cliente, por año
+  const densidad = {}
+  ;['2025', '2026'].forEach(k => {
+    const frecuencias = [], montos = []
+    cliFreq[k].forEach(cf => { if (cf.tickets.size > 0) { frecuencias.push(cf.tickets.size); montos.push(Math.round(cf.monto)) } })
+    densidad[k] = { frecuencias, montos }
+  })
+
+  // Sunburst: por línea, top-12 productos + "Otros"
+  const MAX_PROD_POR_LINEA = 12
+  const sunburst = {}
+  scopes.forEach(k => {
+    const lineas = []
+    lineaProd[k].forEach((prodMap, linea) => {
+      const prods = [...prodMap.entries()]
+        .map(([nombre, d]) => ({ nombre, venta: Math.round(d.venta), cantidad: Math.round(d.cantidad) }))
+        .filter(p => p.venta > 0).sort((a, b) => b.venta - a.venta)
+      const top = prods.slice(0, MAX_PROD_POR_LINEA)
+      const resto = prods.slice(MAX_PROD_POR_LINEA)
+      if (resto.length) {
+        top.push({ nombre: `Otros (${resto.length})`, venta: resto.reduce((s, p) => s + p.venta, 0), cantidad: resto.reduce((s, p) => s + p.cantidad, 0) })
+      }
+      const ventaLinea = top.reduce((s, p) => s + p.venta, 0)
+      const cantLinea = top.reduce((s, p) => s + p.cantidad, 0)
+      if (ventaLinea > 0) lineas.push({ nombre: linea, venta: ventaLinea, cantidad: cantLinea, productos: top })
+    })
+    lineas.sort((a, b) => b.venta - a.venta)
+    sunburst[k] = lineas
+  })
+
+  // Chord: top-24 productos globales por venta + matriz de co-ocurrencia (clientes en común)
+  const TOP_N_CHORD = 24
+  const chord = {}
+  scopes.forEach(k => {
+    const topProductos = [...prodTotal[k].entries()].sort((a, b) => b[1] - a[1]).slice(0, TOP_N_CHORD).map(([nombre]) => nombre)
+    const idx = new Map(topProductos.map((n, i) => [n, i]))
+    const n = topProductos.length
+    const matrix = Array.from({ length: n }, () => new Array(n).fill(0))
+    cliProdSet[k].forEach(set => {
+      const inTop = [...set].filter(p => idx.has(p)).map(p => idx.get(p))
+      for (let i = 0; i < inTop.length; i++) {
+        for (let j = i + 1; j < inTop.length; j++) { matrix[inTop[i]][inTop[j]]++; matrix[inTop[j]][inTop[i]]++ }
+      }
+    })
+    chord[k] = { productos: topProductos, matrix }
+  })
+
+  return { densidad, sunburst, chord }
+}
+
 // ── Ventas General (versión previa por-año, ya no se usa — se conserva por referencia) ──
 function buildVentasGeneral(rows, año) {
   const porMes = {};       // { mes: {com_venta,resto_venta,com_costo,resto_costo,_comTk,_restoTk} }
@@ -1280,6 +1371,12 @@ const bsc_metas_por_mes = {};
     { año: AÑO_ACTUAL,   rows: rawActual },
   ]);
 
+  // ── Análisis de Productos: archivo separado (densidad, sunburst, chord) ────
+  const analitica_productos = buildAnaliticaProductos([
+    { año: AÑO_ANTERIOR, rows: rawAnterior },
+    { año: AÑO_ACTUAL,   rows: rawActual },
+  ]);
+
   const output = {
     resumen, agentes, metas,
     kpi_mensual_actual: kpi2026, kpi_mensual_anterior: kpi2025,
@@ -1321,6 +1418,13 @@ const bsc_metas_por_mes = {};
   fs.copyFileSync(vgFile, path.join(pubDir, 'ventas_general.json'));
   const vgKB = Math.round(fs.statSync(vgFile).size / 1024);
   console.log(`✅ ventas_general.json generado: ${vgKB} KB (archivo independiente)`);
+
+  // ── Análisis de Productos: ARCHIVO SEPARADO (liviano) ───────────────────────
+  const apFile = path.join(outDir, 'analitica_productos.json');
+  fs.writeFileSync(apFile, JSON.stringify(analitica_productos, null, 2), 'utf8');
+  fs.copyFileSync(apFile, path.join(pubDir, 'analitica_productos.json'));
+  const apKB = Math.round(fs.statSync(apFile).size / 1024);
+  console.log(`✅ analitica_productos.json generado: ${apKB} KB (archivo independiente)`);
 
   const sizeKB = Math.round(fs.statSync(outFile).size / 1024);
   console.log(`\n✅ dashboard_data.json generado: ${sizeKB} KB`);
