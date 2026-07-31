@@ -57,11 +57,12 @@ export function computeVG(fact, filtros) {
     // A partir de aquí, todo respeta el filtro de sucursal
     if (sucIdx >= 0 && si !== sucIdx) continue
 
-    // Última compra por cliente (para perdidos): respeta sucursal/equipo/proveedor/línea,
-    // y se calcula "a la fecha de" refRel (Año/Mes mueven ese punto de referencia).
+    // Última compra por cliente (para perdidos): respeta sucursal/equipo/proveedor/línea.
+    // Si se filtra un año específico, SOLO se considera ese año (no acumulado); con
+    // "Todos" se combinan ambos años. Año/Mes también mueven refRel, el punto de corte.
     // 2026: mes; 2025: mes-12 — misma escala relativa continua.
     const rel = ry === 2026 ? rm : rm - 12
-    if (rel <= refRel) {
+    if (passYear && rel <= refRel) {
       const prevRel = cliLast.get(ci)
       if (prevRel === undefined || rel > prevRel) cliLast.set(ci, rel)
     }
