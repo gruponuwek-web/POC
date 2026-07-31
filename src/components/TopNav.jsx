@@ -3,6 +3,7 @@ import React from 'react'
 export default function TopNav({ activeModule, onModule, lastUpdate, session, onLogout }) {
   const tabs = [
     { id: 'dashboard', label: '📊 Dashboard Táctico', active: true },
+    { id: 'general', label: '🏢 Ventas General' },
     { id: 'wbr', label: '📅 WBR' },
     { id: 'scorecard', label: '⚖️ Balanced Scorecard' },
   ]

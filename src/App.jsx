@@ -18,6 +18,11 @@ import PanelIntel from './components/PanelIntel.jsx'
 import CalidadDatos from './components/CalidadDatos.jsx'
 import TablaClientesPerdidos from './components/TablaClientesPerdidos.jsx'
 import TablaTopProveedores from './components/TablaTopProveedores.jsx'
+import SeccionVentasGeneral from './components/SeccionVentasGeneral.jsx'
+import FiltroVentasGeneral from './components/FiltroVentasGeneral.jsx'
+import VentasGeneralCharts from './components/VentasGeneralCharts.jsx'
+import TablasVentasGeneral from './components/TablasVentasGeneral.jsx'
+import { computeVG } from './utils/ventasGeneral.js'
 import BalancedScorecard from './components/BalancedScorecard.jsx'
 
 export default function App() {
@@ -26,6 +31,7 @@ export default function App() {
   const [loading, setLoading] = useState(true)
   const [activeModule, setActiveModule] = useState('dashboard')
   const [wbrMounted, setWbrMounted] = useState(false)
+  const [ventasGeneral, setVentasGeneral] = useState(null) // archivo propio, independiente de `data`
 
   // Filtros
   const [filtros, setFiltros] = useState({
@@ -34,6 +40,10 @@ export default function App() {
     agente: 'todos',
     tipoCliente: 'todos',
     proveedor: 'todos',
+    equipo: 'todos', // solo Ventas General: todos | comercial | resto
+    sucursal: 'todas', // solo Ventas General: todas | <nombre sucursal>
+    vgProveedor: 'todos', // solo Ventas General
+    vgLinea: 'todas', // solo Ventas General
   })
 
   useEffect(() => {
@@ -46,6 +56,15 @@ export default function App() {
       .then(d => { setData(d); setLoading(false) })
       .catch(() => setLoading(false))
   }, [])
+
+  // Lectura independiente de Ventas General — si falla, solo afecta a esa sección
+  useEffect(() => {
+    if (activeModule !== 'general' || ventasGeneral) return
+    fetch(import.meta.env.BASE_URL + 'data/ventas_general.json')
+      .then(r => r.json())
+      .then(setVentasGeneral)
+      .catch(() => {})
+  }, [activeModule, ventasGeneral])
 
   const dataFiltrada = useMemo(() => {
     if (!data) return null
@@ -284,7 +303,13 @@ export default function App() {
   }, [data, filtros])
 
   const [mesPerdidoSel, setMesPerdidoSel] = useState(null)
-  const limpiarFiltros = () => { setFiltros({ año: 'todos', meses: [], agente: 'todos', tipoCliente: 'todos', proveedor: 'todos' }); setMesPerdidoSel(null) }
+  const limpiarFiltros = () => { setFiltros({ año: 'todos', meses: [], agente: 'todos', tipoCliente: 'todos', proveedor: 'todos', equipo: 'todos', sucursal: 'todas', vgProveedor: 'todos', vgLinea: 'todas' }); setMesPerdidoSel(null) }
+
+  // Cómputo pivotable de Ventas General (solo cuando esa pestaña está activa)
+  const vgComputed = useMemo(
+    () => (ventasGeneral && activeModule === 'general') ? computeVG(ventasGeneral, filtros) : null,
+    [ventasGeneral, activeModule, filtros]
+  )
 
   if (!session) return <Login onLogin={setSession} />
 
@@ -384,6 +409,26 @@ export default function App() {
           </div>
 
           <CalidadDatos data={data} />
+        </main>
+      )}
+
+      {activeModule === 'general' && (
+        <main style={{ maxWidth: 1600, margin: '0 auto', padding: '20px 20px 40px' }}>
+          <FiltroVentasGeneral
+            filtros={filtros} onChange={setFiltros}
+            sucursales={ventasGeneral?.dims?.sucursales || []}
+            proveedores={ventasGeneral?.dims?.proveedores || []}
+            lineas={ventasGeneral?.dims?.lineas || []}
+          />
+          {vgComputed ? (
+            <>
+              <SeccionVentasGeneral g={vgComputed} filtros={filtros} />
+              <VentasGeneralCharts g={vgComputed} filtros={filtros} />
+              <TablasVentasGeneral g={vgComputed} />
+            </>
+          ) : (
+            <div style={{ padding: 40, textAlign: 'center', color: '#94a3b8', fontSize: 14 }}>Cargando ventas generales…</div>
+          )}
         </main>
       )}
 

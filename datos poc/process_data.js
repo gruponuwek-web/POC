@@ -161,6 +161,156 @@ function processVentas(rows, año) {
   return result;
 }
 
+// ── Ventas General: TABLA DE HECHOS pivotable ────────────────────────────────
+// Genera un cubo de datos a nivel línea agregado por
+// (año, mes, sucursal, proveedor, línea, vendedor, cliente) → {venta, costo, n}.
+// Permite filtrar/pivotar en el navegador por cualquier combinación de dimensiones.
+function buildVentasGeneralFact(rowsByYear) {
+  const dSuc = [], dProv = [], dLinea = [], dVend = [], dCli = [];
+  const mSuc = new Map(), mProv = new Map(), mLinea = new Map(), mVend = new Map(), mCli = new Map();
+  const idxSimple = (map, list, key) => { if (map.has(key)) return map.get(key); const i = list.length; map.set(key, i); list.push(key); return i; };
+  const agg = new Map(); // "año|mes|si|pi|li|vi|ci" -> [venta, costo, n]
+
+  rowsByYear.forEach(({ año, rows }) => {
+    rows.forEach(r => {
+      const tipo = (r['TIPO DOCUMENTO'] || '').trim();
+      if (!tipo) return;
+      const f = parseDate(r['FECHA']);
+      if (!f || f.getFullYear() !== año) return;
+      const mes = f.getMonth() + 1;
+      const ag = normAgent(r['NOMBRE AGENTE']);
+      const esCom = AGENTES_COMERCIALES.has(ag);
+      const suc = (r['Sucursal'] || 'Pachuca').trim() || 'Pachuca';
+      const prov = (r['NOMBRE PROV.'] || '(Sin proveedor)').trim() || '(Sin proveedor)';
+      const lin = (r['DECRIP. LINEA'] || r['DESCRIP. LINEA'] || '(Sin línea)').trim() || '(Sin línea)';
+      const cliNom = normClient(r['NOMBRE CLIENTE']);
+      const cliNum = (r['CLIENTE'] || '').trim();
+      const cliKey = cliNum || cliNom;
+      const imp = parseNum(r['IMPORTE']);
+      const cost = Math.abs(parseNum(r['COSTO TOTAL']));
+
+      const si = idxSimple(mSuc, dSuc, suc);
+      const pi = idxSimple(mProv, dProv, prov);
+      const li = idxSimple(mLinea, dLinea, lin);
+      let vi = mVend.get(ag); if (vi === undefined) { vi = dVend.length; mVend.set(ag, vi); dVend.push({ nombre: ag, equipo: esCom ? 'comercial' : 'resto' }); }
+      let ci = mCli.get(cliKey); if (ci === undefined) { ci = dCli.length; mCli.set(cliKey, ci); dCli.push({ nombre: cliNom, num: cliNum }); }
+
+      const key = `${año}|${mes}|${si}|${pi}|${li}|${vi}|${ci}`;
+      let a = agg.get(key); if (!a) { a = [0, 0, 0]; agg.set(key, a); }
+      a[0] += imp; a[1] += cost; a[2] += 1;
+    });
+  });
+
+  const rows = [];
+  agg.forEach((v, key) => {
+    const [año, mes, si, pi, li, vi, ci] = key.split('|').map(Number);
+    rows.push([año, mes, si, pi, li, vi, ci, Math.round(v[0]), Math.round(v[1]), v[2]]);
+  });
+
+  return { dims: { sucursales: dSuc, proveedores: dProv, lineas: dLinea, vendedores: dVend, clientes: dCli }, rows };
+}
+
+// ── Ventas General (versión previa por-año, ya no se usa — se conserva por referencia) ──
+function buildVentasGeneral(rows, año) {
+  const porMes = {};       // { mes: {com_venta,resto_venta,com_costo,resto_costo,_comTk,_restoTk} }
+  const restoAgMes = {};   // { agente: { mes: venta } }  (top vendedores del resto)
+  const vend = {};         // { agente: {equipo, mes:{[m]:{venta,costo,_tk}}} }  (todos)
+  const prov = {};         // { proveedor: {mes:{[m]:{venta,costo,_tk}}} }
+  const cli  = {};         // { clienteKey: {nombre,num, mes:{[m]:venta}} }
+
+  rows.forEach(r => {
+    const tipo = (r['TIPO DOCUMENTO'] || '').trim();
+    if (!tipo) return;
+    const f = parseDate(r['FECHA']);
+    if (!f || f.getFullYear() !== año) return;
+    const ag    = normAgent(r['NOMBRE AGENTE']);
+    const esCom = AGENTES_COMERCIALES.has(ag);
+    const imp   = parseNum(r['IMPORTE']);
+    const cost  = Math.abs(parseNum(r['COSTO TOTAL']));
+    const mes   = f.getMonth() + 1;
+    const tk    = `${r['FOLIO']}-${r['LETRA']}-${r['CLIENTE']}`;
+    const prv   = (r['NOMBRE PROV.'] || '').trim();
+    const cliNum = r['CLIENTE'] || '';
+    const cliNom = normClient(r['NOMBRE CLIENTE']);
+
+    // Por mes (comercial vs resto)
+    if (!porMes[mes]) porMes[mes] = { com_venta: 0, resto_venta: 0, com_costo: 0, resto_costo: 0, _comTk: new Set(), _restoTk: new Set() };
+    if (esCom) {
+      porMes[mes].com_venta += imp; porMes[mes].com_costo += cost; porMes[mes]._comTk.add(tk);
+    } else {
+      porMes[mes].resto_venta += imp; porMes[mes].resto_costo += cost; porMes[mes]._restoTk.add(tk);
+      if (!restoAgMes[ag]) restoAgMes[ag] = {};
+      restoAgMes[ag][mes] = (restoAgMes[ag][mes] || 0) + imp;
+    }
+
+    // Vendedor (todos)
+    if (!vend[ag]) vend[ag] = { equipo: esCom ? 'comercial' : 'resto', mes: {} };
+    if (!vend[ag].mes[mes]) vend[ag].mes[mes] = { venta: 0, costo: 0, _tk: new Set() };
+    vend[ag].mes[mes].venta += imp; vend[ag].mes[mes].costo += cost; vend[ag].mes[mes]._tk.add(tk);
+
+    // Proveedor (toda la empresa, con split comercial/resto)
+    if (prv) {
+      if (!prov[prv]) prov[prv] = { mes: {} };
+      if (!prov[prv].mes[mes]) prov[prv].mes[mes] = { com_venta: 0, com_costo: 0, resto_venta: 0, resto_costo: 0, _comTk: new Set(), _restoTk: new Set() };
+      const pm = prov[prv].mes[mes];
+      if (esCom) { pm.com_venta += imp; pm.com_costo += cost; pm._comTk.add(tk); }
+      else { pm.resto_venta += imp; pm.resto_costo += cost; pm._restoTk.add(tk); }
+    }
+
+    // Cliente (toda la empresa, con split comercial/resto)
+    const ckey = cliNum || cliNom;
+    if (ckey) {
+      if (!cli[ckey]) cli[ckey] = { nombre: cliNom, num: cliNum, mes: {} };
+      if (!cli[ckey].mes[mes]) cli[ckey].mes[mes] = { com_venta: 0, resto_venta: 0 };
+      if (esCom) cli[ckey].mes[mes].com_venta += imp; else cli[ckey].mes[mes].resto_venta += imp;
+    }
+  });
+
+  const por_mes = {};
+  Object.entries(porMes).forEach(([m, v]) => {
+    por_mes[m] = {
+      com_venta: Math.round(v.com_venta), resto_venta: Math.round(v.resto_venta),
+      com_costo: Math.round(v.com_costo), resto_costo: Math.round(v.resto_costo),
+      com_tickets: v._comTk.size, resto_tickets: v._restoTk.size,
+    };
+  });
+
+  const resto_por_agente_mes = {};
+  Object.entries(restoAgMes).forEach(([ag, byMes]) => {
+    resto_por_agente_mes[ag] = {};
+    Object.entries(byMes).forEach(([m, v]) => { resto_por_agente_mes[ag][m] = Math.round(v); });
+  });
+
+  // Todos los vendedores con venta/costo/tickets por mes
+  const vendedores = Object.entries(vend).map(([nombre, d]) => {
+    const pm = {};
+    Object.entries(d.mes).forEach(([m, v]) => { pm[m] = { venta: Math.round(v.venta), costo: Math.round(v.costo), tickets: v._tk.size }; });
+    return { nombre, equipo: d.equipo, por_mes: pm };
+  });
+
+  // Top 60 proveedores de toda la empresa (con split comercial/resto)
+  const proveedores = Object.entries(prov).map(([nombre, d]) => {
+    const pm = {}; let tot = 0;
+    Object.entries(d.mes).forEach(([m, v]) => {
+      pm[m] = {
+        com_venta: Math.round(v.com_venta), com_costo: Math.round(v.com_costo), com_tickets: v._comTk.size,
+        resto_venta: Math.round(v.resto_venta), resto_costo: Math.round(v.resto_costo), resto_tickets: v._restoTk.size,
+      };
+      tot += v.com_venta + v.resto_venta;
+    });
+    return { nombre, _tot: tot, por_mes: pm };
+  }).sort((a, b) => b._tot - a._tot).slice(0, 60).map(({ _tot, ...x }) => x);
+
+  // Top 100 clientes de toda la empresa (con split comercial/resto)
+  const clientes = Object.entries(cli).map(([, d]) => {
+    const pm = {}; let tot = 0;
+    Object.entries(d.mes).forEach(([m, v]) => { pm[m] = { com_venta: Math.round(v.com_venta), resto_venta: Math.round(v.resto_venta) }; tot += v.com_venta + v.resto_venta; });
+    return { nombre: d.nombre, num: d.num, _tot: tot, por_mes: pm };
+  }).filter(x => x._tot > 0).sort((a, b) => b._tot - a._tot).slice(0, 100).map(({ _tot, ...x }) => x);
+
+  return { por_mes, resto_por_agente_mes, vendedores, proveedores, clientes };
+}
+
 // ── Clientes con ticket acumulado > $3,000 por mes ───────────────────────────
 function buildClientesSobre3000(ventas) {
   const byMesCli = {};
@@ -1086,6 +1236,13 @@ const bsc_metas_por_mes = {};
     });
   }
 
+  // ── Ventas General: toda la empresa (comercial + el resto) ─────────────────
+  // Ventas General: tabla de hechos (fact table) pivotable por todas las dimensiones
+  const ventas_general = buildVentasGeneralFact([
+    { año: AÑO_ANTERIOR, rows: rawAnterior },
+    { año: AÑO_ACTUAL,   rows: rawActual },
+  ]);
+
   const output = {
     resumen, agentes, metas,
     kpi_mensual_actual: kpi2026, kpi_mensual_anterior: kpi2025,
@@ -1120,6 +1277,13 @@ const bsc_metas_por_mes = {};
   const pubDir = path.join(__dirname, '..', 'public', 'data');
   if (!fs.existsSync(pubDir)) fs.mkdirSync(pubDir, { recursive: true });
   fs.copyFileSync(outFile, path.join(pubDir, 'dashboard_data.json'));
+
+  // ── Ventas General: ARCHIVO SEPARADO (no afecta a dashboard_data.json) ──────
+  const vgFile = path.join(outDir, 'ventas_general.json');
+  fs.writeFileSync(vgFile, JSON.stringify(ventas_general, null, 2), 'utf8');
+  fs.copyFileSync(vgFile, path.join(pubDir, 'ventas_general.json'));
+  const vgKB = Math.round(fs.statSync(vgFile).size / 1024);
+  console.log(`✅ ventas_general.json generado: ${vgKB} KB (archivo independiente)`);
 
   const sizeKB = Math.round(fs.statSync(outFile).size / 1024);
   console.log(`\n✅ dashboard_data.json generado: ${sizeKB} KB`);

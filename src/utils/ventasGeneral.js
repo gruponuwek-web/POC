@@ -1,0 +1,75 @@
+// Cómputo pivotable de Ventas General a partir de la tabla de hechos (fact table).
+// fact = { dims:{sucursales,proveedores,lineas,vendedores,clientes}, rows:[[año,mes,si,pi,li,vi,ci,venta,costo,n]] }
+// Un solo recorrido produce todos los agregados que necesita la página.
+
+export function computeVG(fact, filtros) {
+  if (!fact || !fact.rows || !fact.dims) return null
+  const { dims, rows } = fact
+
+  const año = filtros.año || 'todos'
+  const equipo = filtros.equipo || 'todos'
+  const mesesSet = (filtros.meses && filtros.meses.length) ? new Set(filtros.meses) : null
+  const sucIdx = (filtros.sucursal && filtros.sucursal !== 'todas') ? dims.sucursales.indexOf(filtros.sucursal) : -1
+  const provIdx = (filtros.vgProveedor && filtros.vgProveedor !== 'todos') ? dims.proveedores.indexOf(filtros.vgProveedor) : -1
+  const lineaIdx = (filtros.vgLinea && filtros.vgLinea !== 'todas') ? dims.lineas.indexOf(filtros.vgLinea) : -1
+
+  let comV = 0, comC = 0, comN = 0, restoV = 0, restoC = 0, restoN = 0
+  let prevComV = 0, prevRestoV = 0
+  const porMes = {}                 // { mes: {comV,restoV,comC,restoC,comN,restoN} }
+  const vendMap = new Map()         // vi -> {nombre,equipo,venta,costo,n}
+  const provMap = new Map()         // pi -> {nombre,venta,costo,n}
+  const cliMap = new Map()          // ci -> {nombre,num,venta}
+  const comparar = año === '2026'
+
+  for (let i = 0; i < rows.length; i++) {
+    const r = rows[i]
+    const ry = r[0], rm = r[1], si = r[2], pi = r[3], li = r[4], vi = r[5], ci = r[6]
+    const venta = r[7], costo = r[8], n = r[9]
+
+    if (sucIdx >= 0 && si !== sucIdx) continue
+    if (provIdx >= 0 && pi !== provIdx) continue
+    if (lineaIdx >= 0 && li !== lineaIdx) continue
+    const vend = dims.vendedores[vi]
+    const esCom = vend.equipo === 'comercial'
+    if (equipo === 'comercial' && !esCom) continue
+    if (equipo === 'resto' && esCom) continue
+
+    const inMeses = !mesesSet || mesesSet.has(rm)
+
+    // Comparación vs año anterior (solo vista 2026): acumula 2025 en mismos meses/scope
+    if (comparar && ry === 2025 && inMeses) {
+      if (esCom) prevComV += venta; else prevRestoV += venta
+    }
+
+    // Filtro de año para el agregado principal
+    if (año === '2025' && ry !== 2025) continue
+    if (año === '2026' && ry !== 2026) continue
+    if (!inMeses) continue
+
+    if (esCom) { comV += venta; comC += costo; comN += n } else { restoV += venta; restoC += costo; restoN += n }
+
+    let pm = porMes[rm]; if (!pm) { pm = { comV: 0, restoV: 0, comC: 0, restoC: 0, comN: 0, restoN: 0 }; porMes[rm] = pm }
+    if (esCom) { pm.comV += venta; pm.comC += costo; pm.comN += n } else { pm.restoV += venta; pm.restoC += costo; pm.restoN += n }
+
+    let vm = vendMap.get(vi); if (!vm) { vm = { nombre: vend.nombre, equipo: vend.equipo, venta: 0, costo: 0, n: 0 }; vendMap.set(vi, vm) }
+    vm.venta += venta; vm.costo += costo; vm.n += n
+
+    let pv = provMap.get(pi); if (!pv) { pv = { nombre: dims.proveedores[pi], venta: 0, costo: 0, n: 0 }; provMap.set(pi, pv) }
+    pv.venta += venta; pv.costo += costo; pv.n += n
+
+    let cm = cliMap.get(ci); if (!cm) { const c = dims.clientes[ci]; cm = { nombre: c.nombre, num: c.num, venta: 0 }; cliMap.set(ci, cm) }
+    cm.venta += venta
+  }
+
+  const bySales = (a, b) => b.venta - a.venta
+  const vendedores = [...vendMap.values()].filter(v => v.venta > 0).sort(bySales)
+  const proveedores = [...provMap.values()].filter(p => p.venta > 0).sort(bySales)
+  const clientes = [...cliMap.values()].filter(c => c.venta > 0).sort(bySales)
+  const topResto = vendedores.filter(v => v.equipo === 'resto').slice(0, 7)
+
+  const meses = Object.keys(porMes).map(Number).sort((a, b) => a - b)
+  const total = comV + restoV
+  const prev = comparar ? { comV: prevComV, restoV: prevRestoV, total: prevComV + prevRestoV } : null
+
+  return { comV, restoV, comN, restoN, total, totalN: comN + restoN, prev, porMes, meses, vendedores, proveedores, clientes, topResto }
+}
