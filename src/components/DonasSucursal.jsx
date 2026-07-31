@@ -3,6 +3,39 @@ import { fmt } from '../utils/format.js'
 import InfoTip from './InfoTip.jsx'
 
 const COMc = '#1a6cf0', RESTOc = '#f59e0b', TRACK = '#eef2f7'
+const SUC_COLORS = ['#1a6cf0', '#7c3aed', '#14b8a6', '#ec4899', '#f59e0b', '#0ea5e9']
+
+function DonaGeneral({ sucursales, totalEmpresa }) {
+  const R = 52, C = 2 * Math.PI * R
+  let offset = 0
+  return (
+    <div style={{ background: '#fff', border: '2px solid #1a6cf0', borderRadius: 10, padding: 14, textAlign: 'center' }}>
+      <div style={{ fontSize: 12, fontWeight: 700, color: '#1a6cf0', textTransform: 'uppercase', letterSpacing: '.4px' }}>🏢 Empresa (total)</div>
+      <div style={{ fontSize: 10.5, color: '#94a3b8', marginBottom: 6 }}>reparto por sucursal</div>
+      <svg viewBox="0 0 140 140" style={{ width: 150, height: 150 }}>
+        <circle cx="70" cy="70" r={R} fill="none" stroke={TRACK} strokeWidth="16" />
+        {sucursales.map((s, i) => {
+          const len = totalEmpresa > 0 ? C * (s.total / totalEmpresa) : 0
+          const el = <circle key={s.nombre} cx="70" cy="70" r={R} fill="none" stroke={SUC_COLORS[i % SUC_COLORS.length]} strokeWidth="16"
+            strokeDasharray={`${len.toFixed(1)} ${(C - len).toFixed(1)}`} strokeDashoffset={(-offset).toFixed(1)} transform="rotate(-90 70 70)" />
+          offset += len
+          return el
+        })}
+        <text x="70" y="66" textAnchor="middle" fontSize="16" fontWeight="800" fill="#0f1f3d">${(totalEmpresa / 1e6).toFixed(1)}M</text>
+        <text x="70" y="84" textAnchor="middle" fontSize="10" fill="#94a3b8">total</text>
+      </svg>
+      <div style={{ marginTop: 6, display: 'flex', flexDirection: 'column', gap: 3 }}>
+        {sucursales.map((s, i) => (
+          <div key={s.nombre} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, justifyContent: 'center' }}>
+            <span style={{ width: 9, height: 9, borderRadius: 2, background: SUC_COLORS[i % SUC_COLORS.length] }} />
+            <span style={{ color: '#334155', fontWeight: 600 }}>{s.nombre}</span>
+            <span style={{ color: '#94a3b8' }}>{totalEmpresa > 0 ? (s.total / totalEmpresa * 100).toFixed(1) : 0}%</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
 
 function Dona({ s, totalEmpresa }) {
   const R = 52, C = 2 * Math.PI * R
@@ -44,6 +77,7 @@ export default function DonasSucursal({ g }) {
       </div>
       <div style={{ padding: 18, background: '#fbfcfe' }}>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(200px,1fr))', gap: 16 }}>
+          <DonaGeneral sucursales={g.sucursalesVenta} totalEmpresa={totalEmpresa} />
           {g.sucursalesVenta.map(s => <Dona key={s.nombre} s={s} totalEmpresa={totalEmpresa} />)}
         </div>
         <div style={{ display: 'flex', gap: 18, marginTop: 16, fontSize: 11.5, color: '#64748b', justifyContent: 'center' }}>
