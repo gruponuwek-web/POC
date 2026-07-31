@@ -22,6 +22,7 @@ import SeccionVentasGeneral from './components/SeccionVentasGeneral.jsx'
 import FiltroVentasGeneral from './components/FiltroVentasGeneral.jsx'
 import VentasGeneralCharts from './components/VentasGeneralCharts.jsx'
 import TendenciasVentasGeneral from './components/TendenciasVentasGeneral.jsx'
+import VentaMensualComparativa from './components/VentaMensualComparativa.jsx'
 import DonasSucursal from './components/DonasSucursal.jsx'
 import TablasVentasGeneral from './components/TablasVentasGeneral.jsx'
 import { computeVG } from './utils/ventasGeneral.js'
@@ -426,6 +427,7 @@ export default function App() {
             <>
               <SeccionVentasGeneral g={vgComputed} filtros={filtros} />
               <DonasSucursal g={vgComputed} />
+              <VentaMensualComparativa g={vgComputed} filtros={filtros} />
               <TendenciasVentasGeneral g={vgComputed} filtros={filtros} />
               <VentasGeneralCharts g={vgComputed} filtros={filtros} />
               <TablasVentasGeneral g={vgComputed} filtros={filtros} />
