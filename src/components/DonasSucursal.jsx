@@ -3,7 +3,8 @@ import { fmt } from '../utils/format.js'
 import InfoTip from './InfoTip.jsx'
 
 const COMc = '#1a6cf0', RESTOc = '#f59e0b', TRACK = '#eef2f7'
-const SUC_COLORS = ['#1a6cf0', '#7c3aed', '#14b8a6', '#ec4899', '#f59e0b', '#0ea5e9']
+// Colores de sucursal: distintos entre sí y distintos del azul (comercial) y ámbar (resto)
+const SUC_COLORS = ['#7c3aed', '#14b8a6', '#f43f5e', '#0891b2', '#84cc16', '#d946ef']
 
 function DonaGeneral({ sucursales, totalEmpresa }) {
   const R = 52, C = 2 * Math.PI * R
@@ -16,8 +17,10 @@ function DonaGeneral({ sucursales, totalEmpresa }) {
         <circle cx="70" cy="70" r={R} fill="none" stroke={TRACK} strokeWidth="16" />
         {sucursales.map((s, i) => {
           const len = totalEmpresa > 0 ? C * (s.total / totalEmpresa) : 0
+          const gap = sucursales.length > 1 ? 3 : 0 // separación entre segmentos
+          const visible = Math.max(0, len - gap)
           const el = <circle key={s.nombre} cx="70" cy="70" r={R} fill="none" stroke={SUC_COLORS[i % SUC_COLORS.length]} strokeWidth="16"
-            strokeDasharray={`${len.toFixed(1)} ${(C - len).toFixed(1)}`} strokeDashoffset={(-offset).toFixed(1)} transform="rotate(-90 70 70)" />
+            strokeDasharray={`${visible.toFixed(1)} ${(C - visible).toFixed(1)}`} strokeDashoffset={(-offset).toFixed(1)} transform="rotate(-90 70 70)" />
           offset += len
           return el
         })}
@@ -43,6 +46,7 @@ function Dona({ s, totalEmpresa }) {
   const pResto = s.total > 0 ? s.resto / s.total : 0
   const share = totalEmpresa > 0 ? (s.total / totalEmpresa * 100) : 0
   const lenResto = C * pResto, lenCom = C * pCom
+  const gap = (pCom > 0 && pResto > 0) ? 3 : 0
 
   return (
     <div style={{ background: '#fff', border: '1.5px solid #e2e8f0', borderRadius: 10, padding: 14, textAlign: 'center' }}>
@@ -51,9 +55,9 @@ function Dona({ s, totalEmpresa }) {
       <svg viewBox="0 0 140 140" style={{ width: 150, height: 150 }}>
         <circle cx="70" cy="70" r={R} fill="none" stroke={TRACK} strokeWidth="16" />
         {pResto > 0 && <circle cx="70" cy="70" r={R} fill="none" stroke={RESTOc} strokeWidth="16"
-          strokeDasharray={`${lenResto.toFixed(1)} ${(C - lenResto).toFixed(1)}`} strokeDashoffset="0" transform="rotate(-90 70 70)" />}
+          strokeDasharray={`${Math.max(0, lenResto - gap).toFixed(1)} ${(C - Math.max(0, lenResto - gap)).toFixed(1)}`} strokeDashoffset="0" transform="rotate(-90 70 70)" />}
         {pCom > 0 && <circle cx="70" cy="70" r={R} fill="none" stroke={COMc} strokeWidth="16"
-          strokeDasharray={`${lenCom.toFixed(1)} ${(C - lenCom).toFixed(1)}`} strokeDashoffset={(-lenResto).toFixed(1)} transform="rotate(-90 70 70)" />}
+          strokeDasharray={`${Math.max(0, lenCom - gap).toFixed(1)} ${(C - Math.max(0, lenCom - gap)).toFixed(1)}`} strokeDashoffset={(-lenResto).toFixed(1)} transform="rotate(-90 70 70)" />}
         <text x="70" y="66" textAnchor="middle" fontSize="16" fontWeight="800" fill="#0f1f3d">${(s.total / 1e6).toFixed(1)}M</text>
         <text x="70" y="84" textAnchor="middle" fontSize="10" fill="#94a3b8">total</text>
       </svg>
