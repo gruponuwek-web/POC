@@ -49,12 +49,13 @@ export default function TablaClientesPerdidos({ clientes, filtros, compact = fal
 
   const mesesActivos = filtros?.meses?.length > 0 ? filtros.meses : null
 
-  // Regla +4 meses sobre una escala relativa continua (2026=mes, 2025=mes-12), igual que en
-  // Empresa Completa y en la tarjeta KPI de arriba. Un Año específico NO se acumula con el
-  // otro año: 2026 solo cuenta clientes con actividad en 2026 (ultima_compra_2026); 2025 solo
-  // cuenta clientes cuya actividad quedó confinada a 2025 (nunca volvieron en 2026).
+  // Regla +4 meses lineal sobre una escala relativa continua (2026=mes, 2025=mes-12): el "mes
+  // en que se cumplieron los 4 meses sin compra" puede caer en el año siguiente al de la
+  // última compra — así se definió desde el inicio. Año filtra a los clientes cuyo mesPerdido
+  // cae dentro del rango de meses de ESE año; Mes específico filtra a los que se perdieron
+  // exactamente en ese mes.
   const perdidos = (() => {
-    // Clic en gráfica: mes específico (bucket exacto de cuándo se perdió, no un corte acumulado)
+    // Clic en gráfica: mes específico (bucket exacto de cuándo se perdió)
     if (mesFiltro) {
       const target = mesFiltro - 4
       return perdidosTodos.filter(c => c.ultima_compra && relMes(c.ultima_compra) === target)
@@ -63,20 +64,37 @@ export default function TablaClientesPerdidos({ clientes, filtros, compact = fal
     // Sin filtro de Año/Mes → todos los perdidos actuales (status ya calculado por el ETL)
     if (filtros?.año === 'todos' && !mesesActivos) return perdidosTodos
 
-    const soloMes = mesesActivos?.length === 1 ? mesesActivos[0] : null
-    const mesMax2026 = mesesConDatos.length > 0 ? Math.max(...mesesConDatos) : 7
+    // Meses del FilterBar: bucket exacto por mes, sin importar el año
+    if (mesesActivos) {
+      return perdidosTodos.filter(c => {
+        if (!c.ultima_compra) return false
+        const rm = relMes(c.ultima_compra)
+        return mesesActivos.some(m => rm === m - 4)
+      })
+    }
 
-    if (filtros?.año === '2026') {
-      const corte = (soloMes != null ? soloMes : mesMax2026) - 4
-      return clientes.filter(c => c.ultima_compra_2026 && relMes(c.ultima_compra_2026) <= corte)
-    }
+    // Año 2025 sin mes: 2025 es año completo (Ene–Dic) en los datos
     if (filtros?.año === '2025') {
-      const corte = (soloMes != null ? soloMes - 12 : 0) - 4
-      return clientes.filter(c => c.ultima_compra && !c.ultima_compra_2026 && relMes(c.ultima_compra) <= corte)
+      const minRel = 1 - 12 - 4, maxRel = 12 - 12 - 4
+      return perdidosTodos.filter(c => {
+        if (!c.ultima_compra) return false
+        const rm = relMes(c.ultima_compra)
+        return rm >= minRel && rm <= maxRel
+      })
     }
-    // 'todos' con mes(es) específico(s): acumulado de ambos años, corte por el mes elegido
-    const corte = (soloMes != null ? soloMes : mesMax2026) - 4
-    return clientes.filter(c => !c.ultima_compra || relMes(c.ultima_compra) <= corte)
+
+    // Año 2026 sin mes → rango completo de meses disponibles
+    if (mesesConDatos.length > 0) {
+      const minRel = Math.min(...mesesConDatos) - 4
+      const maxRel = Math.max(...mesesConDatos) - 4
+      return perdidosTodos.filter(c => {
+        if (!c.ultima_compra) return false
+        const rm = relMes(c.ultima_compra)
+        return rm >= minRel && rm <= maxRel
+      })
+    }
+
+    return perdidosTodos
   })()
 
   const counts = perdidos.reduce((acc, c) => {

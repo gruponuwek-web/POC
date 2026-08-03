@@ -16,11 +16,9 @@ export default function ChartClientesPerdidos({ kpiAgentes, clientes = [], año,
   const mesesValidos = new Set(mesesConDatos)
   const soloAgente = filtros?.agente && filtros.agente !== 'todos'
 
-  // Para 2026: acotado a clientes con actividad EN 2026 (mismo criterio que la tarjeta KPI y
-  // la tabla — no acumulado desde antes). Para 'todos': acumulado (status actual del ETL,
-  // cualquier año). Para 2025: perdidos_al_mes_2025 por agente (precomputado en el ETL).
+  // Para 2026/todos: calcular desde clientes (sin doble conteo)
+  // Para 2025: seguir usando perdidos_al_mes_2025 por agente
   const usar2025 = año === '2025'
-  const usar2026Scoped = año === '2026'
 
   let chartData, agentNames
 
@@ -28,20 +26,13 @@ export default function ChartClientesPerdidos({ kpiAgentes, clientes = [], año,
     // Agrupar perdidos por (agente, mesPerdido) desde tabla_clientes
     const byAgenteMes = {}
     const mesesSet = new Set()
-    const mesMax2026 = mesesConDatos.length > 0 ? Math.max(...mesesConDatos) : 7
-    const corte2026 = mesMax2026 - 4
 
-    const base = usar2026Scoped
-      ? clientes.filter(c => c.ultima_compra_2026 && relMes(c.ultima_compra_2026) <= corte2026)
-      : clientes.filter(esPerdido)
-
-    base.forEach(c => {
-      const fechaRef = usar2026Scoped ? c.ultima_compra_2026 : c.ultima_compra
-      if (!fechaRef) return
-      const rm = relMes(fechaRef)
-      const mesPerdido = rm + 4  // cliente con última compra en rm se perdió en mes rm+4
+    clientes.filter(esPerdido).forEach(c => {
+      if (!c.ultima_compra) return
+      const rm = relMes(c.ultima_compra)
+      const mesPerdido = rm + 4  // cliente con ultima_compra en rm se perdió en mes rm+4
       if (mesPerdido < 1 || mesPerdido > 12) return
-      if (!usar2026Scoped && mesesValidos.size > 0 && !mesesValidos.has(mesPerdido)) return
+      if (mesesValidos.size > 0 && !mesesValidos.has(mesPerdido)) return
       mesesSet.add(mesPerdido)
       const ag = c.agente
       if (!byAgenteMes[ag]) byAgenteMes[ag] = {}
