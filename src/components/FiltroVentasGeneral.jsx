@@ -136,7 +136,7 @@ export default function FiltroVentasGeneral({ filtros, onChange, sucursales = []
         </select>
       </Campo>
       {agenteOrden.length > 0 && (
-        <Campo label="Agente" info="Filtra por agente individual (columna NOMBRE AGENTE). No afecta a Ticket Promedio ni a la Frecuencia de compra en la Distribución de Compra por Cliente, calculados sobre tickets/folios completos sin desglose por agente.">
+        <Campo label="Agente" info="Filtra por agente individual (columna NOMBRE AGENTE). Afecta a todas las tarjetas y gráficas de la página, incluyendo Ticket Promedio, Densidad de Compra y Correlación de Productos.">
           <select value={vgAgente} onChange={e => onChange({ ...filtros, vgAgente: e.target.value })} style={{ ...selectStyle, maxWidth: 180 }}>
             <option value="todos">Todos</option>
             {agenteOrden.map(a => <option key={a} value={a}>{a}</option>)}

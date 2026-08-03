@@ -1,7 +1,7 @@
 // Cómputo pivotable de Ventas General a partir de la tabla de hechos (fact table).
 // fact = { dims:{sucursales,proveedores,lineas,productos,vendedores,clientes},
 //          rows:[[año,mes,si,pi,li,proi,vi,ci,venta,costo,n,cant]],
-//          folios:[[año,mes,si,eb,ci,venta,[[proi,li,pi],...]]] }
+//          folios:[[año,mes,si,eb,ci,venta,[[proi,li,pi],...],vi]] }
 // Un solo recorrido produce todos los agregados que necesita la página.
 
 export function computeVG(fact, filtros) {
@@ -122,13 +122,14 @@ export function computeVG(fact, filtros) {
   let tkVenta = 0, tkCount = 0
   if (fact.ticketsCubo) {
     for (const k in fact.ticketsCubo) {
-      const [ry, rm, si, eb] = k.split('|').map(Number)
+      const [ry, rm, si, eb, vi] = k.split('|').map(Number)
       if (año === '2025' && ry !== 2025) continue
       if (año === '2026' && ry !== 2026) continue
       if (mesesSet && !mesesSet.has(rm)) continue
       if (sucIdx >= 0 && si !== sucIdx) continue
       if (equipo === 'comercial' && eb !== 0) continue
       if (equipo === 'resto' && eb !== 1) continue
+      if (agente && dims.vendedores[vi].nombre !== agente) continue
       const c = fact.ticketsCubo[k]; tkVenta += c.v; tkCount += c.t
     }
   }
@@ -162,12 +163,13 @@ export function computeVG(fact, filtros) {
     let prevTkVenta = 0, prevTkCount = 0
     if (fact.ticketsCubo) {
       for (const k in fact.ticketsCubo) {
-        const [ry, rm, si, eb] = k.split('|').map(Number)
+        const [ry, rm, si, eb, vi] = k.split('|').map(Number)
         if (ry !== 2025) continue
         if (mesesSet && !mesesSet.has(rm)) continue
         if (sucIdx >= 0 && si !== sucIdx) continue
         if (equipo === 'comercial' && eb !== 0) continue
         if (equipo === 'resto' && eb !== 1) continue
+        if (agente && dims.vendedores[vi].nombre !== agente) continue
         const c = fact.ticketsCubo[k]; prevTkVenta += c.v; prevTkCount += c.t
       }
     }
@@ -254,11 +256,12 @@ export function computeProductAnalytics(fact, filtros) {
   const cliFreqY = { 2025: new Map(), 2026: new Map() }
   for (let i = 0; i < foliosArr.length; i++) {
     const fo = foliosArr[i]
-    const ry = fo[0], rm = fo[1], si = fo[2], eb = fo[3], ci = fo[4], items = fo[6]
+    const ry = fo[0], rm = fo[1], si = fo[2], eb = fo[3], ci = fo[4], items = fo[6], vi = fo[7]
     if (mesesSet && !mesesSet.has(rm)) continue
     if (sucIdx >= 0 && si !== sucIdx) continue
     if (equipo === 'comercial' && eb !== 0) continue
     if (equipo === 'resto' && eb !== 1) continue
+    if (agente && dims.vendedores[vi].nombre !== agente) continue
     if (provIdx >= 0 || lineaIdx >= 0) {
       const matches = items.some(([, li, pi]) => (lineaIdx < 0 || li === lineaIdx) && (provIdx < 0 || pi === provIdx))
       if (!matches) continue
@@ -296,13 +299,14 @@ export function computeProductAnalytics(fact, filtros) {
   const folioItemsList = []        // canastas filtradas (arrays de proi), para co-ocurrencia
   for (let i = 0; i < foliosArr.length; i++) {
     const fo = foliosArr[i]
-    const ry = fo[0], rm = fo[1], si = fo[2], eb = fo[3], items = fo[6]
+    const ry = fo[0], rm = fo[1], si = fo[2], eb = fo[3], items = fo[6], vi = fo[7]
     if (año === '2025' && ry !== 2025) continue
     if (año === '2026' && ry !== 2026) continue
     if (mesesSet && !mesesSet.has(rm)) continue
     if (sucIdx >= 0 && si !== sucIdx) continue
     if (equipo === 'comercial' && eb !== 0) continue
     if (equipo === 'resto' && eb !== 1) continue
+    if (agente && dims.vendedores[vi].nombre !== agente) continue
 
     const filtItems = (provIdx < 0 && lineaIdx < 0) ? items
       : items.filter(([, li, pi]) => (lineaIdx < 0 || li === lineaIdx) && (provIdx < 0 || pi === provIdx))
@@ -333,6 +337,7 @@ export function scopeLabel(filtros) {
   if (filtros.sucursal && filtros.sucursal !== 'todas') partes.push(filtros.sucursal)
   if (filtros.vgLinea && filtros.vgLinea !== 'todas') partes.push(filtros.vgLinea)
   if (filtros.vgProveedor && filtros.vgProveedor !== 'todos') partes.push(filtros.vgProveedor)
+  if (filtros.vgAgente && filtros.vgAgente !== 'todos') partes.push(filtros.vgAgente)
   if (filtros.equipo === 'comercial') partes.push('Equipo comercial')
   else if (filtros.equipo === 'resto') partes.push('El resto')
   return partes.length ? partes.join(' · ') : 'Toda la empresa'

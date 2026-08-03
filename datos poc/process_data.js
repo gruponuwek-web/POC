@@ -211,9 +211,9 @@ function buildVentasGeneralFact(rowsByYear) {
       let a = agg.get(key); if (!a) { a = [0, 0, 0, 0]; agg.set(key, a); }
       a[0] += imp; a[1] += cost; a[2] += 1; a[3] += cant;
 
-      // Ticket promedio: tickets únicos por (año, mes, sucursal, equipo)
+      // Ticket promedio: tickets únicos por (año, mes, sucursal, equipo, vendedor)
       const eb = esCom ? 0 : 1;
-      const tkKey = `${año}|${mes}|${si}|${eb}`;
+      const tkKey = `${año}|${mes}|${si}|${eb}|${vi}`;
       let tc = tkCubo.get(tkKey); if (!tc) { tc = { tks: new Set(), v: 0 }; tkCubo.set(tkKey, tc); }
       const folioKey = `${r['FOLIO']}-${r['LETRA']}-${cliNum}`;
       tc.tks.add(folioKey);
@@ -221,7 +221,7 @@ function buildVentasGeneralFact(rowsByYear) {
 
       // Canasta del folio (para densidad de compra y correlación de productos)
       let fo = folioMap.get(folioKey);
-      if (!fo) { fo = { año, mes, si, eb, ci, venta: 0, items: new Map() }; folioMap.set(folioKey, fo); }
+      if (!fo) { fo = { año, mes, si, eb, vi, ci, venta: 0, items: new Map() }; folioMap.set(folioKey, fo); }
       fo.venta += imp;
       fo.items.set(proi, { li, pi });
 
@@ -242,12 +242,12 @@ function buildVentasGeneralFact(rowsByYear) {
     rows.push([año, mes, si, pi, li, proi, vi, ci, Math.round(v[0]), Math.round(v[1]), v[2], Math.round(v[3])]);
   });
 
-  // Canastas por folio → array compacto [año,mes,si,eb,ci,venta,[[proi,li,pi],...]]
+  // Canastas por folio → array compacto [año,mes,si,eb,ci,venta,[[proi,li,pi],...],vi]
   const folios = [];
   folioMap.forEach(fo => {
     const items = [];
     fo.items.forEach((v, proi) => items.push([proi, v.li, v.pi]));
-    folios.push([fo.año, fo.mes, fo.si, fo.eb, fo.ci, Math.round(fo.venta), items]);
+    folios.push([fo.año, fo.mes, fo.si, fo.eb, fo.ci, Math.round(fo.venta), items, fo.vi]);
   });
 
   // Cubo de tickets → { "año|mes|si|eb": {t, v} }

@@ -113,12 +113,12 @@ export default function SeccionVentasGeneral({ g, filtros }) {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(190px,1fr))', gap: 12, marginBottom: scoped === 'todos' ? 16 : 0 }}>
           <MiniKPI icon="🎫" label="Ticket promedio" valor={fmt.moneda(g.ticketProm)}
             sub={`${fmt.num(g.tickets)} tickets únicos`}
-            scopeNote="Año, Mes, Sucursal, Equipo"
-            info="Venta ÷ tickets únicos (folio). Responde a año, mes, sucursal y equipo; no varía por proveedor o línea."
+            scopeNote="Año, Mes, Sucursal, Equipo, Agente"
+            info="Venta ÷ tickets únicos (folio). Responde a año, mes, sucursal, equipo y agente; no varía por proveedor o línea."
             comp={g.prev && g.prev.ticketProm != null && <Comparacion cur={g.ticketProm} prev={g.prev.ticketProm} />} />
           <MiniKPI icon="📉" label="Clientes perdidos" valor={fmt.num(g.perdidos)} color="#b91c1c"
             sub={`Regla +4 meses · ${fmt.pct(g.perdidosPct)} de ${fmt.num(g.perdidosTotal)} clientes`}
-            scopeNote="Año, Mes, Sucursal, Equipo, Proveedor, Línea"
+            scopeNote="Año, Mes, Sucursal, Equipo, Agente, Proveedor, Línea"
             info="Misma regla de +4 meses que el Dashboard Táctico, pero con una base distinta: aquí solo se cuentan clientes con historial REAL de compra en el alcance filtrado (no cartera asignada sin compra). El Dashboard Táctico usa cartera asignada al agente + clientes 2025, que puede incluir clientes que nunca compraron — por eso ese número puede ser mayor aunque cubra menos agentes. Si filtras Año/Mes aquí, la fecha de corte se mueve a ese punto ('¿quién estaba perdido a esa fecha?'); con 'Todos' usa el mes más reciente con datos."
             comp={g.prev && <Comparacion cur={g.perdidos} prev={g.prev.perdidos} fmtFn={fmt.num} invertir />} />
         </div>
