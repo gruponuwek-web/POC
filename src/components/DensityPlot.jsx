@@ -19,7 +19,7 @@ function Curva({ pts, minX, maxX, maxY, W, H, padL, padR, padT, padB, color }) {
   )
 }
 
-function Panel({ titulo, info, valores25, valores26, fmtX, logScale, nXTicks = 6, rotateLabels = false }) {
+function Panel({ titulo, sub, info, valores25, valores26, fmtX, logScale, nXTicks = 6, rotateLabels = false }) {
   const t25 = useMemo(() => logScale ? valores25.map(v => Math.log10(Math.max(1, v) + 1)) : valores25, [valores25, logScale])
   const t26 = useMemo(() => logScale ? valores26.map(v => Math.log10(Math.max(1, v) + 1)) : valores26, [valores26, logScale])
   const k25 = useMemo(() => kde(t25), [t25])
@@ -33,10 +33,11 @@ function Panel({ titulo, info, valores25, valores26, fmtX, logScale, nXTicks = 6
 
   return (
     <div style={{ background: '#fff', border: '1.5px solid #e2e8f0', borderRadius: 10, padding: 14 }}>
-      <div style={{ display: 'flex', alignItems: 'center', marginBottom: 8 }}>
+      <div style={{ display: 'flex', alignItems: 'center', marginBottom: sub ? 1 : 8 }}>
         <span style={{ fontSize: 11.5, fontWeight: 700, color: '#0f1f3d', textTransform: 'uppercase', letterSpacing: '.4px' }}>{titulo}</span>
         {info && <InfoTip text={info} />}
       </div>
+      {sub && <div style={{ fontSize: 10.5, color: '#94a3b8', fontStyle: 'italic', marginBottom: 8 }}>{sub}</div>}
       <svg viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', display: 'block' }}>
         {yTicks.map((y, i) => {
           const yy = padT + (1 - y / maxY) * (H - padT - padB)
@@ -72,15 +73,20 @@ export default function DensityPlot({ ap }) {
         <span style={{ fontSize: 12, fontWeight: 700, color: '#0f1f3d', textTransform: 'uppercase', letterSpacing: '.4px' }}>📉 Distribución de Compra por Cliente — 2025 vs 2026</span>
         <InfoTip text="Densidad estimada (KDE) sobre todos los clientes con compra en el año. Compara cómo cambió el patrón de compra de un año a otro." />
       </div>
+      <div style={{ padding: '2px 18px 0', fontSize: 11, color: '#64748b' }}>
+        Compara a los clientes de 2025 contra los de 2026: ¿compraron más seguido? ¿gastaron más? La parte más alta de cada curva es donde se agrupa la mayoría de los clientes.
+      </div>
       <div style={{ padding: 16, display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(300px,1fr))', gap: 16 }}>
         <Panel
           titulo="Frecuencia de compra (tickets por cliente)"
+          sub="Entre más a la derecha esté la curva, más veces compró ese grupo de clientes en el año."
           info="Número de tickets/compras distintas por cliente en el año. Un pico más a la derecha indica clientes comprando más seguido."
           valores25={d25.frecuencias} valores26={d26.frecuencias}
           fmtX={x => Math.round(x)}
         />
         <Panel
-          titulo="Monto de compra (venta total por cliente, escala log)"
+          titulo="Monto de compra (venta total por cliente)"
+          sub="Entre más a la derecha esté la curva, más dinero gastó ese grupo de clientes en el año."
           info="Venta total anual por cliente. Escala logarítmica porque el gasto está muy sesgado (unos pocos clientes mayoristas gastan mucho más que la mayoría). Un pico más a la derecha indica clientes con mayor gasto."
           valores25={d25.montos} valores26={d26.montos}
           fmtX={x => `$${Math.round(x).toLocaleString('es-MX')}`}

@@ -79,6 +79,9 @@ export default function CorrelacionProductos({ ap, filtros }) {
         <InfoTip text="Los productos con más folios en común, agrupados en clústers alrededor de los productos 'hub' (verde) — el producto con el que más se compran juntos. Los satélites (ámbar) son los productos que suelen acompañarlos en el mismo folio de compra. Una línea más gruesa = más folios en común." />
         {filtros && <span style={{ fontSize: 10.5, color: '#94a3b8', fontWeight: 600 }}>· {scopeLabel(filtros)}{filtros.año && filtros.año !== 'todos' ? ` · ${filtros.año}` : ''}{(filtros.meses && filtros.meses.length) ? ` · ${filtros.meses.length} mes(es)` : ''}</span>}
       </div>
+      <div style={{ padding: '2px 18px 0', fontSize: 11, color: '#64748b' }}>
+        Muestra qué productos se compran juntos en el mismo ticket. Los círculos verdes son los productos "estrella" y los ámbar son los que casi siempre los acompañan. Entre más gruesa la línea que los une, más veces se compraron juntos.
+      </div>
       <div style={{ padding: 18, display: 'grid', gridTemplateColumns: '360px 1fr', gap: 20, alignItems: 'center' }}>
         <svg viewBox="0 0 320 320" style={{ width: '100%', maxWidth: 360, display: 'block', margin: '0 auto' }}>
           {top.map((p, idx) => {

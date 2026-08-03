@@ -78,6 +78,9 @@ export default function SunburstProductos({ ap, filtros }) {
           </button>
         )}
       </div>
+      <div style={{ padding: '2px 18px 0', fontSize: 11, color: '#64748b' }}>
+        La dona de adentro son las líneas de producto (Papel, Químicos, Bolsas...) y la de afuera son los productos de esa línea. Entre más grande el pedazo, más se vendió. Toca una línea para ver solo sus productos.
+      </div>
       <div style={{ padding: 18, display: 'grid', gridTemplateColumns: '260px 1fr', gap: 20, alignItems: 'center' }}>
         <svg viewBox="0 0 200 200" style={{ width: '100%', maxWidth: 260, display: 'block', margin: '0 auto' }}>
           <circle cx="100" cy="100" r={R1} fill="none" stroke="#f1f5f9" strokeWidth={SW} />
