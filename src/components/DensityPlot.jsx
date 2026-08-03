@@ -81,7 +81,7 @@ export default function DensityPlot({ ap, filtros }) {
     <div style={{ background: '#fff', borderRadius: 10, border: '1.5px solid #e2e8f0', boxShadow: '0 1px 4px rgba(0,0,0,.05)', overflow: 'hidden', marginBottom: 16 }}>
       <div style={{ padding: '14px 18px 0', display: 'flex', alignItems: 'center' }}>
         <span style={{ fontSize: 12, fontWeight: 700, color: '#0f1f3d', textTransform: 'uppercase', letterSpacing: '.4px' }}>📉 Distribución de Compra por Cliente — {titulo}</span>
-        <InfoTip text="Densidad estimada (KDE) sobre los clientes con compra en el alcance filtrado (Mes/Sucursal/Equipo aplican; Proveedor/Línea no, porque es a nivel de folio completo). Compara cómo cambió el patrón de compra de un año a otro." />
+        <InfoTip text="Densidad estimada (KDE) sobre los clientes con compra en el alcance filtrado. Si filtras Proveedor o Línea, la frecuencia cuenta solo los tickets donde compraron algo de ese proveedor/línea, y el monto es solo lo gastado en ese proveedor/línea. Compara cómo cambió el patrón de compra de un año a otro." />
       </div>
       <div style={{ padding: '2px 18px 0', fontSize: 11, color: '#64748b' }}>
         {desc}

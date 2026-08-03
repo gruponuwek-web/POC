@@ -154,8 +154,9 @@ const TOP_N_CHORD = 16
 // Cómputo pivotable de Análisis de Productos (Sunburst, Densidad de compra, Correlación)
 // a partir de la MISMA fact table, respetando los 6 filtros de la página.
 // Sunburst: se arma desde `rows` (línea→producto), respeta año/mes/sucursal/equipo/prov/línea.
-// Densidad: se arma desde `folios` (por cliente), respeta año/mes/sucursal/equipo — igual que
-//   Ticket Promedio, no depende de proveedor/línea (la venta del folio es del ticket completo).
+// Densidad: frecuencia (folios distintos por cliente) se arma desde `folios`, contando solo
+//   los que tienen algún ítem que cumpla proveedor/línea si aplica; monto se arma desde `rows`
+//   sumando venta por cliente ya filtrada por proveedor/línea. Ambas respetan mes/sucursal/equipo.
 // Correlación: se arma desde `folios`, filtrando los ítems del folio por proveedor/línea si
 //   aplica, y calculando co-ocurrencia (folios en común) sobre los ítems restantes.
 export function computeProductAnalytics(fact, filtros) {
@@ -203,23 +204,48 @@ export function computeProductAnalytics(fact, filtros) {
   }).filter(l => l.venta > 0).sort((a, b) => b.venta - a.venta)
 
   // --- Densidad: por cliente, comparando 2025 vs 2026 (el año siempre queda fijo a la
-  // comparación; respeta mes/sucursal/equipo — no proveedor/línea, es a nivel folio) ---
+  // comparación; el resto de filtros sí aplica) ---
   const foliosArr = folios || []
+
+  // Frecuencia: folios distintos por cliente. Si hay filtro de proveedor/línea, solo cuenta
+  // los folios que incluyen al menos un ítem que cumple ese filtro.
   const cliFreqY = { 2025: new Map(), 2026: new Map() }
   for (let i = 0; i < foliosArr.length; i++) {
     const fo = foliosArr[i]
-    const ry = fo[0], rm = fo[1], si = fo[2], eb = fo[3], ci = fo[4], venta = fo[5]
+    const ry = fo[0], rm = fo[1], si = fo[2], eb = fo[3], ci = fo[4], items = fo[6]
     if (mesesSet && !mesesSet.has(rm)) continue
     if (sucIdx >= 0 && si !== sucIdx) continue
     if (equipo === 'comercial' && eb !== 0) continue
     if (equipo === 'resto' && eb !== 1) continue
+    if (provIdx >= 0 || lineaIdx >= 0) {
+      const matches = items.some(([, li, pi]) => (lineaIdx < 0 || li === lineaIdx) && (provIdx < 0 || pi === provIdx))
+      if (!matches) continue
+    }
     const m = cliFreqY[ry]; if (!m) continue
-    let cf = m.get(ci); if (!cf) { cf = { tickets: 0, monto: 0 }; m.set(ci, cf) }
-    cf.tickets += 1; cf.monto += venta
+    m.set(ci, (m.get(ci) || 0) + 1)
   }
+
+  // Monto: venta por cliente desde `rows`, ya filtrada por proveedor/línea (si aplica).
+  const cliMontoY = { 2025: new Map(), 2026: new Map() }
+  for (let i = 0; i < rows.length; i++) {
+    const r = rows[i]
+    const ry = r[0], rm = r[1], si = r[2], pi = r[3], li = r[4], vi = r[6], ci = r[7]
+    const venta = r[8]
+    if (mesesSet && !mesesSet.has(rm)) continue
+    if (sucIdx >= 0 && si !== sucIdx) continue
+    if (provIdx >= 0 && pi !== provIdx) continue
+    if (lineaIdx >= 0 && li !== lineaIdx) continue
+    const vend = dims.vendedores[vi]
+    const esCom = vend.equipo === 'comercial'
+    if (equipo === 'comercial' && !esCom) continue
+    if (equipo === 'resto' && esCom) continue
+    const m = cliMontoY[ry]; if (!m) continue
+    m.set(ci, (m.get(ci) || 0) + venta)
+  }
+
   const densidad = {
-    '2025': { frecuencias: [...cliFreqY[2025].values()].map(c => c.tickets), montos: [...cliFreqY[2025].values()].map(c => c.monto) },
-    '2026': { frecuencias: [...cliFreqY[2026].values()].map(c => c.tickets), montos: [...cliFreqY[2026].values()].map(c => c.monto) },
+    '2025': { frecuencias: [...cliFreqY[2025].values()], montos: [...cliMontoY[2025].values()].filter(v => v > 0) },
+    '2026': { frecuencias: [...cliFreqY[2026].values()], montos: [...cliMontoY[2026].values()].filter(v => v > 0) },
   }
 
   // --- Correlación: red de co-ocurrencia de productos, respeta los 6 filtros ---
