@@ -109,7 +109,6 @@ export function computeVG(fact, filtros) {
   const meses = Object.keys(porMes).map(Number).sort((a, b) => a - b)
   const mesesY = Object.keys(porMesY).map(Number).sort((a, b) => a - b)
   const total = comV + restoV
-  const prev = comparar ? { comV: prevComV, restoV: prevRestoV, total: prevComV + prevRestoV } : null
 
   // Venta por sucursal (para las donas): nombre + split comercial/resto
   const sucursalesVenta = Object.keys(porSucursal).map(si => {
@@ -152,6 +151,32 @@ export function computeVG(fact, filtros) {
   } else {
     const corte = mesMax2026 - 4
     cliLast.forEach(rel => { perdidosTotal++; if (rel <= corte) perdidos++ })
+  }
+
+  // Comparación vs 2025 (solo vista año=2026): además de venta, también ticket promedio y
+  // clientes perdidos con el mismo alcance (mes/sucursal/equipo/proveedor/línea) pero en 2025.
+  let prev = null
+  if (comparar) {
+    let prevTkVenta = 0, prevTkCount = 0
+    if (fact.ticketsCubo) {
+      for (const k in fact.ticketsCubo) {
+        const [ry, rm, si, eb] = k.split('|').map(Number)
+        if (ry !== 2025) continue
+        if (mesesSet && !mesesSet.has(rm)) continue
+        if (sucIdx >= 0 && si !== sucIdx) continue
+        if (equipo === 'comercial' && eb !== 0) continue
+        if (equipo === 'resto' && eb !== 1) continue
+        const c = fact.ticketsCubo[k]; prevTkVenta += c.v; prevTkCount += c.t
+      }
+    }
+    const minRel2025 = 1 - 12 - 4, maxRel2025 = 12 - 12 - 4
+    let prevPerdidos = 0, prevPerdidosTotal = 0
+    cliLast.forEach(rel => { prevPerdidosTotal++; if (rel >= minRel2025 && rel <= maxRel2025) prevPerdidos++ })
+    prev = {
+      comV: prevComV, restoV: prevRestoV, total: prevComV + prevRestoV,
+      ticketProm: prevTkCount > 0 ? prevTkVenta / prevTkCount : null,
+      perdidos: prevPerdidos, perdidosTotal: prevPerdidosTotal,
+    }
   }
 
   return {

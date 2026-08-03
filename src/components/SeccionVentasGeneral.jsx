@@ -18,7 +18,7 @@ function Tarjeta({ icon, label, valor, sub, borde, comp }) {
   )
 }
 
-function MiniKPI({ icon, label, valor, sub, info, color, scopeNote }) {
+function MiniKPI({ icon, label, valor, sub, info, color, scopeNote, comp }) {
   return (
     <div style={{ background: '#fff', border: '1.5px solid #e2e8f0', borderRadius: 9, padding: '10px 12px' }}>
       <div style={{ fontSize: 10, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '.4px', display: 'flex', alignItems: 'center' }}>
@@ -26,21 +26,25 @@ function MiniKPI({ icon, label, valor, sub, info, color, scopeNote }) {
       </div>
       <div style={{ fontSize: 19, fontWeight: 800, color: color || '#0f1f3d', margin: '3px 0 2px' }}>{valor}</div>
       <div style={{ fontSize: 10.5, color: '#94a3b8' }}>{sub}</div>
+      {comp}
       {scopeNote && <div style={{ fontSize: 9.5, color: '#b0b8c4', marginTop: 3 }}>Filtros: {scopeNote}</div>}
     </div>
   )
 }
 
-function Comparacion({ cur, prev }) {
+// fmtFn: formateador del valor (dinero por default). invertir: si un incremento es MALA
+// noticia (p.ej. clientes perdidos), invierte los colores verde/rojo.
+function Comparacion({ cur, prev, fmtFn = fmt.moneda, invertir = false }) {
   if (prev == null) return null
   const abs = cur - prev
   const pct = prev !== 0 ? abs / prev * 100 : 0
-  const up = abs >= 0
+  const subio = abs >= 0
+  const esBueno = invertir ? !subio : subio
   return (
     <div style={{ fontSize: 10.5, marginTop: 4, display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
-      <span style={{ color: '#94a3b8' }}>2025: {fmt.moneda(prev)}</span>
-      <span style={{ background: up ? '#dcfce7' : '#fee2e2', color: up ? '#15803d' : '#b91c1c', padding: '1px 7px', borderRadius: 8, fontWeight: 700, fontSize: 10 }}>
-        {up ? '▲' : '▼'} {fmt.pct(Math.abs(pct))} · {up ? '+' : '−'}{fmt.moneda(Math.abs(abs))}
+      <span style={{ color: '#94a3b8' }}>2025: {fmtFn(prev)}</span>
+      <span style={{ background: esBueno ? '#dcfce7' : '#fee2e2', color: esBueno ? '#15803d' : '#b91c1c', padding: '1px 7px', borderRadius: 8, fontWeight: 700, fontSize: 10 }}>
+        {subio ? '▲' : '▼'} {fmt.pct(Math.abs(pct))} · {subio ? '+' : '−'}{fmtFn(Math.abs(abs))}
       </span>
     </div>
   )
@@ -110,11 +114,13 @@ export default function SeccionVentasGeneral({ g, filtros }) {
           <MiniKPI icon="🎫" label="Ticket promedio" valor={fmt.moneda(g.ticketProm)}
             sub={`${fmt.num(g.tickets)} tickets únicos`}
             scopeNote="Año, Mes, Sucursal, Equipo"
-            info="Venta ÷ tickets únicos (folio). Responde a año, mes, sucursal y equipo; no varía por proveedor o línea." />
+            info="Venta ÷ tickets únicos (folio). Responde a año, mes, sucursal y equipo; no varía por proveedor o línea."
+            comp={g.prev && g.prev.ticketProm != null && <Comparacion cur={g.ticketProm} prev={g.prev.ticketProm} />} />
           <MiniKPI icon="📉" label="Clientes perdidos" valor={fmt.num(g.perdidos)} color="#b91c1c"
             sub={`Regla +4 meses · ${fmt.pct(g.perdidosPct)} de ${fmt.num(g.perdidosTotal)} clientes`}
             scopeNote="Año, Mes, Sucursal, Equipo, Proveedor, Línea"
-            info="Misma regla de +4 meses que el Dashboard Táctico, pero con una base distinta: aquí solo se cuentan clientes con historial REAL de compra en el alcance filtrado (no cartera asignada sin compra). El Dashboard Táctico usa cartera asignada al agente + clientes 2025, que puede incluir clientes que nunca compraron — por eso ese número puede ser mayor aunque cubra menos agentes. Si filtras Año/Mes aquí, la fecha de corte se mueve a ese punto ('¿quién estaba perdido a esa fecha?'); con 'Todos' usa el mes más reciente con datos." />
+            info="Misma regla de +4 meses que el Dashboard Táctico, pero con una base distinta: aquí solo se cuentan clientes con historial REAL de compra en el alcance filtrado (no cartera asignada sin compra). El Dashboard Táctico usa cartera asignada al agente + clientes 2025, que puede incluir clientes que nunca compraron — por eso ese número puede ser mayor aunque cubra menos agentes. Si filtras Año/Mes aquí, la fecha de corte se mueve a ese punto ('¿quién estaba perdido a esa fecha?'); con 'Todos' usa el mes más reciente con datos."
+            comp={g.prev && <Comparacion cur={g.perdidos} prev={g.prev.perdidos} fmtFn={fmt.num} invertir />} />
         </div>
 
         {scoped === 'todos' && (
