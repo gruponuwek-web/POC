@@ -200,22 +200,27 @@ export default function App() {
     const totalRecup  = es2025 ? recup2025  : filtros.año === 'todos' ? recup2026  + recup2025  : recup2026
     // Perdidos: siempre desde clientesBase (clientes únicos) — evita doble conteo por agente.
     // Regla +4 meses sobre una escala relativa continua (2026=mes, 2025=mes-12), igual que en
-    // Empresa Completa: perdido si su última compra quedó a 4+ meses de la fecha de referencia
-    // que marcan Año/Mes. Año/Mes "Todos" usa el status ya calculado por el ETL (hoy como
-    // referencia); cualquier Año o Mes específico mueve la fecha de corte.
+    // Empresa Completa. Año/Mes "Todos" usa el status ya calculado por el ETL (hoy como
+    // referencia, acumulado ambos años). Un Año específico NO se acumula con el otro año:
+    // 2026 solo cuenta clientes con actividad en 2026 (ultima_compra_2026); 2025 solo cuenta
+    // clientes cuya actividad quedó confinada a 2025 (nunca volvieron en 2026).
     const _esPerdido = c => c.status === 'Perdido' || !c.ultima_compra || c.dias_sin_compra >= 120
     const mesesDisp = data.resumen.meses_disponibles || [1,2,3,4,5,6,7]
     const mesMax2026KPI = Math.max(...mesesDisp)
     const relMesKPI = (fecha) => { const d = new Date(fecha); return (d.getFullYear() - 2026) * 12 + (d.getMonth() + 1) }
+    const soloMesKPI = filtros.meses.length === 1 ? filtros.meses[0] : null
     let totalPerdidos
     if (filtros.año === 'todos' && filtros.meses.length === 0) {
       totalPerdidos = clientesBase.filter(_esPerdido).length
+    } else if (filtros.año === '2026') {
+      const corteKPI = (soloMesKPI != null ? soloMesKPI : mesMax2026KPI) - 4
+      totalPerdidos = clientesBase.filter(c => c.ultima_compra_2026 && relMesKPI(c.ultima_compra_2026) <= corteKPI).length
+    } else if (filtros.año === '2025') {
+      const corteKPI = (soloMesKPI != null ? soloMesKPI - 12 : 0) - 4
+      totalPerdidos = clientesBase.filter(c => c.ultima_compra && !c.ultima_compra_2026 && relMesKPI(c.ultima_compra) <= corteKPI).length
     } else {
-      const soloMesKPI = filtros.meses.length === 1 ? filtros.meses[0] : null
-      const refRelKPI = filtros.año === '2025' ? (soloMesKPI != null ? soloMesKPI - 12 : 0)
-        : filtros.año === '2026' ? (soloMesKPI != null ? soloMesKPI : mesMax2026KPI)
-        : (soloMesKPI != null ? soloMesKPI : mesMax2026KPI)
-      const corteKPI = refRelKPI - 4
+      // 'todos' con mes(es) específico(s): acumulado de ambos años, corte por el mes elegido
+      const corteKPI = (soloMesKPI != null ? soloMesKPI : mesMax2026KPI) - 4
       totalPerdidos = clientesBase.filter(c => !c.ultima_compra || relMesKPI(c.ultima_compra) <= corteKPI).length
     }
 

@@ -50,8 +50,9 @@ export default function TablaClientesPerdidos({ clientes, filtros, compact = fal
   const mesesActivos = filtros?.meses?.length > 0 ? filtros.meses : null
 
   // Regla +4 meses sobre una escala relativa continua (2026=mes, 2025=mes-12), igual que en
-  // Empresa Completa y en la tarjeta KPI de arriba: cualquier Año/Mes específico mueve la
-  // fecha de corte, en vez de usar criterios distintos para 2025 vs 2026.
+  // Empresa Completa y en la tarjeta KPI de arriba. Un Año específico NO se acumula con el
+  // otro año: 2026 solo cuenta clientes con actividad en 2026 (ultima_compra_2026); 2025 solo
+  // cuenta clientes cuya actividad quedó confinada a 2025 (nunca volvieron en 2026).
   const perdidos = (() => {
     // Clic en gráfica: mes específico (bucket exacto de cuándo se perdió, no un corte acumulado)
     if (mesFiltro) {
@@ -64,11 +65,18 @@ export default function TablaClientesPerdidos({ clientes, filtros, compact = fal
 
     const soloMes = mesesActivos?.length === 1 ? mesesActivos[0] : null
     const mesMax2026 = mesesConDatos.length > 0 ? Math.max(...mesesConDatos) : 7
-    const refRel = filtros?.año === '2025' ? (soloMes != null ? soloMes - 12 : 0)
-      : filtros?.año === '2026' ? (soloMes != null ? soloMes : mesMax2026)
-      : (soloMes != null ? soloMes : mesMax2026)
-    const corte = refRel - 4
-    return perdidosTodos.filter(c => !c.ultima_compra || relMes(c.ultima_compra) <= corte)
+
+    if (filtros?.año === '2026') {
+      const corte = (soloMes != null ? soloMes : mesMax2026) - 4
+      return clientes.filter(c => c.ultima_compra_2026 && relMes(c.ultima_compra_2026) <= corte)
+    }
+    if (filtros?.año === '2025') {
+      const corte = (soloMes != null ? soloMes - 12 : 0) - 4
+      return clientes.filter(c => c.ultima_compra && !c.ultima_compra_2026 && relMes(c.ultima_compra) <= corte)
+    }
+    // 'todos' con mes(es) específico(s): acumulado de ambos años, corte por el mes elegido
+    const corte = (soloMes != null ? soloMes : mesMax2026) - 4
+    return clientes.filter(c => !c.ultima_compra || relMes(c.ultima_compra) <= corte)
   })()
 
   const counts = perdidos.reduce((acc, c) => {
