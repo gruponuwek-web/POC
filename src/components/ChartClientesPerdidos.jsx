@@ -12,67 +12,47 @@ const relMes = (fecha) => {
 
 const esPerdido = (c) => c.status === 'Perdido' || !c.ultima_compra || c.dias_sin_compra >= 120
 
-export default function ChartClientesPerdidos({ kpiAgentes, clientes = [], año, mesesConDatos = [], filtros, mesSel, onMesClick }) {
+export default function ChartClientesPerdidos({ clientes = [], año, mesesConDatos = [], filtros, mesSel, onMesClick }) {
   const mesesValidos = new Set(mesesConDatos)
   const soloAgente = filtros?.agente && filtros.agente !== 'todos'
-
-  // Para 2026/todos: calcular desde clientes (sin doble conteo)
-  // Para 2025: seguir usando perdidos_al_mes_2025 por agente
   const usar2025 = año === '2025'
 
-  let chartData, agentNames
+  // Se calcula siempre desde tabla_clientes (mismo criterio que la tarjeta KPI y la tabla de
+  // abajo: última compra REAL del cliente, cruzando el año si hace falta). "mes_num" queda en
+  // la escala relativa continua (dic2025=0, ene2026=1, ...) para que el clic en una barra siga
+  // apuntando al mes correcto en la tabla; "mes" (la etiqueta Ene–Dic) se ajusta aparte para 2025.
+  const byAgenteMes = {}
+  const mesesSet = new Set()
 
-  if (!usar2025 && clientes.length > 0) {
-    // Agrupar perdidos por (agente, mesPerdido) desde tabla_clientes
-    const byAgenteMes = {}
-    const mesesSet = new Set()
-
-    clientes.filter(esPerdido).forEach(c => {
-      if (!c.ultima_compra) return
-      const rm = relMes(c.ultima_compra)
-      const mesPerdido = rm + 4  // cliente con ultima_compra en rm se perdió en mes rm+4
-      if (mesPerdido < 1 || mesPerdido > 12) return
+  clientes.filter(esPerdido).forEach(c => {
+    if (!c.ultima_compra) return
+    const rm = relMes(c.ultima_compra)
+    const mesPerdido = rm + 4  // cliente con ultima_compra en rm se perdió en mes rm+4
+    if (usar2025) {
+      if (mesPerdido < -11 || mesPerdido > 0) return  // fuera del año 2025
+    } else {
+      if (mesPerdido < 1 || mesPerdido > 12) return  // fuera de 2026 (o futuro)
       if (mesesValidos.size > 0 && !mesesValidos.has(mesPerdido)) return
-      mesesSet.add(mesPerdido)
-      const ag = c.agente
-      if (!byAgenteMes[ag]) byAgenteMes[ag] = {}
-      byAgenteMes[ag][mesPerdido] = (byAgenteMes[ag][mesPerdido] || 0) + 1
-    })
+    }
+    mesesSet.add(mesPerdido)
+    const ag = c.agente
+    if (!byAgenteMes[ag]) byAgenteMes[ag] = {}
+    byAgenteMes[ag][mesPerdido] = (byAgenteMes[ag][mesPerdido] || 0) + 1
+  })
 
-    agentNames = [...new Set(clientes.map(c => c.agente))].filter(ag => byAgenteMes[ag])
-    const mesesDisponibles = [...mesesSet].sort((a, b) => a - b)
+  const agentNames = [...new Set(clientes.map(c => c.agente))].filter(ag => byAgenteMes[ag])
+  const mesesDisponibles = [...mesesSet].sort((a, b) => a - b)
 
-    chartData = mesesDisponibles.map(m => {
-      const row = { mes: MESES[m - 1], mes_num: m, total: 0 }
-      agentNames.forEach(ag => {
-        const v = (byAgenteMes[ag]?.[m]) || 0
-        row[ag] = v
-        row.total += v
-      })
-      return row
+  const chartData = mesesDisponibles.map(m => {
+    const mesCalendario = usar2025 ? m + 12 : m  // 1-12 para el nombre del mes en el eje
+    const row = { mes: MESES[mesCalendario - 1], mes_num: m, total: 0 }
+    agentNames.forEach(ag => {
+      const v = (byAgenteMes[ag]?.[m]) || 0
+      row[ag] = v
+      row.total += v
     })
-  } else {
-    // 2025: usar perdidos_al_mes_2025 por agente
-    const usarCampo = 'perdidos_al_mes_2025'
-    const mesesSet = new Set()
-    kpiAgentes.forEach(a => {
-      Object.keys(a[usarCampo] || {}).forEach(m => {
-        const mn = parseInt(m)
-        if (mesesValidos.size === 0 || mesesValidos.has(mn)) mesesSet.add(mn)
-      })
-    })
-    agentNames = kpiAgentes.map(a => a.agente)
-    const mesesDisponibles = [...mesesSet].sort((a, b) => a - b)
-    chartData = mesesDisponibles.map(m => {
-      const row = { mes: MESES[m - 1], mes_num: m, total: 0 }
-      kpiAgentes.forEach(a => {
-        const v = (a[usarCampo] || {})[m] || 0
-        row[a.agente] = v
-        row.total += v
-      })
-      return row
-    })
-  }
+    return row
+  })
 
   const data = chartData
   const maxVal = Math.max(...data.map(d => d.total), 1)
