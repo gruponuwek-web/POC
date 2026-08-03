@@ -59,15 +59,14 @@ export function computeVG(fact, filtros) {
     // A partir de aquí, todo respeta el filtro de sucursal
     if (sucIdx >= 0 && si !== sucIdx) continue
 
-    // Última compra por cliente (para perdidos): respeta sucursal/equipo/proveedor/línea.
-    // Si se filtra un año específico, SOLO se considera ese año (no acumulado); con
-    // "Todos" se combinan ambos años. Año/Mes también mueven refRel, el punto de corte.
-    // 2026: mes; 2025: mes-12 — misma escala relativa continua.
+    // Última compra por cliente (para perdidos): respeta sucursal/equipo/proveedor/línea, pero
+    // SIEMPRE se calcula sobre la compra real del cliente en cualquier año — la regla de +4
+    // meses es lineal y puede cruzar el límite de año (un cliente que dejó de comprar en
+    // sep-2025 y nunca volvió SÍ cuenta como perdido en ene-2026). Año/Mes solo deciden qué
+    // ventana de "mes en que se cumplieron los 4 meses" se cuenta (ver más abajo).
     const rel = ry === 2026 ? rm : rm - 12
-    if (passYear && rel <= refRel) {
-      const prevRel = cliLast.get(ci)
-      if (prevRel === undefined || rel > prevRel) cliLast.set(ci, rel)
-    }
+    const prevRel = cliLast.get(ci)
+    if (prevRel === undefined || rel > prevRel) cliLast.set(ci, rel)
 
     // Desglose por año-mes (ambos años, respeta el resto de filtros menos año)
     if (inMeses) {
@@ -134,12 +133,26 @@ export function computeVG(fact, filtros) {
   }
   const ticketProm = tkCount > 0 ? tkVenta / tkCount : 0
 
-  // Clientes perdidos (regla +4 meses) calculado desde la fact table:
-  // responde a sucursal, equipo, proveedor, línea, año y mes (vía refRel).
-  // Base = clientes del alcance con historial de compra a la fecha de referencia.
-  const corte = refRel - 4
+  // Clientes perdidos (regla +4 meses) calculado desde la fact table: responde a sucursal,
+  // equipo, proveedor, línea, año y mes. El "mes en que se cumplen los 4 meses sin compra"
+  // (mesPerdido = últimaCompra + 4) es lineal y puede caer en el año siguiente al de la
+  // última compra. Con Mes específico se usa un corte acumulado hasta ese mes (como antes);
+  // con Año específico sin mes, se cuenta a los clientes cuyo mesPerdido cae dentro del rango
+  // de ese año — no acumulado desde antes. Base = todos los clientes del alcance.
   let perdidos = 0, perdidosTotal = 0
-  cliLast.forEach(rel => { perdidosTotal++; if (rel <= corte) perdidos++ })
+  if (soloMes != null) {
+    const corte = refRel - 4
+    cliLast.forEach(rel => { perdidosTotal++; if (rel <= corte) perdidos++ })
+  } else if (año === '2025') {
+    const minRel = 1 - 12 - 4, maxRel = 12 - 12 - 4 // año completo Ene–Dic 2025
+    cliLast.forEach(rel => { perdidosTotal++; if (rel >= minRel && rel <= maxRel) perdidos++ })
+  } else if (año === '2026') {
+    const minRel = 1 - 4, maxRel = mesMax2026 - 4
+    cliLast.forEach(rel => { perdidosTotal++; if (rel >= minRel && rel <= maxRel) perdidos++ })
+  } else {
+    const corte = mesMax2026 - 4
+    cliLast.forEach(rel => { perdidosTotal++; if (rel <= corte) perdidos++ })
+  }
 
   return {
     comV, restoV, comN, restoN, total, totalN: comN + restoN, prev,
