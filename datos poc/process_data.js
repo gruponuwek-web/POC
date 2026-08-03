@@ -166,15 +166,19 @@ function processVentas(rows, año) {
 // (año, mes, sucursal, proveedor, línea, vendedor, cliente) → {venta, costo, n}.
 // Permite filtrar/pivotar en el navegador por cualquier combinación de dimensiones.
 function buildVentasGeneralFact(rowsByYear) {
-  const dSuc = [], dProv = [], dLinea = [], dVend = [], dCli = [];
-  const mSuc = new Map(), mProv = new Map(), mLinea = new Map(), mVend = new Map(), mCli = new Map();
+  const dSuc = [], dProv = [], dLinea = [], dProd = [], dVend = [], dCli = [];
+  const mSuc = new Map(), mProv = new Map(), mLinea = new Map(), mProd = new Map(), mVend = new Map(), mCli = new Map();
   const idxSimple = (map, list, key) => { if (map.has(key)) return map.get(key); const i = list.length; map.set(key, i); list.push(key); return i; };
-  const agg = new Map(); // "año|mes|si|pi|li|vi|ci" -> [venta, costo, n]
+  const agg = new Map(); // "año|mes|si|pi|li|proi|vi|ci" -> [venta, costo, n, cant]
 
   // Auxiliares para ticket promedio y clientes perdidos (no dependen de prov/línea)
   const tkCubo = new Map();   // "año|mes|si|eb" -> { tks:Set, v }
   const cliAct = new Map();   // cliKey -> { lastRel, si, eb } (última compra en escala relativa)
   let mesMax2026 = 0;         // último mes con datos de 2026 (para la regla de 4 meses)
+
+  // Canastas por folio (para Análisis de Productos: densidad de compra y correlación).
+  // folioKey -> { año, mes, si, eb, ci, venta, items: Map(proi -> {li,pi}) }
+  const folioMap = new Map();
 
   rowsByYear.forEach(({ año, rows }) => {
     rows.forEach(r => {
@@ -188,28 +192,38 @@ function buildVentasGeneralFact(rowsByYear) {
       const suc = (r['Sucursal'] || 'Pachuca').trim() || 'Pachuca';
       const prov = (r['NOMBRE PROV.'] || '(Sin proveedor)').trim() || '(Sin proveedor)';
       const lin = (r['DECRIP. LINEA'] || r['DESCRIP. LINEA'] || '(Sin línea)').trim() || '(Sin línea)';
+      const prod = (r['DESCRIPCION'] || '(Sin descripción)').trim() || '(Sin descripción)';
       const cliNom = normClient(r['NOMBRE CLIENTE']);
       const cliNum = (r['CLIENTE'] || '').trim();
       const cliKey = cliNum || cliNom;
       const imp = parseNum(r['IMPORTE']);
       const cost = Math.abs(parseNum(r['COSTO TOTAL']));
+      const cant = parseNum(r['CANTIDAD']) || 0;
 
       const si = idxSimple(mSuc, dSuc, suc);
       const pi = idxSimple(mProv, dProv, prov);
       const li = idxSimple(mLinea, dLinea, lin);
+      const proi = idxSimple(mProd, dProd, prod);
       let vi = mVend.get(ag); if (vi === undefined) { vi = dVend.length; mVend.set(ag, vi); dVend.push({ nombre: ag, equipo: esCom ? 'comercial' : 'resto' }); }
       let ci = mCli.get(cliKey); if (ci === undefined) { ci = dCli.length; mCli.set(cliKey, ci); dCli.push({ nombre: cliNom, num: cliNum }); }
 
-      const key = `${año}|${mes}|${si}|${pi}|${li}|${vi}|${ci}`;
-      let a = agg.get(key); if (!a) { a = [0, 0, 0]; agg.set(key, a); }
-      a[0] += imp; a[1] += cost; a[2] += 1;
+      const key = `${año}|${mes}|${si}|${pi}|${li}|${proi}|${vi}|${ci}`;
+      let a = agg.get(key); if (!a) { a = [0, 0, 0, 0]; agg.set(key, a); }
+      a[0] += imp; a[1] += cost; a[2] += 1; a[3] += cant;
 
       // Ticket promedio: tickets únicos por (año, mes, sucursal, equipo)
       const eb = esCom ? 0 : 1;
       const tkKey = `${año}|${mes}|${si}|${eb}`;
       let tc = tkCubo.get(tkKey); if (!tc) { tc = { tks: new Set(), v: 0 }; tkCubo.set(tkKey, tc); }
-      tc.tks.add(`${r['FOLIO']}-${r['LETRA']}-${cliNum}`);
+      const folioKey = `${r['FOLIO']}-${r['LETRA']}-${cliNum}`;
+      tc.tks.add(folioKey);
       tc.v += imp;
+
+      // Canasta del folio (para densidad de compra y correlación de productos)
+      let fo = folioMap.get(folioKey);
+      if (!fo) { fo = { año, mes, si, eb, ci, venta: 0, items: new Map() }; folioMap.set(folioKey, fo); }
+      fo.venta += imp;
+      fo.items.set(proi, { li, pi });
 
       // Clientes perdidos (método Dashboard): última compra en escala relativa continua
       // 2026 → mes (1-12); 2025 → mes-12 (dic-2025=0, ene-2025=-11). Se guarda sucursal/equipo
@@ -224,8 +238,16 @@ function buildVentasGeneralFact(rowsByYear) {
 
   const rows = [];
   agg.forEach((v, key) => {
-    const [año, mes, si, pi, li, vi, ci] = key.split('|').map(Number);
-    rows.push([año, mes, si, pi, li, vi, ci, Math.round(v[0]), Math.round(v[1]), v[2]]);
+    const [año, mes, si, pi, li, proi, vi, ci] = key.split('|').map(Number);
+    rows.push([año, mes, si, pi, li, proi, vi, ci, Math.round(v[0]), Math.round(v[1]), v[2], Math.round(v[3])]);
+  });
+
+  // Canastas por folio → array compacto [año,mes,si,eb,ci,venta,[[proi,li,pi],...]]
+  const folios = [];
+  folioMap.forEach(fo => {
+    const items = [];
+    fo.items.forEach((v, proi) => items.push([proi, v.li, v.pi]));
+    folios.push([fo.año, fo.mes, fo.si, fo.eb, fo.ci, Math.round(fo.venta), items]);
   });
 
   // Cubo de tickets → { "año|mes|si|eb": {t, v} }
@@ -244,100 +266,10 @@ function buildVentasGeneralFact(rowsByYear) {
     if (ca.lastRel <= cortePerdido) p.perdidos += 1;
   });
 
-  return { dims: { sucursales: dSuc, proveedores: dProv, lineas: dLinea, vendedores: dVend, clientes: dCli }, rows, ticketsCubo, perdidosCubo, perdidosRegla: MESES_PERDIDO, mesMax2026 };
-}
-
-// ── Análisis de Productos: densidad de compra, sunburst y correlación (chord) ──
-// Estructuras ligeras (NO pivotables por todos los filtros como la fact table) para
-// mantener el archivo pequeño. Se calculan por año ('2025'/'2026') y 'todos' (acumulado).
-function buildAnaliticaProductos(rowsByYear) {
-  const scopes = ['2025', '2026', 'todos']
-  const mk = () => new Map()
-  const cliFreq    = { '2025': mk(), '2026': mk(), todos: mk() } // ci -> {tickets:Set, monto}
-  const lineaProd  = { '2025': mk(), '2026': mk(), todos: mk() } // linea -> Map(producto -> {venta,cantidad})
-  const prodTotal  = { '2025': mk(), '2026': mk(), todos: mk() } // producto -> venta acumulada
-  const folioProdSet = { '2025': mk(), '2026': mk(), todos: mk() } // folio -> Set(producto)
-
-  rowsByYear.forEach(({ año, rows }) => {
-    const scopeKey = String(año)
-    rows.forEach(r => {
-      const tipo = (r['TIPO DOCUMENTO'] || '').trim()
-      if (!tipo) return
-      const f = parseDate(r['FECHA'])
-      if (!f || f.getFullYear() !== año) return
-      const cliKey = (r['CLIENTE'] || '').trim() || normClient(r['NOMBRE CLIENTE'])
-      const producto = (r['DESCRIPCION'] || '').trim() || '(Sin descripción)'
-      const linea = (r['DECRIP. LINEA'] || r['DESCRIP. LINEA'] || '(Sin línea)').trim() || '(Sin línea)'
-      const imp = parseNum(r['IMPORTE'])
-      const cant = parseNum(r['CANTIDAD']) || 0
-      const folioKey = `${r['FOLIO']}-${r['LETRA']}-${cliKey}`
-
-      ;[scopeKey, 'todos'].forEach(k => {
-        let cf = cliFreq[k].get(cliKey); if (!cf) { cf = { tickets: new Set(), monto: 0 }; cliFreq[k].set(cliKey, cf) }
-        cf.tickets.add(folioKey); cf.monto += imp
-
-        let lm = lineaProd[k].get(linea); if (!lm) { lm = new Map(); lineaProd[k].set(linea, lm) }
-        let pd = lm.get(producto); if (!pd) { pd = { venta: 0, cantidad: 0 }; lm.set(producto, pd) }
-        pd.venta += imp; pd.cantidad += cant
-
-        prodTotal[k].set(producto, (prodTotal[k].get(producto) || 0) + imp)
-
-        let fs2 = folioProdSet[k].get(folioKey); if (!fs2) { fs2 = new Set(); folioProdSet[k].set(folioKey, fs2) }
-        fs2.add(producto)
-      })
-    })
-  })
-
-  // Densidad: arrays de frecuencia (tickets) y monto total por cliente, por año
-  const densidad = {}
-  ;['2025', '2026'].forEach(k => {
-    const frecuencias = [], montos = []
-    cliFreq[k].forEach(cf => { if (cf.tickets.size > 0) { frecuencias.push(cf.tickets.size); montos.push(Math.round(cf.monto)) } })
-    densidad[k] = { frecuencias, montos }
-  })
-
-  // Sunburst: por línea, top-12 productos + "Otros"
-  const MAX_PROD_POR_LINEA = 12
-  const sunburst = {}
-  scopes.forEach(k => {
-    const lineas = []
-    lineaProd[k].forEach((prodMap, linea) => {
-      const prods = [...prodMap.entries()]
-        .map(([nombre, d]) => ({ nombre, venta: Math.round(d.venta), cantidad: Math.round(d.cantidad) }))
-        .filter(p => p.venta > 0).sort((a, b) => b.venta - a.venta)
-      const top = prods.slice(0, MAX_PROD_POR_LINEA)
-      const resto = prods.slice(MAX_PROD_POR_LINEA)
-      if (resto.length) {
-        top.push({ nombre: `Otros (${resto.length})`, venta: resto.reduce((s, p) => s + p.venta, 0), cantidad: resto.reduce((s, p) => s + p.cantidad, 0) })
-      }
-      const ventaLinea = top.reduce((s, p) => s + p.venta, 0)
-      const cantLinea = top.reduce((s, p) => s + p.cantidad, 0)
-      if (ventaLinea > 0) lineas.push({ nombre: linea, venta: ventaLinea, cantidad: cantLinea, productos: top })
-    })
-    lineas.sort((a, b) => b.venta - a.venta)
-    sunburst[k] = lineas
-  })
-
-  // Chord: top-16 productos globales por venta + matriz de co-ocurrencia por FOLIO
-  // (folios de compra únicos donde aparecen ambos productos juntos — análisis de canasta)
-  const TOP_N_CHORD = 16
-  const chord = {}
-  scopes.forEach(k => {
-    const topProductos = [...prodTotal[k].entries()].sort((a, b) => b[1] - a[1]).slice(0, TOP_N_CHORD).map(([nombre]) => nombre)
-    const idx = new Map(topProductos.map((n, i) => [n, i]))
-    const n = topProductos.length
-    const matrix = Array.from({ length: n }, () => new Array(n).fill(0))
-    folioProdSet[k].forEach(set => {
-      const inTop = [...set].filter(p => idx.has(p)).map(p => idx.get(p))
-      for (let i = 0; i < inTop.length; i++) {
-        for (let j = i + 1; j < inTop.length; j++) { matrix[inTop[i]][inTop[j]]++; matrix[inTop[j]][inTop[i]]++ }
-      }
-    })
-    const grado = matrix.map(fila => fila.reduce((s, v) => s + v, 0))
-    chord[k] = { productos: topProductos, matrix, grado }
-  })
-
-  return { densidad, sunburst, chord }
+  return {
+    dims: { sucursales: dSuc, proveedores: dProv, lineas: dLinea, productos: dProd, vendedores: dVend, clientes: dCli },
+    rows, folios, ticketsCubo, perdidosCubo, perdidosRegla: MESES_PERDIDO, mesMax2026,
+  };
 }
 
 // ── Ventas General (versión previa por-año, ya no se usa — se conserva por referencia) ──
@@ -1373,12 +1305,6 @@ const bsc_metas_por_mes = {};
     { año: AÑO_ACTUAL,   rows: rawActual },
   ]);
 
-  // ── Análisis de Productos: archivo separado (densidad, sunburst, chord) ────
-  const analitica_productos = buildAnaliticaProductos([
-    { año: AÑO_ANTERIOR, rows: rawAnterior },
-    { año: AÑO_ACTUAL,   rows: rawActual },
-  ]);
-
   const output = {
     resumen, agentes, metas,
     kpi_mensual_actual: kpi2026, kpi_mensual_anterior: kpi2025,
@@ -1416,17 +1342,10 @@ const bsc_metas_por_mes = {};
 
   // ── Ventas General: ARCHIVO SEPARADO (no afecta a dashboard_data.json) ──────
   const vgFile = path.join(outDir, 'ventas_general.json');
-  fs.writeFileSync(vgFile, JSON.stringify(ventas_general, null, 2), 'utf8');
+  fs.writeFileSync(vgFile, JSON.stringify(ventas_general), 'utf8');
   fs.copyFileSync(vgFile, path.join(pubDir, 'ventas_general.json'));
   const vgKB = Math.round(fs.statSync(vgFile).size / 1024);
   console.log(`✅ ventas_general.json generado: ${vgKB} KB (archivo independiente)`);
-
-  // ── Análisis de Productos: ARCHIVO SEPARADO (liviano) ───────────────────────
-  const apFile = path.join(outDir, 'analitica_productos.json');
-  fs.writeFileSync(apFile, JSON.stringify(analitica_productos, null, 2), 'utf8');
-  fs.copyFileSync(apFile, path.join(pubDir, 'analitica_productos.json'));
-  const apKB = Math.round(fs.statSync(apFile).size / 1024);
-  console.log(`✅ analitica_productos.json generado: ${apKB} KB (archivo independiente)`);
 
   const sizeKB = Math.round(fs.statSync(outFile).size / 1024);
   console.log(`\n✅ dashboard_data.json generado: ${sizeKB} KB`);

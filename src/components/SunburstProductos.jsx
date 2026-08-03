@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react'
 import { fmt } from '../utils/format.js'
 import InfoTip from './InfoTip.jsx'
+import { scopeLabel } from '../utils/ventasGeneral.js'
 
 function lineaColor(i, n) { return `hsl(${Math.round(i * 360 / n)}, 62%, 48%)` }
 function prodColor(i, n, pi) { return `hsl(${Math.round(i * 360 / n)}, 55%, ${Math.min(80, 60 + pi * 3)}%)` }
@@ -8,8 +9,7 @@ function prodColor(i, n, pi) { return `hsl(${Math.round(i * 360 / n)}, 55%, ${Ma
 function titulo(s) { return String(s || '').toLowerCase().replace(/\b\w/g, c => c.toUpperCase()) }
 
 export default function SunburstProductos({ ap, filtros }) {
-  const scopeKey = filtros?.año === '2025' ? '2025' : filtros?.año === '2026' ? '2026' : 'todos'
-  const lineas = ap?.sunburst?.[scopeKey] || []
+  const lineas = ap?.sunburst || []
   const [sel, setSel] = useState(null) // nombre de línea seleccionada (drill-down), null = ver todas
 
   // Si la línea seleccionada ya no existe en este alcance (p.ej. cambió el filtro), reseteamos
@@ -71,6 +71,7 @@ export default function SunburstProductos({ ap, filtros }) {
       <div style={{ padding: '14px 18px 0', display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
         <span style={{ fontSize: 12, fontWeight: 700, color: '#0f1f3d', textTransform: 'uppercase', letterSpacing: '.4px' }}>☀️ Productos por Línea (Sunburst)</span>
         <InfoTip text="Anillo interior = línea de producto. Anillo exterior = productos dentro de esa línea. El tamaño de cada segmento es la venta $. Haz clic en una línea (en el anillo o en la lista) para entrar solo a esa línea." />
+        {filtros && <span style={{ fontSize: 10.5, color: '#94a3b8', fontWeight: 600 }}>· {scopeLabel(filtros)}{filtros.año && filtros.año !== 'todos' ? ` · ${filtros.año}` : ''}{(filtros.meses && filtros.meses.length) ? ` · ${filtros.meses.length} mes(es)` : ''}</span>}
         {lineaSel && (
           <button onClick={() => setSel(null)} style={{ marginLeft: 'auto', fontSize: 11, fontWeight: 700, color: '#1a6cf0', background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: 6, padding: '4px 10px', cursor: 'pointer' }}>
             ← Ver todas las líneas

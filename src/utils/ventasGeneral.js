@@ -1,5 +1,7 @@
 // Cómputo pivotable de Ventas General a partir de la tabla de hechos (fact table).
-// fact = { dims:{sucursales,proveedores,lineas,vendedores,clientes}, rows:[[año,mes,si,pi,li,vi,ci,venta,costo,n]] }
+// fact = { dims:{sucursales,proveedores,lineas,productos,vendedores,clientes},
+//          rows:[[año,mes,si,pi,li,proi,vi,ci,venta,costo,n,cant]],
+//          folios:[[año,mes,si,eb,ci,venta,[[proi,li,pi],...]]] }
 // Un solo recorrido produce todos los agregados que necesita la página.
 
 export function computeVG(fact, filtros) {
@@ -35,8 +37,8 @@ export function computeVG(fact, filtros) {
 
   for (let i = 0; i < rows.length; i++) {
     const r = rows[i]
-    const ry = r[0], rm = r[1], si = r[2], pi = r[3], li = r[4], vi = r[5], ci = r[6]
-    const venta = r[7], costo = r[8], n = r[9]
+    const ry = r[0], rm = r[1], si = r[2], pi = r[3], li = r[4], vi = r[6], ci = r[7]
+    const venta = r[8], costo = r[9], n = r[10]
 
     if (provIdx >= 0 && pi !== provIdx) continue
     if (lineaIdx >= 0 && li !== lineaIdx) continue
@@ -144,6 +146,116 @@ export function computeVG(fact, filtros) {
     porMes, meses, porMesY, mesesY, vendedores, proveedores, clientes, topResto, sucursalesVenta,
     ticketProm, tickets: tkCount, perdidos, perdidosTotal, perdidosPct: perdidosTotal > 0 ? perdidos / perdidosTotal * 100 : 0,
   }
+}
+
+const TOP_N_SUNBURST = 12
+const TOP_N_CHORD = 16
+
+// Cómputo pivotable de Análisis de Productos (Sunburst, Densidad de compra, Correlación)
+// a partir de la MISMA fact table, respetando los 6 filtros de la página.
+// Sunburst: se arma desde `rows` (línea→producto), respeta año/mes/sucursal/equipo/prov/línea.
+// Densidad: se arma desde `folios` (por cliente), respeta año/mes/sucursal/equipo — igual que
+//   Ticket Promedio, no depende de proveedor/línea (la venta del folio es del ticket completo).
+// Correlación: se arma desde `folios`, filtrando los ítems del folio por proveedor/línea si
+//   aplica, y calculando co-ocurrencia (folios en común) sobre los ítems restantes.
+export function computeProductAnalytics(fact, filtros) {
+  if (!fact || !fact.rows || !fact.dims) return null
+  const { dims, rows, folios } = fact
+
+  const año = filtros.año || 'todos'
+  const equipo = filtros.equipo || 'todos'
+  const mesesSet = (filtros.meses && filtros.meses.length) ? new Set(filtros.meses) : null
+  const sucIdx = (filtros.sucursal && filtros.sucursal !== 'todas') ? dims.sucursales.indexOf(filtros.sucursal) : -1
+  const provIdx = (filtros.vgProveedor && filtros.vgProveedor !== 'todos') ? dims.proveedores.indexOf(filtros.vgProveedor) : -1
+  const lineaIdx = (filtros.vgLinea && filtros.vgLinea !== 'todas') ? dims.lineas.indexOf(filtros.vgLinea) : -1
+
+  // --- Sunburst: línea -> producto ---
+  const lineaMap = new Map() // li -> { venta, cantidad, prods: Map(proi -> {venta,cantidad}) }
+  for (let i = 0; i < rows.length; i++) {
+    const r = rows[i]
+    const ry = r[0], rm = r[1], si = r[2], pi = r[3], li = r[4], proi = r[5], vi = r[6]
+    const venta = r[8], cant = r[11]
+    if (año === '2025' && ry !== 2025) continue
+    if (año === '2026' && ry !== 2026) continue
+    if (mesesSet && !mesesSet.has(rm)) continue
+    if (sucIdx >= 0 && si !== sucIdx) continue
+    if (provIdx >= 0 && pi !== provIdx) continue
+    if (lineaIdx >= 0 && li !== lineaIdx) continue
+    const vend = dims.vendedores[vi]
+    const esCom = vend.equipo === 'comercial'
+    if (equipo === 'comercial' && !esCom) continue
+    if (equipo === 'resto' && esCom) continue
+
+    let lm = lineaMap.get(li); if (!lm) { lm = { venta: 0, cantidad: 0, prods: new Map() }; lineaMap.set(li, lm) }
+    lm.venta += venta; lm.cantidad += cant
+    let pm = lm.prods.get(proi); if (!pm) { pm = { venta: 0, cantidad: 0 }; lm.prods.set(proi, pm) }
+    pm.venta += venta; pm.cantidad += cant
+  }
+  const sunburst = [...lineaMap.entries()].map(([li, lm]) => {
+    const prods = [...lm.prods.entries()].map(([proi, pm]) => ({ nombre: dims.productos[proi], venta: pm.venta, cantidad: pm.cantidad })).sort((a, b) => b.venta - a.venta)
+    const top = prods.slice(0, TOP_N_SUNBURST)
+    const resto = prods.slice(TOP_N_SUNBURST)
+    if (resto.length) {
+      const rv = resto.reduce((s, p) => s + p.venta, 0), rc = resto.reduce((s, p) => s + p.cantidad, 0)
+      top.push({ nombre: `Otros (${resto.length})`, venta: rv, cantidad: rc })
+    }
+    return { nombre: dims.lineas[li], venta: lm.venta, cantidad: lm.cantidad, productos: top }
+  }).filter(l => l.venta > 0).sort((a, b) => b.venta - a.venta)
+
+  // --- Densidad: por cliente, comparando 2025 vs 2026 (el año siempre queda fijo a la
+  // comparación; respeta mes/sucursal/equipo — no proveedor/línea, es a nivel folio) ---
+  const foliosArr = folios || []
+  const cliFreqY = { 2025: new Map(), 2026: new Map() }
+  for (let i = 0; i < foliosArr.length; i++) {
+    const fo = foliosArr[i]
+    const ry = fo[0], rm = fo[1], si = fo[2], eb = fo[3], ci = fo[4], venta = fo[5]
+    if (mesesSet && !mesesSet.has(rm)) continue
+    if (sucIdx >= 0 && si !== sucIdx) continue
+    if (equipo === 'comercial' && eb !== 0) continue
+    if (equipo === 'resto' && eb !== 1) continue
+    const m = cliFreqY[ry]; if (!m) continue
+    let cf = m.get(ci); if (!cf) { cf = { tickets: 0, monto: 0 }; m.set(ci, cf) }
+    cf.tickets += 1; cf.monto += venta
+  }
+  const densidad = {
+    '2025': { frecuencias: [...cliFreqY[2025].values()].map(c => c.tickets), montos: [...cliFreqY[2025].values()].map(c => c.monto) },
+    '2026': { frecuencias: [...cliFreqY[2026].values()].map(c => c.tickets), montos: [...cliFreqY[2026].values()].map(c => c.monto) },
+  }
+
+  // --- Correlación: red de co-ocurrencia de productos, respeta los 6 filtros ---
+  const prodTotal = new Map()      // proi -> nº de folios (filtrados) en que aparece
+  const folioItemsList = []        // canastas filtradas (arrays de proi), para co-ocurrencia
+  for (let i = 0; i < foliosArr.length; i++) {
+    const fo = foliosArr[i]
+    const ry = fo[0], rm = fo[1], si = fo[2], eb = fo[3], items = fo[6]
+    if (año === '2025' && ry !== 2025) continue
+    if (año === '2026' && ry !== 2026) continue
+    if (mesesSet && !mesesSet.has(rm)) continue
+    if (sucIdx >= 0 && si !== sucIdx) continue
+    if (equipo === 'comercial' && eb !== 0) continue
+    if (equipo === 'resto' && eb !== 1) continue
+
+    const filtItems = (provIdx < 0 && lineaIdx < 0) ? items
+      : items.filter(([, li, pi]) => (lineaIdx < 0 || li === lineaIdx) && (provIdx < 0 || pi === provIdx))
+    const proiSet = [...new Set(filtItems.map(([proi]) => proi))]
+    if (proiSet.length >= 2) folioItemsList.push(proiSet)
+    proiSet.forEach(proi => { prodTotal.set(proi, (prodTotal.get(proi) || 0) + 1) })
+  }
+
+  const topProds = [...prodTotal.entries()].sort((a, b) => b[1] - a[1]).slice(0, TOP_N_CHORD).map(([proi]) => proi)
+  const prodIdxOf = new Map(topProds.map((proi, i) => [proi, i]))
+  const n = topProds.length
+  const matrix = Array.from({ length: n }, () => new Array(n).fill(0))
+  folioItemsList.forEach(proiList => {
+    const idxs = proiList.map(proi => prodIdxOf.get(proi)).filter(i => i !== undefined)
+    for (let a = 0; a < idxs.length; a++) for (let b = a + 1; b < idxs.length; b++) {
+      matrix[idxs[a]][idxs[b]]++; matrix[idxs[b]][idxs[a]]++
+    }
+  })
+  const grado = matrix.map(row => row.reduce((s, v) => s + v, 0))
+  const chord = { productos: topProds.map(proi => dims.productos[proi]), matrix, grado }
+
+  return { sunburst, densidad, chord }
 }
 
 // Etiqueta legible del alcance según los filtros activos (para encabezados).

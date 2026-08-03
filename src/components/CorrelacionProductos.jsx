@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react'
 import InfoTip from './InfoTip.jsx'
+import { scopeLabel } from '../utils/ventasGeneral.js'
 
 function titulo(s, max = 26) {
   const t = String(s || '').toLowerCase().replace(/\b\w/g, c => c.toUpperCase())
@@ -11,8 +12,7 @@ const SAT_C = '#f59e0b', SAT_C_LIGHT = '#fcd34d'
 const LINK_C = '#cbd5e1'
 
 export default function CorrelacionProductos({ ap, filtros }) {
-  const scopeKey = filtros?.año === '2025' ? '2025' : filtros?.año === '2026' ? '2026' : 'todos'
-  const chord = ap?.chord?.[scopeKey]
+  const chord = ap?.chord
 
   const { nodePos, pares, top, maxV, grado, hubSet, clusterSize } = useMemo(() => {
     const empty = { nodePos: [], pares: [], top: [], maxV: 1, grado: [], hubSet: new Set(), clusterSize: [] }
@@ -76,7 +76,8 @@ export default function CorrelacionProductos({ ap, filtros }) {
     <div style={{ background: '#fff', borderRadius: 10, border: '1.5px solid #e2e8f0', boxShadow: '0 1px 4px rgba(0,0,0,.05)', overflow: 'hidden', marginBottom: 16 }}>
       <div style={{ padding: '14px 18px 0', display: 'flex', alignItems: 'center' }}>
         <span style={{ fontSize: 12, fontWeight: 700, color: '#0f1f3d', textTransform: 'uppercase', letterSpacing: '.4px' }}>🔗 Productos Comprados Juntos</span>
-        <InfoTip text="Los 16 productos con mayor venta, agrupados en clústers alrededor de los productos 'hub' (verde) — el producto con el que más se compran juntos. Los satélites (ámbar) son los productos que suelen acompañarlos en el mismo folio de compra. Una línea más gruesa = más folios en común." />
+        <InfoTip text="Los productos con más folios en común, agrupados en clústers alrededor de los productos 'hub' (verde) — el producto con el que más se compran juntos. Los satélites (ámbar) son los productos que suelen acompañarlos en el mismo folio de compra. Una línea más gruesa = más folios en común." />
+        {filtros && <span style={{ fontSize: 10.5, color: '#94a3b8', fontWeight: 600 }}>· {scopeLabel(filtros)}{filtros.año && filtros.año !== 'todos' ? ` · ${filtros.año}` : ''}{(filtros.meses && filtros.meses.length) ? ` · ${filtros.meses.length} mes(es)` : ''}</span>}
       </div>
       <div style={{ padding: 18, display: 'grid', gridTemplateColumns: '360px 1fr', gap: 20, alignItems: 'center' }}>
         <svg viewBox="0 0 320 320" style={{ width: '100%', maxWidth: 360, display: 'block', margin: '0 auto' }}>
