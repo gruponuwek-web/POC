@@ -10,6 +10,7 @@ export function computeVG(fact, filtros) {
 
   const año = filtros.vgAño || 'todos'
   const equipo = filtros.equipo || 'todos'
+  const agente = (filtros.vgAgente && filtros.vgAgente !== 'todos') ? filtros.vgAgente : null
   const mesesSet = (filtros.vgMeses && filtros.vgMeses.length) ? new Set(filtros.vgMeses) : null
   const sucIdx = (filtros.sucursal && filtros.sucursal !== 'todas') ? dims.sucursales.indexOf(filtros.sucursal) : -1
   const provIdx = (filtros.vgProveedor && filtros.vgProveedor !== 'todos') ? dims.proveedores.indexOf(filtros.vgProveedor) : -1
@@ -46,6 +47,7 @@ export function computeVG(fact, filtros) {
     const esCom = vend.equipo === 'comercial'
     if (equipo === 'comercial' && !esCom) continue
     if (equipo === 'resto' && esCom) continue
+    if (agente && vend.nombre !== agente) continue
 
     const inMeses = !mesesSet || mesesSet.has(rm)
     const passYear = !(año === '2025' && ry !== 2025) && !(año === '2026' && ry !== 2026)
@@ -203,6 +205,7 @@ export function computeProductAnalytics(fact, filtros) {
 
   const año = filtros.vgAño || 'todos'
   const equipo = filtros.equipo || 'todos'
+  const agente = (filtros.vgAgente && filtros.vgAgente !== 'todos') ? filtros.vgAgente : null
   const mesesSet = (filtros.vgMeses && filtros.vgMeses.length) ? new Set(filtros.vgMeses) : null
   const sucIdx = (filtros.sucursal && filtros.sucursal !== 'todas') ? dims.sucursales.indexOf(filtros.sucursal) : -1
   const provIdx = (filtros.vgProveedor && filtros.vgProveedor !== 'todos') ? dims.proveedores.indexOf(filtros.vgProveedor) : -1
@@ -224,6 +227,7 @@ export function computeProductAnalytics(fact, filtros) {
     const esCom = vend.equipo === 'comercial'
     if (equipo === 'comercial' && !esCom) continue
     if (equipo === 'resto' && esCom) continue
+    if (agente && vend.nombre !== agente) continue
 
     let lm = lineaMap.get(li); if (!lm) { lm = { venta: 0, cantidad: 0, prods: new Map() }; lineaMap.set(li, lm) }
     lm.venta += venta; lm.cantidad += cant
@@ -277,6 +281,7 @@ export function computeProductAnalytics(fact, filtros) {
     const esCom = vend.equipo === 'comercial'
     if (equipo === 'comercial' && !esCom) continue
     if (equipo === 'resto' && esCom) continue
+    if (agente && vend.nombre !== agente) continue
     const m = cliMontoY[ry]; if (!m) continue
     m.set(ci, (m.get(ci) || 0) + venta)
   }

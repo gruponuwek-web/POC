@@ -91,16 +91,18 @@ function Campo({ label, info, children }) {
 
 const Sep = () => <div style={{ width: 1, alignSelf: 'stretch', minHeight: 22, background: '#e2e8f0', margin: '0 4px' }} />
 
-export default function FiltroVentasGeneral({ filtros, onChange, sucursales = [], proveedores = [], lineas = [] }) {
+export default function FiltroVentasGeneral({ filtros, onChange, sucursales = [], proveedores = [], lineas = [], agentes = [] }) {
   const vgAño = filtros.vgAño || 'todos'
   const vgMeses = filtros.vgMeses || []
   const equipo = filtros.equipo || 'todos'
+  const vgAgente = filtros.vgAgente || 'todos'
   const sucursal = filtros.sucursal || 'todas'
   const vgProveedor = filtros.vgProveedor || 'todos'
   const vgLinea = filtros.vgLinea || 'todas'
   const provOrden = [...proveedores].sort((a, b) => a.localeCompare(b))
   const lineaOrden = [...lineas].sort((a, b) => a.localeCompare(b))
-  const hayFiltros = vgAño !== 'todos' || vgMeses.length > 0 || equipo !== 'todos' || sucursal !== 'todas' || vgProveedor !== 'todos' || vgLinea !== 'todas'
+  const agenteOrden = [...agentes].sort((a, b) => a.localeCompare(b))
+  const hayFiltros = vgAño !== 'todos' || vgMeses.length > 0 || equipo !== 'todos' || vgAgente !== 'todos' || sucursal !== 'todas' || vgProveedor !== 'todos' || vgLinea !== 'todas'
 
   return (
     <div style={{
@@ -133,6 +135,14 @@ export default function FiltroVentasGeneral({ filtros, onChange, sucursales = []
           <option value="resto">El resto</option>
         </select>
       </Campo>
+      {agenteOrden.length > 0 && (
+        <Campo label="Agente" info="Filtra por agente individual (columna NOMBRE AGENTE). No afecta a Ticket Promedio ni a la Frecuencia de compra en la Distribución de Compra por Cliente, calculados sobre tickets/folios completos sin desglose por agente.">
+          <select value={vgAgente} onChange={e => onChange({ ...filtros, vgAgente: e.target.value })} style={{ ...selectStyle, maxWidth: 180 }}>
+            <option value="todos">Todos</option>
+            {agenteOrden.map(a => <option key={a} value={a}>{a}</option>)}
+          </select>
+        </Campo>
+      )}
       {sucursales.length > 0 && (
         <Campo label="Sucursal" info="Filtra por sucursal. La sección de donas la ignora a propósito para poder comparar todas las sucursales entre sí.">
           <select value={sucursal} onChange={e => onChange({ ...filtros, sucursal: e.target.value })} style={selectStyle}>
@@ -163,7 +173,7 @@ export default function FiltroVentasGeneral({ filtros, onChange, sucursales = []
       )}
 
       {hayFiltros && (
-        <button onClick={() => onChange({ ...filtros, vgAño: 'todos', vgMeses: [], equipo: 'todos', sucursal: 'todas', vgProveedor: 'todos', vgLinea: 'todas' })} style={{
+        <button onClick={() => onChange({ ...filtros, vgAño: 'todos', vgMeses: [], equipo: 'todos', vgAgente: 'todos', sucursal: 'todas', vgProveedor: 'todos', vgLinea: 'todas' })} style={{
           marginLeft: 'auto', padding: '5px 14px', borderRadius: 6, fontSize: 11,
           fontWeight: 700, border: '1.5px solid #ef4444', background: '#fff5f5',
           color: '#ef4444', cursor: 'pointer'

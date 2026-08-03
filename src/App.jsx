@@ -51,6 +51,7 @@ export default function App() {
     sucursal: 'todas', // solo Empresa Completa: todas | <nombre sucursal>
     vgProveedor: 'todos', // solo Empresa Completa
     vgLinea: 'todas', // solo Empresa Completa
+    vgAgente: 'todos', // solo Empresa Completa — filtra por NOMBRE AGENTE individual
   })
 
   useEffect(() => {
@@ -444,6 +445,7 @@ export default function App() {
             sucursales={ventasGeneral?.dims?.sucursales || []}
             proveedores={ventasGeneral?.dims?.proveedores || []}
             lineas={ventasGeneral?.dims?.lineas || []}
+            agentes={ventasGeneral?.dims?.vendedores?.map(v => v.nombre) || []}
           />
           {vgComputed ? (
             <>
