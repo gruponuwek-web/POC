@@ -12,7 +12,11 @@ export function kde(values, { nPoints = 60, bwMult = 1 } = {}) {
   const sorted = [...vals].sort((a, b) => a - b)
   const pct = p => sorted[Math.min(n - 1, Math.floor(p * (n - 1)))]
   const min = Math.max(0, pct(0.01) - bw * 2)
-  const max = pct(0.98) + bw * 2
+  // El colchón de "bw*2" ayuda a suavizar los extremos en muestras grandes, pero en muestras
+  // chicas (pocos clientes) el ancho de banda de Silverman crece mucho y, al pasar por una
+  // escala logarítmica (monto), un exceso pequeño en log-espacio se vuelve una cifra absurda
+  // en dinero real — nunca debe superar el valor máximo/mínimo realmente observado.
+  const max = Math.min(pct(0.98) + bw * 2, sorted[n - 1])
   const span = Math.max(max - min, 1e-6)
   const step = span / (nPoints - 1)
 

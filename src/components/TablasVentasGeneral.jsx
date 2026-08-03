@@ -148,14 +148,14 @@ export default function TablasVentasGeneral({ g, filtros }) {
         extra={<>
           <span style={{ fontSize: 11, color: 'rgba(255,255,255,.45)', fontWeight: 500 }}>{clientes.length} clientes</span>
           <BotonCSV onClick={() => exportCSV('clientes_general.csv',
-            ['#', 'Cliente', 'Núm', 'Venta', '% del Total'],
-            clientes.map((r, i) => [i + 1, `"${titulo(r.nombre)}"`, r.num, r.venta, (totalVentaCli > 0 ? r.venta / totalVentaCli * 100 : 0).toFixed(1) + '%']))} />
+            ['#', 'Cliente', 'Núm', 'Agente', 'Venta', '% del Total'],
+            clientes.map((r, i) => [i + 1, `"${titulo(r.nombre)}"`, r.num, `"${titulo(r.agente)}"`, r.venta, (totalVentaCli > 0 ? r.venta / totalVentaCli * 100 : 0).toFixed(1) + '%']))} />
         </>}
         footer={<VerMas total={clientes.length} limite={limC} onMas={() => setLimC(l => l + 15)} />}>
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead><tr style={{ background: '#0f1f3d' }}>
             <th style={{ ...thStyle, textAlign: 'center' }}>#</th>
-            {['Cliente', 'Venta', '% del total'].map(h => <th key={h} style={thStyle}>{h}</th>)}
+            {['Cliente', 'Agente', 'Venta', '% del total'].map(h => <th key={h} style={thStyle}>{h}</th>)}
           </tr></thead>
           <tbody>
             {clientes.slice(0, limC).map((r, i) => {
@@ -164,6 +164,7 @@ export default function TablasVentasGeneral({ g, filtros }) {
                 <tr key={(r.num || '') + r.nombre} style={{ background: i % 2 === 0 ? '#fff' : '#f8fafc' }}>
                   <td style={{ ...tdStyle, textAlign: 'center', fontWeight: 700, color: '#94a3b8', fontSize: 11 }}>{i + 1}</td>
                   <td style={{ ...tdStyle, fontWeight: 700, color: '#0f1f3d', maxWidth: 320, overflow: 'hidden', textOverflow: 'ellipsis' }}>{titulo(r.nombre)}</td>
+                  <td style={{ ...tdStyle, color: '#64748b', maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis' }}>{r.agente ? titulo(r.agente) : '—'}</td>
                   <td style={{ ...tdStyle, fontWeight: 700 }}>{fmt.moneda(r.venta)}</td>
                   <td style={{ ...tdStyle, minWidth: 140 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>

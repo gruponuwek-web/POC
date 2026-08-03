@@ -98,14 +98,20 @@ export function computeVG(fact, filtros) {
     let pv = provMap.get(pi); if (!pv) { pv = { nombre: dims.proveedores[pi], venta: 0, costo: 0, n: 0 }; provMap.set(pi, pv) }
     pv.venta += venta; pv.costo += costo; pv.n += n
 
-    let cm = cliMap.get(ci); if (!cm) { const c = dims.clientes[ci]; cm = { nombre: c.nombre, num: c.num, venta: 0 }; cliMap.set(ci, cm) }
+    let cm = cliMap.get(ci); if (!cm) { const c = dims.clientes[ci]; cm = { nombre: c.nombre, num: c.num, venta: 0, porVend: new Map() }; cliMap.set(ci, cm) }
     cm.venta += venta
+    cm.porVend.set(vi, (cm.porVend.get(vi) || 0) + venta)
   }
 
   const bySales = (a, b) => b.venta - a.venta
   const vendedores = [...vendMap.values()].filter(v => v.venta > 0).sort(bySales)
   const proveedores = [...provMap.values()].filter(p => p.venta > 0).sort(bySales)
-  const clientes = [...cliMap.values()].filter(c => c.venta > 0).sort(bySales)
+  // Agente: vendedor con más venta a ese cliente en el alcance filtrado (puede haber más de
+  // uno si el cliente compró vía varios agentes).
+  const clientes = [...cliMap.values()].filter(c => c.venta > 0).map(c => {
+    const top = [...c.porVend.entries()].sort((a, b) => b[1] - a[1])[0]
+    return { nombre: c.nombre, num: c.num, venta: c.venta, agente: top ? dims.vendedores[top[0]].nombre : null }
+  }).sort(bySales)
   const topResto = vendedores.filter(v => v.equipo === 'resto').slice(0, 7)
 
   const meses = Object.keys(porMes).map(Number).sort((a, b) => a - b)
