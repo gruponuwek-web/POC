@@ -56,7 +56,7 @@ export default function VentaMensualComparativa({ g, filtros }) {
   const equipo = filtros.equipo || 'todos'
   const scoped = equipo === 'comercial' ? 'comercial' : equipo === 'resto' ? 'resto' : 'todos'
   const alcance = scopeLabel(filtros)
-  const añoFiltro = filtros.año || 'todos'
+  const añoFiltro = filtros.vgAño || 'todos'
 
   const vYear = (d, year) => {
     const s = d && d[year]; if (!s) return { com: 0, resto: 0, total: 0 }

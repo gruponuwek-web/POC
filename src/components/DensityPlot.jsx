@@ -70,7 +70,7 @@ export default function DensityPlot({ ap, filtros }) {
   // El filtro de Mes/Sucursal/Equipo ya viene aplicado dentro de d25/d26. El de Año decide
   // si se muestra la comparación completa o solo la curva del año elegido (si no, el filtro
   // de Año parecería "no hacer nada" en esta gráfica aunque el resto de la página sí cambie).
-  const año = filtros?.año || 'todos'
+  const año = filtros?.vgAño || 'todos'
   const show25 = año !== '2026', show26 = año !== '2025'
   const titulo = año === '2025' ? '2025' : año === '2026' ? '2026' : '2025 vs 2026'
   const desc = año === '2025' ? 'Cómo compraron tus clientes en 2025. La parte más alta de la curva es donde se agrupa la mayoría.'

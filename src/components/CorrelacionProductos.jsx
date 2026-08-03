@@ -77,7 +77,7 @@ export default function CorrelacionProductos({ ap, filtros }) {
       <div style={{ padding: '14px 18px 0', display: 'flex', alignItems: 'center' }}>
         <span style={{ fontSize: 12, fontWeight: 700, color: '#0f1f3d', textTransform: 'uppercase', letterSpacing: '.4px' }}>🔗 Productos Comprados Juntos</span>
         <InfoTip text="Los productos con más folios en común, agrupados en clústers alrededor de los productos 'hub' (verde) — el producto con el que más se compran juntos. Los satélites (ámbar) son los productos que suelen acompañarlos en el mismo folio de compra. Una línea más gruesa = más folios en común." />
-        {filtros && <span style={{ fontSize: 10.5, color: '#94a3b8', fontWeight: 600 }}>· {scopeLabel(filtros)}{filtros.año && filtros.año !== 'todos' ? ` · ${filtros.año}` : ''}{(filtros.meses && filtros.meses.length) ? ` · ${filtros.meses.length} mes(es)` : ''}</span>}
+        {filtros && <span style={{ fontSize: 10.5, color: '#94a3b8', fontWeight: 600 }}>· {scopeLabel(filtros)}{filtros.vgAño && filtros.vgAño !== 'todos' ? ` · ${filtros.vgAño}` : ''}{(filtros.vgMeses && filtros.vgMeses.length) ? ` · ${filtros.vgMeses.length} mes(es)` : ''}</span>}
       </div>
       <div style={{ padding: '2px 18px 0', fontSize: 11, color: '#64748b' }}>
         Muestra qué productos se compran juntos en el mismo ticket. Los círculos verdes son los productos "estrella" y los ámbar son los que casi siempre los acompañan. Entre más gruesa la línea que los une, más veces se compraron juntos.

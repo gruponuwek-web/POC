@@ -8,9 +8,9 @@ export function computeVG(fact, filtros) {
   if (!fact || !fact.rows || !fact.dims) return null
   const { dims, rows } = fact
 
-  const año = filtros.año || 'todos'
+  const año = filtros.vgAño || 'todos'
   const equipo = filtros.equipo || 'todos'
-  const mesesSet = (filtros.meses && filtros.meses.length) ? new Set(filtros.meses) : null
+  const mesesSet = (filtros.vgMeses && filtros.vgMeses.length) ? new Set(filtros.vgMeses) : null
   const sucIdx = (filtros.sucursal && filtros.sucursal !== 'todas') ? dims.sucursales.indexOf(filtros.sucursal) : -1
   const provIdx = (filtros.vgProveedor && filtros.vgProveedor !== 'todos') ? dims.proveedores.indexOf(filtros.vgProveedor) : -1
   const lineaIdx = (filtros.vgLinea && filtros.vgLinea !== 'todas') ? dims.lineas.indexOf(filtros.vgLinea) : -1
@@ -18,7 +18,7 @@ export function computeVG(fact, filtros) {
   // Punto de referencia ("a la fecha de...") para Clientes Perdidos, en la escala relativa
   // 2026=mes, 2025=mes-12. Permite que Año/Mes muevan la fecha de corte de recencia.
   const mesMax2026 = fact.mesMax2026 || 7
-  const mesesArr = filtros.meses || []
+  const mesesArr = filtros.vgMeses || []
   const soloMes = mesesArr.length === 1 ? mesesArr[0] : null
   const refRel = año === '2025' ? (soloMes != null ? soloMes - 12 : 0)
     : año === '2026' ? (soloMes != null ? soloMes : mesMax2026)
@@ -163,9 +163,9 @@ export function computeProductAnalytics(fact, filtros) {
   if (!fact || !fact.rows || !fact.dims) return null
   const { dims, rows, folios } = fact
 
-  const año = filtros.año || 'todos'
+  const año = filtros.vgAño || 'todos'
   const equipo = filtros.equipo || 'todos'
-  const mesesSet = (filtros.meses && filtros.meses.length) ? new Set(filtros.meses) : null
+  const mesesSet = (filtros.vgMeses && filtros.vgMeses.length) ? new Set(filtros.vgMeses) : null
   const sucIdx = (filtros.sucursal && filtros.sucursal !== 'todas') ? dims.sucursales.indexOf(filtros.sucursal) : -1
   const provIdx = (filtros.vgProveedor && filtros.vgProveedor !== 'todos') ? dims.proveedores.indexOf(filtros.vgProveedor) : -1
   const lineaIdx = (filtros.vgLinea && filtros.vgLinea !== 'todas') ? dims.lineas.indexOf(filtros.vgLinea) : -1

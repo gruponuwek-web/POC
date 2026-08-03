@@ -40,15 +40,17 @@ export default function App() {
 
   // Filtros
   const [filtros, setFiltros] = useState({
-    año: 'todos',
-    meses: [],
+    año: 'todos', // solo Dashboard Táctico
+    meses: [], // solo Dashboard Táctico
     agente: 'todos',
     tipoCliente: 'todos',
     proveedor: 'todos',
-    equipo: 'todos', // solo Ventas General: todos | comercial | resto
-    sucursal: 'todas', // solo Ventas General: todas | <nombre sucursal>
-    vgProveedor: 'todos', // solo Ventas General
-    vgLinea: 'todas', // solo Ventas General
+    vgAño: 'todos', // solo Empresa Completa — independiente de "año"
+    vgMeses: [], // solo Empresa Completa — independiente de "meses"
+    equipo: 'todos', // solo Empresa Completa: todos | comercial | resto
+    sucursal: 'todas', // solo Empresa Completa: todas | <nombre sucursal>
+    vgProveedor: 'todos', // solo Empresa Completa
+    vgLinea: 'todas', // solo Empresa Completa
   })
 
   useEffect(() => {
@@ -308,7 +310,7 @@ export default function App() {
   }, [data, filtros])
 
   const [mesPerdidoSel, setMesPerdidoSel] = useState(null)
-  const limpiarFiltros = () => { setFiltros({ año: 'todos', meses: [], agente: 'todos', tipoCliente: 'todos', proveedor: 'todos', equipo: 'todos', sucursal: 'todas', vgProveedor: 'todos', vgLinea: 'todas' }); setMesPerdidoSel(null) }
+  const limpiarFiltros = () => { setFiltros(f => ({ ...f, año: 'todos', meses: [], agente: 'todos', tipoCliente: 'todos', proveedor: 'todos' })); setMesPerdidoSel(null) }
 
   // Cómputo pivotable de Ventas General (solo cuando esa pestaña está activa)
   const vgComputed = useMemo(

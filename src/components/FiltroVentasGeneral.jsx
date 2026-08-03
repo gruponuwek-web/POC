@@ -23,14 +23,16 @@ function Campo({ label, info, children }) {
 const Sep = () => <div style={{ width: 1, alignSelf: 'stretch', minHeight: 22, background: '#e2e8f0', margin: '0 4px' }} />
 
 export default function FiltroVentasGeneral({ filtros, onChange, sucursales = [], proveedores = [], lineas = [] }) {
-  const mesSel = filtros.meses.length === 1 ? String(filtros.meses[0]) : 'todos'
+  const vgAño = filtros.vgAño || 'todos'
+  const vgMeses = filtros.vgMeses || []
+  const mesSel = vgMeses.length === 1 ? String(vgMeses[0]) : 'todos'
   const equipo = filtros.equipo || 'todos'
   const sucursal = filtros.sucursal || 'todas'
   const vgProveedor = filtros.vgProveedor || 'todos'
   const vgLinea = filtros.vgLinea || 'todas'
   const provOrden = [...proveedores].sort((a, b) => a.localeCompare(b))
   const lineaOrden = [...lineas].sort((a, b) => a.localeCompare(b))
-  const hayFiltros = filtros.año !== 'todos' || filtros.meses.length > 0 || equipo !== 'todos' || sucursal !== 'todas' || vgProveedor !== 'todos' || vgLinea !== 'todas'
+  const hayFiltros = vgAño !== 'todos' || vgMeses.length > 0 || equipo !== 'todos' || sucursal !== 'todas' || vgProveedor !== 'todos' || vgLinea !== 'todas'
 
   return (
     <div style={{
@@ -42,15 +44,15 @@ export default function FiltroVentasGeneral({ filtros, onChange, sucursales = []
       <span style={{ fontSize: 11, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '.5px' }}>Filtros</span>
 
       {/* ── Periodo ── */}
-      <Campo label="Año" info="Filtra el periodo de todas las tarjetas y gráficas. 'Todos' suma 2025 + 2026.">
-        <select value={filtros.año} onChange={e => onChange({ ...filtros, año: e.target.value })} style={selectStyle}>
+      <Campo label="Año" info="Filtra el periodo de todas las tarjetas y gráficas. 'Todos' suma 2025 + 2026. Independiente del filtro de Año en Dashboard Táctico.">
+        <select value={vgAño} onChange={e => onChange({ ...filtros, vgAño: e.target.value })} style={selectStyle}>
           <option value="todos">Todos</option>
           <option value="2025">2025</option>
           <option value="2026">2026</option>
         </select>
       </Campo>
-      <Campo label="Mes" info="Filtra al mes seleccionado. En Clientes Perdidos, un mes específico mueve la fecha de corte ('¿quién estaba perdido a esa fecha?').">
-        <select value={mesSel} onChange={e => onChange({ ...filtros, meses: e.target.value === 'todos' ? [] : [Number(e.target.value)] })} style={selectStyle}>
+      <Campo label="Mes" info="Filtra al mes seleccionado. En Clientes Perdidos, un mes específico mueve la fecha de corte ('¿quién estaba perdido a esa fecha?'). Independiente del filtro de Mes en Dashboard Táctico.">
+        <select value={mesSel} onChange={e => onChange({ ...filtros, vgMeses: e.target.value === 'todos' ? [] : [Number(e.target.value)] })} style={selectStyle}>
           <option value="todos">Todos</option>
           {MESES.map((m, i) => <option key={i + 1} value={i + 1}>{m}</option>)}
         </select>
@@ -96,7 +98,7 @@ export default function FiltroVentasGeneral({ filtros, onChange, sucursales = []
       )}
 
       {hayFiltros && (
-        <button onClick={() => onChange({ ...filtros, año: 'todos', meses: [], equipo: 'todos', sucursal: 'todas', vgProveedor: 'todos', vgLinea: 'todas' })} style={{
+        <button onClick={() => onChange({ ...filtros, vgAño: 'todos', vgMeses: [], equipo: 'todos', sucursal: 'todas', vgProveedor: 'todos', vgLinea: 'todas' })} style={{
           marginLeft: 'auto', padding: '5px 14px', borderRadius: 6, fontSize: 11,
           fontWeight: 700, border: '1.5px solid #ef4444', background: '#fff5f5',
           color: '#ef4444', cursor: 'pointer'

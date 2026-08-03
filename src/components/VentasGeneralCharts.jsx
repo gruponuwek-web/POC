@@ -25,7 +25,7 @@ export default function VentasGeneralCharts({ g, filtros }) {
   const scoped = equipo === 'comercial' ? 'comercial' : equipo === 'resto' ? 'resto' : 'todos'
   const alcance = scopeLabel(filtros)
   const sufijo = alcance === 'Toda la empresa' ? 'Toda la empresa' : alcance
-  const añoFiltro = filtros.año || 'todos'
+  const añoFiltro = filtros.vgAño || 'todos'
   const agrupado = añoFiltro === 'todos'
 
   const yData = (d, year) => {
