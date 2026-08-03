@@ -51,7 +51,7 @@ export default function App() {
     sucursal: 'todas', // solo Empresa Completa: todas | <nombre sucursal>
     vgProveedor: 'todos', // solo Empresa Completa
     vgLinea: 'todas', // solo Empresa Completa
-    vgAgente: 'todos', // solo Empresa Completa — filtra por NOMBRE AGENTE individual
+    vgAgentes: [], // solo Empresa Completa — filtra por NOMBRE AGENTE, uno o varios a la vez
   })
 
   useEffect(() => {

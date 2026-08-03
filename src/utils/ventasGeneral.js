@@ -10,7 +10,7 @@ export function computeVG(fact, filtros) {
 
   const año = filtros.vgAño || 'todos'
   const equipo = filtros.equipo || 'todos'
-  const agente = (filtros.vgAgente && filtros.vgAgente !== 'todos') ? filtros.vgAgente : null
+  const agenteSet = (filtros.vgAgentes && filtros.vgAgentes.length) ? new Set(filtros.vgAgentes) : null
   const mesesSet = (filtros.vgMeses && filtros.vgMeses.length) ? new Set(filtros.vgMeses) : null
   const sucIdx = (filtros.sucursal && filtros.sucursal !== 'todas') ? dims.sucursales.indexOf(filtros.sucursal) : -1
   const provIdx = (filtros.vgProveedor && filtros.vgProveedor !== 'todos') ? dims.proveedores.indexOf(filtros.vgProveedor) : -1
@@ -47,7 +47,7 @@ export function computeVG(fact, filtros) {
     const esCom = vend.equipo === 'comercial'
     if (equipo === 'comercial' && !esCom) continue
     if (equipo === 'resto' && esCom) continue
-    if (agente && vend.nombre !== agente) continue
+    if (agenteSet && !agenteSet.has(vend.nombre)) continue
 
     const inMeses = !mesesSet || mesesSet.has(rm)
     const passYear = !(año === '2025' && ry !== 2025) && !(año === '2026' && ry !== 2026)
@@ -135,7 +135,7 @@ export function computeVG(fact, filtros) {
       if (sucIdx >= 0 && si !== sucIdx) continue
       if (equipo === 'comercial' && eb !== 0) continue
       if (equipo === 'resto' && eb !== 1) continue
-      if (agente && dims.vendedores[vi].nombre !== agente) continue
+      if (agenteSet && !agenteSet.has(dims.vendedores[vi].nombre)) continue
       const c = fact.ticketsCubo[k]; tkVenta += c.v; tkCount += c.t
     }
   }
@@ -175,7 +175,7 @@ export function computeVG(fact, filtros) {
         if (sucIdx >= 0 && si !== sucIdx) continue
         if (equipo === 'comercial' && eb !== 0) continue
         if (equipo === 'resto' && eb !== 1) continue
-        if (agente && dims.vendedores[vi].nombre !== agente) continue
+        if (agenteSet && !agenteSet.has(dims.vendedores[vi].nombre)) continue
         const c = fact.ticketsCubo[k]; prevTkVenta += c.v; prevTkCount += c.t
       }
     }
@@ -213,7 +213,7 @@ export function computeProductAnalytics(fact, filtros) {
 
   const año = filtros.vgAño || 'todos'
   const equipo = filtros.equipo || 'todos'
-  const agente = (filtros.vgAgente && filtros.vgAgente !== 'todos') ? filtros.vgAgente : null
+  const agenteSet = (filtros.vgAgentes && filtros.vgAgentes.length) ? new Set(filtros.vgAgentes) : null
   const mesesSet = (filtros.vgMeses && filtros.vgMeses.length) ? new Set(filtros.vgMeses) : null
   const sucIdx = (filtros.sucursal && filtros.sucursal !== 'todas') ? dims.sucursales.indexOf(filtros.sucursal) : -1
   const provIdx = (filtros.vgProveedor && filtros.vgProveedor !== 'todos') ? dims.proveedores.indexOf(filtros.vgProveedor) : -1
@@ -235,7 +235,7 @@ export function computeProductAnalytics(fact, filtros) {
     const esCom = vend.equipo === 'comercial'
     if (equipo === 'comercial' && !esCom) continue
     if (equipo === 'resto' && esCom) continue
-    if (agente && vend.nombre !== agente) continue
+    if (agenteSet && !agenteSet.has(vend.nombre)) continue
 
     let lm = lineaMap.get(li); if (!lm) { lm = { venta: 0, cantidad: 0, prods: new Map() }; lineaMap.set(li, lm) }
     lm.venta += venta; lm.cantidad += cant
@@ -267,7 +267,7 @@ export function computeProductAnalytics(fact, filtros) {
     if (sucIdx >= 0 && si !== sucIdx) continue
     if (equipo === 'comercial' && eb !== 0) continue
     if (equipo === 'resto' && eb !== 1) continue
-    if (agente && dims.vendedores[vi].nombre !== agente) continue
+    if (agenteSet && !agenteSet.has(dims.vendedores[vi].nombre)) continue
     if (provIdx >= 0 || lineaIdx >= 0) {
       const matches = items.some(([, li, pi]) => (lineaIdx < 0 || li === lineaIdx) && (provIdx < 0 || pi === provIdx))
       if (!matches) continue
@@ -290,7 +290,7 @@ export function computeProductAnalytics(fact, filtros) {
     const esCom = vend.equipo === 'comercial'
     if (equipo === 'comercial' && !esCom) continue
     if (equipo === 'resto' && esCom) continue
-    if (agente && vend.nombre !== agente) continue
+    if (agenteSet && !agenteSet.has(vend.nombre)) continue
     const m = cliMontoY[ry]; if (!m) continue
     m.set(ci, (m.get(ci) || 0) + venta)
   }
@@ -312,7 +312,7 @@ export function computeProductAnalytics(fact, filtros) {
     if (sucIdx >= 0 && si !== sucIdx) continue
     if (equipo === 'comercial' && eb !== 0) continue
     if (equipo === 'resto' && eb !== 1) continue
-    if (agente && dims.vendedores[vi].nombre !== agente) continue
+    if (agenteSet && !agenteSet.has(dims.vendedores[vi].nombre)) continue
 
     const filtItems = (provIdx < 0 && lineaIdx < 0) ? items
       : items.filter(([, li, pi]) => (lineaIdx < 0 || li === lineaIdx) && (provIdx < 0 || pi === provIdx))
@@ -343,7 +343,8 @@ export function scopeLabel(filtros) {
   if (filtros.sucursal && filtros.sucursal !== 'todas') partes.push(filtros.sucursal)
   if (filtros.vgLinea && filtros.vgLinea !== 'todas') partes.push(filtros.vgLinea)
   if (filtros.vgProveedor && filtros.vgProveedor !== 'todos') partes.push(filtros.vgProveedor)
-  if (filtros.vgAgente && filtros.vgAgente !== 'todos') partes.push(filtros.vgAgente)
+  if (filtros.vgAgentes && filtros.vgAgentes.length === 1) partes.push(filtros.vgAgentes[0])
+  else if (filtros.vgAgentes && filtros.vgAgentes.length > 1) partes.push(`${filtros.vgAgentes.length} agentes`)
   if (filtros.equipo === 'comercial') partes.push('Equipo comercial')
   else if (filtros.equipo === 'resto') partes.push('El resto')
   return partes.length ? partes.join(' · ') : 'Toda la empresa'

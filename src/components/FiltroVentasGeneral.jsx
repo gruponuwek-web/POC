@@ -78,6 +78,76 @@ function MesMultiSelect({ selected, onChange }) {
   )
 }
 
+// Selector genérico de varios valores de texto con checkboxes (p.ej. agentes) — misma
+// mecánica que MesMultiSelect pero para una lista dinámica de strings.
+function TextMultiSelect({ options, selected, onChange, maxWidth = 180 }) {
+  const [open, setOpen] = useState(false)
+  const ref = useRef(null)
+
+  useEffect(() => {
+    const handler = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false) }
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [])
+
+  const label = selected.length === 0
+    ? 'Todos'
+    : selected.length === options.length
+      ? 'Todos'
+      : selected.length === 1
+        ? selected[0]
+        : `${selected.length} agentes`
+
+  const toggle = (v) => {
+    const next = selected.includes(v) ? selected.filter(x => x !== v) : [...selected, v]
+    onChange(next)
+  }
+
+  return (
+    <div ref={ref} style={{ position: 'relative' }}>
+      <div
+        onClick={() => setOpen(o => !o)}
+        style={{ ...selectStyle, display: 'flex', alignItems: 'center', gap: 4, cursor: 'pointer', userSelect: 'none', minWidth: 110, maxWidth }}
+      >
+        <span style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{label}</span>
+        <span style={{ fontSize: 9, color: '#94a3b8' }}>▼</span>
+      </div>
+      {open && (
+        <div style={{
+          position: 'absolute', top: 'calc(100% + 4px)', left: 0, zIndex: 999,
+          background: '#fff', border: '1.5px solid #e2e8f0', borderRadius: 8,
+          boxShadow: '0 8px 24px rgba(0,0,0,.12)', minWidth: 220, maxHeight: 320, overflowY: 'auto'
+        }}>
+          {options.map(v => {
+            const activo = selected.includes(v)
+            return (
+              <div
+                key={v}
+                onClick={() => toggle(v)}
+                style={{
+                  padding: '7px 12px', fontSize: 12, fontWeight: 500, cursor: 'pointer',
+                  display: 'flex', alignItems: 'center', gap: 8, whiteSpace: 'nowrap',
+                  background: activo ? '#eff6ff' : '#fff',
+                  color: activo ? '#1a6cf0' : '#334155',
+                }}
+              >
+                <span style={{
+                  width: 14, height: 14, borderRadius: 4, flexShrink: 0,
+                  border: `1.5px solid ${activo ? '#1a6cf0' : '#cbd5e1'}`,
+                  background: activo ? '#1a6cf0' : '#fff',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontSize: 9, color: '#fff'
+                }}>{activo ? '✓' : ''}</span>
+                {v}
+              </div>
+            )
+          })}
+        </div>
+      )}
+    </div>
+  )
+}
+
 function Campo({ label, info, children }) {
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
@@ -95,14 +165,14 @@ export default function FiltroVentasGeneral({ filtros, onChange, sucursales = []
   const vgAño = filtros.vgAño || 'todos'
   const vgMeses = filtros.vgMeses || []
   const equipo = filtros.equipo || 'todos'
-  const vgAgente = filtros.vgAgente || 'todos'
+  const vgAgentes = filtros.vgAgentes || []
   const sucursal = filtros.sucursal || 'todas'
   const vgProveedor = filtros.vgProveedor || 'todos'
   const vgLinea = filtros.vgLinea || 'todas'
   const provOrden = [...proveedores].sort((a, b) => a.localeCompare(b))
   const lineaOrden = [...lineas].sort((a, b) => a.localeCompare(b))
   const agenteOrden = [...agentes].sort((a, b) => a.localeCompare(b))
-  const hayFiltros = vgAño !== 'todos' || vgMeses.length > 0 || equipo !== 'todos' || vgAgente !== 'todos' || sucursal !== 'todas' || vgProveedor !== 'todos' || vgLinea !== 'todas'
+  const hayFiltros = vgAño !== 'todos' || vgMeses.length > 0 || equipo !== 'todos' || vgAgentes.length > 0 || sucursal !== 'todas' || vgProveedor !== 'todos' || vgLinea !== 'todas'
 
   return (
     <div style={{
@@ -136,11 +206,8 @@ export default function FiltroVentasGeneral({ filtros, onChange, sucursales = []
         </select>
       </Campo>
       {agenteOrden.length > 0 && (
-        <Campo label="Agente" info="Filtra por agente individual (columna NOMBRE AGENTE). Afecta a todas las tarjetas y gráficas de la página, incluyendo Ticket Promedio, Densidad de Compra y Correlación de Productos.">
-          <select value={vgAgente} onChange={e => onChange({ ...filtros, vgAgente: e.target.value })} style={{ ...selectStyle, maxWidth: 180 }}>
-            <option value="todos">Todos</option>
-            {agenteOrden.map(a => <option key={a} value={a}>{a}</option>)}
-          </select>
+        <Campo label="Agente" info="Filtra por agente(s) (columna NOMBRE AGENTE) — puedes elegir varios a la vez. Afecta a todas las tarjetas y gráficas de la página, incluyendo Ticket Promedio, Densidad de Compra y Correlación de Productos.">
+          <TextMultiSelect options={agenteOrden} selected={vgAgentes} onChange={ags => onChange({ ...filtros, vgAgentes: ags })} />
         </Campo>
       )}
       {sucursales.length > 0 && (
@@ -173,7 +240,7 @@ export default function FiltroVentasGeneral({ filtros, onChange, sucursales = []
       )}
 
       {hayFiltros && (
-        <button onClick={() => onChange({ ...filtros, vgAño: 'todos', vgMeses: [], equipo: 'todos', vgAgente: 'todos', sucursal: 'todas', vgProveedor: 'todos', vgLinea: 'todas' })} style={{
+        <button onClick={() => onChange({ ...filtros, vgAño: 'todos', vgMeses: [], equipo: 'todos', vgAgentes: [], sucursal: 'todas', vgProveedor: 'todos', vgLinea: 'todas' })} style={{
           marginLeft: 'auto', padding: '5px 14px', borderRadius: 6, fontSize: 11,
           fontWeight: 700, border: '1.5px solid #ef4444', background: '#fff5f5',
           color: '#ef4444', cursor: 'pointer'
