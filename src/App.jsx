@@ -441,7 +441,7 @@ export default function App() {
               <TablasVentasGeneral g={vgComputed} filtros={filtros} />
               {paComputed && (
                 <>
-                  <DensityPlot ap={paComputed} />
+                  <DensityPlot ap={paComputed} filtros={filtros} />
                   <SunburstProductos ap={paComputed} filtros={filtros} />
                   <CorrelacionProductos ap={paComputed} filtros={filtros} />
                 </>
