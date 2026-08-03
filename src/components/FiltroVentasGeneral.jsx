@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import InfoTip from './InfoTip.jsx'
 
 const MESES = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
@@ -7,6 +7,75 @@ const selectStyle = {
   padding: '4px 10px', borderRadius: 6, fontSize: 12, fontWeight: 500,
   border: '1.5px solid #e2e8f0', background: '#f8fafc', color: '#334155',
   outline: 'none', cursor: 'pointer'
+}
+
+// Selector de mes(es) con checkboxes — permite elegir varios meses a la vez, igual que en
+// Dashboard Táctico.
+function MesMultiSelect({ selected, onChange }) {
+  const [open, setOpen] = useState(false)
+  const ref = useRef(null)
+
+  useEffect(() => {
+    const handler = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false) }
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [])
+
+  const label = selected.length === 0
+    ? 'Todos'
+    : selected.length === MESES.length
+      ? 'Todos'
+      : selected.map(m => MESES[m - 1].slice(0, 3)).join(', ')
+
+  const toggle = (m) => {
+    const next = selected.includes(m) ? selected.filter(v => v !== m) : [...selected, m]
+    onChange(next)
+  }
+
+  return (
+    <div ref={ref} style={{ position: 'relative' }}>
+      <div
+        onClick={() => setOpen(o => !o)}
+        style={{ ...selectStyle, display: 'flex', alignItems: 'center', gap: 4, cursor: 'pointer', userSelect: 'none', minWidth: 110, maxWidth: 180 }}
+      >
+        <span style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{label}</span>
+        <span style={{ fontSize: 9, color: '#94a3b8' }}>▼</span>
+      </div>
+      {open && (
+        <div style={{
+          position: 'absolute', top: 'calc(100% + 4px)', left: 0, zIndex: 999,
+          background: '#fff', border: '1.5px solid #e2e8f0', borderRadius: 8,
+          boxShadow: '0 8px 24px rgba(0,0,0,.12)', minWidth: 140, overflow: 'hidden'
+        }}>
+          {MESES.map((m, i) => {
+            const num = i + 1
+            const activo = selected.includes(num)
+            return (
+              <div
+                key={num}
+                onClick={() => toggle(num)}
+                style={{
+                  padding: '7px 12px', fontSize: 12, fontWeight: 500, cursor: 'pointer',
+                  display: 'flex', alignItems: 'center', gap: 8,
+                  background: activo ? '#eff6ff' : '#fff',
+                  color: activo ? '#1a6cf0' : '#334155',
+                }}
+              >
+                <span style={{
+                  width: 14, height: 14, borderRadius: 4, flexShrink: 0,
+                  border: `1.5px solid ${activo ? '#1a6cf0' : '#cbd5e1'}`,
+                  background: activo ? '#1a6cf0' : '#fff',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontSize: 9, color: '#fff'
+                }}>{activo ? '✓' : ''}</span>
+                {m}
+              </div>
+            )
+          })}
+        </div>
+      )}
+    </div>
+  )
 }
 
 function Campo({ label, info, children }) {
@@ -25,7 +94,6 @@ const Sep = () => <div style={{ width: 1, alignSelf: 'stretch', minHeight: 22, b
 export default function FiltroVentasGeneral({ filtros, onChange, sucursales = [], proveedores = [], lineas = [] }) {
   const vgAño = filtros.vgAño || 'todos'
   const vgMeses = filtros.vgMeses || []
-  const mesSel = vgMeses.length === 1 ? String(vgMeses[0]) : 'todos'
   const equipo = filtros.equipo || 'todos'
   const sucursal = filtros.sucursal || 'todas'
   const vgProveedor = filtros.vgProveedor || 'todos'
@@ -51,11 +119,8 @@ export default function FiltroVentasGeneral({ filtros, onChange, sucursales = []
           <option value="2026">2026</option>
         </select>
       </Campo>
-      <Campo label="Mes" info="Filtra al mes seleccionado. En Clientes Perdidos, un mes específico mueve la fecha de corte ('¿quién estaba perdido a esa fecha?'). Independiente del filtro de Mes en Dashboard Táctico.">
-        <select value={mesSel} onChange={e => onChange({ ...filtros, vgMeses: e.target.value === 'todos' ? [] : [Number(e.target.value)] })} style={selectStyle}>
-          <option value="todos">Todos</option>
-          {MESES.map((m, i) => <option key={i + 1} value={i + 1}>{m}</option>)}
-        </select>
+      <Campo label="Mes" info="Filtra a los meses seleccionados (puedes elegir varios a la vez). En Clientes Perdidos, un solo mes mueve la fecha de corte ('¿quién estaba perdido a esa fecha?'); con más de uno se usa el acumulado del año. Independiente del filtro de Mes en Dashboard Táctico.">
+        <MesMultiSelect selected={vgMeses} onChange={meses => onChange({ ...filtros, vgMeses: meses })} />
       </Campo>
 
       <Sep />
