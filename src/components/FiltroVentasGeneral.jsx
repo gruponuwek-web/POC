@@ -179,7 +179,8 @@ export default function FiltroVentasGeneral({ filtros, onChange, sucursales = []
       background: '#fff', borderRadius: 10, padding: '12px 16px',
       marginBottom: 16, border: '1.5px solid #e2e8f0',
       boxShadow: '0 1px 4px rgba(0,0,0,.05)',
-      display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'center'
+      display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'center',
+      position: 'sticky', top: 56, zIndex: 150,
     }}>
       <span style={{ fontSize: 11, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '.5px' }}>Filtros</span>
 
