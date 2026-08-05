@@ -192,7 +192,7 @@ export default function FiltroVentasGeneral({ filtros, onChange, sucursales = []
           <option value="2026">2026</option>
         </select>
       </Campo>
-      <Campo label="Mes" info="Filtra a los meses seleccionados (puedes elegir varios a la vez). En Clientes Perdidos, un solo mes mueve la fecha de corte ('¿quién estaba perdido a esa fecha?'); con más de uno se usa el acumulado del año. Independiente del filtro de Mes en Dashboard Táctico.">
+      <Campo label="Mes" info="Filtra a los meses seleccionados (puedes elegir varios a la vez). En Clientes Perdidos, un solo mes muestra solo a quienes cruzan el umbral de 4 meses justo ese mes (última compra hace exactamente 4 meses); con más de uno se usa el acumulado del año. Independiente del filtro de Mes en Dashboard Táctico.">
         <MesMultiSelect selected={vgMeses} onChange={meses => onChange({ ...filtros, vgMeses: meses })} />
       </Campo>
 

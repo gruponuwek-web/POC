@@ -149,8 +149,10 @@ export function computeVG(fact, filtros) {
   // de ese año — no acumulado desde antes. Base = todos los clientes del alcance.
   let perdidos = 0, perdidosTotal = 0
   if (soloMes != null) {
+    // Solo los que cruzan el umbral de 4 meses justo en este mes (última compra hace
+    // exactamente 4 meses) — no el acumulado de todos los que siguen inactivos a esta fecha.
     const corte = refRel - 4
-    cliLast.forEach(rel => { perdidosTotal++; if (rel <= corte) perdidos++ })
+    cliLast.forEach(rel => { perdidosTotal++; if (rel === corte) perdidos++ })
   } else if (año === '2025') {
     const minRel = 1 - 12 - 4, maxRel = 12 - 12 - 4 // año completo Ene–Dic 2025
     cliLast.forEach(rel => { perdidosTotal++; if (rel >= minRel && rel <= maxRel) perdidos++ })
