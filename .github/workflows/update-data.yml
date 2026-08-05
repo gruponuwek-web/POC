@@ -47,4 +47,11 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add src/data/dashboard_data.json public/data/dashboard_data.json docs/data/dashboard_data.json src/data/ventas_general.json public/data/ventas_general.json docs/data/ventas_general.json docs/assets/
           git commit -m "data: actualización automática $(date +'%Y-%m-%d %H:%M') UTC"
-          git push
+          for i in 1 2 3; do
+            git push && exit 0
+            echo "Push rechazado (probablemente otra corrida subió cambios primero) — reintentando ($i/3)..."
+            git pull --rebase origin main
+            sleep 5
+          done
+          echo "No se pudo subir tras 3 intentos." >&2
+          exit 1
