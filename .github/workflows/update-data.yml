@@ -2,8 +2,11 @@ name: Actualizar datos desde Google Sheets
 
 on:
   schedule:
-    # Cada 20 min, 7 AM – 7 PM hora México (UTC-6 → 13:00–01:00 UTC), lunes a viernes
-    - cron: '*/20 13-23,0,1 * * 1-5'
+    # Cada 20 min, 7 AM – 7 PM hora México (UTC-6 → 13:00–01:00 UTC), lunes a viernes.
+    # Se dispara en el minuto :07/:27/:47 (no en :00/:20/:40) para evitar los picos de
+    # carga de GitHub Actions en los minutos redondos, donde los "schedule" triggers se
+    # retrasan o se saltan con más frecuencia (comportamiento documentado por GitHub).
+    - cron: '7-59/20 13-23,0,1 * * 1-5'
   workflow_dispatch: # También permite correrlo manualmente desde GitHub
 
 jobs:
