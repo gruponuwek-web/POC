@@ -71,7 +71,7 @@ function setLoading(btnId, loading, text) {
   const btn = document.getElementById(btnId)
   if (!btn) return
   btn.disabled = loading
-  btn.textContent = loading ? '⏳ Guardando…' : text
+  btn.innerHTML = loading ? '⏳ Guardando…' : text
 }
 
 function navigate(el, page) {
