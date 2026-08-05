@@ -760,7 +760,7 @@ export default function BalancedScorecard({ data }) {
                   <span style={{ fontSize:20, fontWeight:900,
                     color: totalScore >= 80 ? '#4ade80' : totalScore >= 55 ? '#fbbf24' : '#f87171',
                     fontVariantNumeric:'tabular-nums' }}>
-                    {totalCal.toFixed(1)}%
+                    {totalScore.toFixed(1)}%
                   </span>
                 </td>
               </tr>
