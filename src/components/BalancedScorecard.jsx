@@ -475,10 +475,8 @@ export default function BalancedScorecard({ data }) {
       const m4_1a = M['4.1a']?.meta ?? 9
       kpis.push({ ratio: perdidos !== null ? (perdidos <= m4_1a ? 100 : (m4_1a / perdidos) * 100) : null, peso: 6 })
 
-      // 4.1b visitas de atención
-      const visitas = data.visitas_atencion_por_mes?.[m] ?? null
-      const m4_1b   = M['4.1b']?.meta ?? null
-      kpis.push({ ratio: visitas !== null && m4_1b ? (visitas / m4_1b) * 100 : null, peso: 5 })
+      // 4.1b visitas de atención — oculto en el BSC (ver oculto:true en PERSPECTIVAS), no se
+      // incluye en el score histórico para que ambos cálculos queden consistentes.
 
       // 4.2a cobertura cartera
       const atendidos = data.kpi_agentes?.reduce((s, a) => s + (a.clientes_ids_por_mes?.[m]?.length || 0), 0) ?? null
@@ -600,10 +598,10 @@ export default function BalancedScorecard({ data }) {
                 {p.icon} {p.nombre}
               </div>
               <div style={{ fontSize:21, fontWeight:900, color, lineHeight:1, fontVariantNumeric:'tabular-nums' }}>
-                {pCal.toFixed(1)}%
+                {(totalPeso > 0 ? pCal / totalPeso * 100 : 0).toFixed(1)}%
               </div>
               <div style={{ fontSize:9.5, color, opacity:.6, marginTop:2 }}>
-                {pPeso.toFixed(0)}% del BSC
+                {(totalPeso > 0 ? pPeso / totalPeso * 100 : 0).toFixed(0)}% del BSC
               </div>
               <div style={{ display:'flex', flexWrap:'wrap', gap:3, marginTop:8 }}>
                 {p.kpis.map(k => {
@@ -688,7 +686,7 @@ export default function BalancedScorecard({ data }) {
                               <div style={{ marginTop:6, display:'inline-block', padding:'2px 8px', borderRadius:10,
                                 background: persp.hdrColor + '22', fontSize:10.5, fontWeight:700,
                                 color: persp.hdrColor, letterSpacing:'.4px' }}>
-                                {pPeso}% del BSC
+                                {(totalPeso > 0 ? pPeso / totalPeso * 100 : 0).toFixed(0)}% del BSC
                               </div>
                             </td>
                           )}
@@ -846,7 +844,7 @@ export default function BalancedScorecard({ data }) {
                         <div style={{ height:'100%', width:`${Math.min(pScore,100)}%`, background:pc, borderRadius:2 }} />
                       </div>
                       <span style={{ fontSize:9.5, fontWeight:700, color:pc, fontVariantNumeric:'tabular-nums', minWidth:28, textAlign:'right', flexShrink:0 }}>
-                        {pCal.toFixed(1)}%
+                        {(totalPeso > 0 ? pCal / totalPeso * 100 : 0).toFixed(1)}%
                       </span>
                     </div>
                   )
