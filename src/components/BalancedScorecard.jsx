@@ -601,7 +601,7 @@ export default function BalancedScorecard({ data }) {
                 {(totalPeso > 0 ? pCal / totalPeso * 100 : 0).toFixed(1)}%
               </div>
               <div style={{ fontSize:9.5, color, opacity:.6, marginTop:2 }}>
-                {(totalPeso > 0 ? pPeso / totalPeso * 100 : 0).toFixed(0)}% del BSC
+                {(totalPeso > 0 ? pPeso / totalPeso * 100 : 0).toFixed(1)}% del BSC
               </div>
               <div style={{ display:'flex', flexWrap:'wrap', gap:3, marginTop:8 }}>
                 {p.kpis.map(k => {
@@ -686,7 +686,7 @@ export default function BalancedScorecard({ data }) {
                               <div style={{ marginTop:6, display:'inline-block', padding:'2px 8px', borderRadius:10,
                                 background: persp.hdrColor + '22', fontSize:10.5, fontWeight:700,
                                 color: persp.hdrColor, letterSpacing:'.4px' }}>
-                                {(totalPeso > 0 ? pPeso / totalPeso * 100 : 0).toFixed(0)}% del BSC
+                                {(totalPeso > 0 ? pPeso / totalPeso * 100 : 0).toFixed(1)}% del BSC
                               </div>
                             </td>
                           )}
