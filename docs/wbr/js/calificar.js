@@ -413,7 +413,7 @@ function _accionCardHtml(num, a = {}) {
   const twId = 'tw' + (++_acompCounter)
   const initVal = a.Acompanamiento || COORD
   const opts = (list, sel) => list.map(o => `<option${o===sel?' selected':''}>${o}</option>`).join('')
-  const clases = ['Prospección','Fidelización','BCG','Recuperación']
+  const clases = ['Prospección','Crecimiento','Recuperación']
   const prios  = ['Alta','Media','Baja']
   return `
     <div class="accion-card">
