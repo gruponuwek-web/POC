@@ -29,12 +29,12 @@ const PERSPECTIVAS = [
     id: 'clientes', nombre: 'Incrementar clientes',
     icon: '👥', hdrColor: '#1a6cf0', hdrBg: '#eff6ff',
     kpis: [
-      { cod:'4.1a', desc:'Clientes perdidos',              unidad:'#', peso:6, meta:'9',   actual:'6',      peor:'24',  ratio:100   },
+      { cod:'4.1a', desc:'Clientes perdidos',              unidad:'#', peso:7, meta:'9',   actual:'6',      peor:'24',  ratio:100   },
       { cod:'4.1b', desc:'Visitas de atención a clientes', unidad:'#', peso:5, meta:null,  actual:'3',      peor:null,  ratio:null, oculto:true },
-      { cod:'4.2a', desc:'Cobertura de cartera total',     unidad:'%', peso:6, meta:'55%', actual:'50.79%', peor:'45%', ratio:92.35 },
-      { cod:'4.2b', desc:'Cobertura de clientes nuevos',   unidad:'%', peso:5, meta:null,  actual:'33.53%', peor:null,  ratio:null  },
-      { cod:'4.3a', desc:'Nuevos clientes',                unidad:'#', peso:5, meta:'25',  actual:'16',     peor:null,  ratio:64    },
-      { cod:'4.3b', desc:'Clientes recuperados',           unidad:'#', peso:3, meta:null,  actual:'4',      peor:null,  ratio:null  },
+      { cod:'4.2a', desc:'Cobertura de cartera total',     unidad:'%', peso:7, meta:'55%', actual:'50.79%', peor:'45%', ratio:92.35 },
+      { cod:'4.2b', desc:'Cobertura de clientes nuevos',   unidad:'%', peso:6, meta:null,  actual:'33.53%', peor:null,  ratio:null  },
+      { cod:'4.3a', desc:'Nuevos clientes',                unidad:'#', peso:6, meta:'25',  actual:'16',     peor:null,  ratio:64    },
+      { cod:'4.3b', desc:'Clientes recuperados',           unidad:'#', peso:4, meta:null,  actual:'4',      peor:null,  ratio:null  },
     ]
   },
   {
@@ -473,29 +473,31 @@ export default function BalancedScorecard({ data }) {
       // 4.1a clientes perdidos (inverso: menos = mejor)
       const perdidos = data.tabla_clientes?.filter(c => _esPerdido(c) && c.ultima_compra && relMesKPI(c.ultima_compra) === m - 4).length ?? null
       const m4_1a = M['4.1a']?.meta ?? 9
-      kpis.push({ ratio: perdidos !== null ? (perdidos <= m4_1a ? 100 : (m4_1a / perdidos) * 100) : null, peso: 6 })
+      kpis.push({ ratio: perdidos !== null ? (perdidos <= m4_1a ? 100 : (m4_1a / perdidos) * 100) : null, peso: 7 })
 
       // 4.1b visitas de atención — oculto en el BSC (ver oculto:true en PERSPECTIVAS), no se
-      // incluye en el score histórico para que ambos cálculos queden consistentes.
+      // incluye en el score histórico para que ambos cálculos queden consistentes. Su peso (5)
+      // se repartió entre las demás KPIs de "Incrementar clientes" (ver PERSPECTIVAS) para que
+      // el total de pesos siga sumando 100 en vez de 95.
 
       // 4.2a cobertura cartera
       const atendidos = data.kpi_agentes?.reduce((s, a) => s + (a.clientes_ids_por_mes?.[m]?.length || 0), 0) ?? null
       const cob = cartera > 0 && atendidos !== null ? (atendidos / cartera) * 100 : null
-      kpis.push({ ratio: cob !== null ? (cob / (M['4.2a']?.meta ?? 55)) * 100 : null, peso: 6 })
+      kpis.push({ ratio: cob !== null ? (cob / (M['4.2a']?.meta ?? 55)) * 100 : null, peso: 7 })
 
       // 4.2b cobertura nuevos
       const cobNuevos = data.cobertura_nuevos_por_mes?.[m]
-      kpis.push({ ratio: cobNuevos ? (cobNuevos.pct / (M['4.2b']?.meta ?? 50)) * 100 : null, peso: 5 })
+      kpis.push({ ratio: cobNuevos ? (cobNuevos.pct / (M['4.2b']?.meta ?? 50)) * 100 : null, peso: 6 })
 
       // 4.3a nuevos clientes
       const nrMes = data.clientes_nr_por_mes?.find(x => x.mes_num === m)
       const nuevos = nrMes?.[`nuevos_${añoActual}`] ?? null
-      kpis.push({ ratio: nuevos !== null ? (nuevos / (M['4.3a']?.meta ?? 25)) * 100 : null, peso: 5 })
+      kpis.push({ ratio: nuevos !== null ? (nuevos / (M['4.3a']?.meta ?? 25)) * 100 : null, peso: 6 })
 
       // 4.3b recuperados
       const recup  = nrMes?.[`recup_${añoActual}`] ?? null
       const m4_3b  = M['4.3b']?.meta ?? null
-      kpis.push({ ratio: recup !== null && m4_3b ? (recup / m4_3b) * 100 : null, peso: 3 })
+      kpis.push({ ratio: recup !== null && m4_3b ? (recup / m4_3b) * 100 : null, peso: 4 })
 
       // 5.1b incidencias (inverso: menos = mejor)
       const incidencias = data.incidencias_por_mes?.[m] ?? null
