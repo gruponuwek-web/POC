@@ -118,6 +118,18 @@ const AGENTES_COMERCIALES = new Set([
   'ITZEL ZORAIDA HERNANDEZ BARBOSA'
 ]);
 
+// ── Agentes excluidos de Empresa Completa (por el momento) ───────────────────
+// No son agentes reales de venta (ventas directas, movimientos internos, cuentas
+// suspendidas) o se pidió omitirlos temporalmente. Sus filas se ignoran por
+// completo al construir el fact-table de Empresa Completa (buildVentasGeneralFact):
+// no aparecen en el filtro de Agente, ni en KPIs, tablas o gráficas de esa pestaña.
+const AGENTES_EXCLUIDOS_EMPRESA_COMPLETA = new Set([
+  'DIRECTO',
+  'INTERNO',
+  'SUSPENDIDOS',
+  'VANESSA RODRIGUEZ LOPEZ',
+]);
+
 // ── Procesamiento ventas ──────────────────────────────────────────────────────
 function processVentas(rows, año) {
   const result = [];
@@ -188,6 +200,7 @@ function buildVentasGeneralFact(rowsByYear) {
       if (!f || f.getFullYear() !== año) return;
       const mes = f.getMonth() + 1;
       const ag = normAgent(r['NOMBRE AGENTE']);
+      if (AGENTES_EXCLUIDOS_EMPRESA_COMPLETA.has(ag)) return;
       const esCom = AGENTES_COMERCIALES.has(ag);
       const suc = (r['Sucursal'] || 'Pachuca').trim() || 'Pachuca';
       const prov = (r['NOMBRE PROV.'] || '(Sin proveedor)').trim() || '(Sin proveedor)';
