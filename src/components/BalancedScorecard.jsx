@@ -750,13 +750,10 @@ export default function BalancedScorecard({ data }) {
                 <td colSpan={5} style={{ padding:'13px 18px', textAlign:'right', color:'rgba(255,255,255,.6)', fontWeight:600, fontSize:12, letterSpacing:'.5px' }}>
                   SCORE TOTAL BALANCED SCORECARD · {MESES[mes - 1].toUpperCase()} {data?.resumen?.año_actual || ''}
                 </td>
-                <td style={{ padding:'13px 10px', textAlign:'center' }}>
-                  <span style={{ color:'#fff', fontWeight:700, fontSize:13,
-                    background:'rgba(255,255,255,.12)', padding:'4px 12px', borderRadius:6 }}>
-                    {((totalCal / totalPeso) * 100).toFixed(1)}%
-                  </span>
-                </td>
-                <td style={{ padding:'13px 14px' }}>
+                <td colSpan={2} style={{ padding:'10px 14px', textAlign:'center' }}>
+                  <div style={{ fontSize:8.5, color:'rgba(255,255,255,.45)', fontWeight:600, letterSpacing:'.3px', marginBottom:2 }}>
+                    Ponderado por peso · cada KPI recortado 0–100%
+                  </div>
                   <span style={{ fontSize:20, fontWeight:900,
                     color: totalScore >= 80 ? '#4ade80' : totalScore >= 55 ? '#fbbf24' : '#f87171',
                     fontVariantNumeric:'tabular-nums' }}>
