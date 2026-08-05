@@ -30,7 +30,7 @@ const PERSPECTIVAS = [
     icon: '👥', hdrColor: '#1a6cf0', hdrBg: '#eff6ff',
     kpis: [
       { cod:'4.1a', desc:'Clientes perdidos',              unidad:'#', peso:6, meta:'9',   actual:'6',      peor:'24',  ratio:100   },
-      { cod:'4.1b', desc:'Visitas de atención a clientes', unidad:'#', peso:5, meta:null,  actual:'3',      peor:null,  ratio:null  },
+      { cod:'4.1b', desc:'Visitas de atención a clientes', unidad:'#', peso:5, meta:null,  actual:'3',      peor:null,  ratio:null, oculto:true },
       { cod:'4.2a', desc:'Cobertura de cartera total',     unidad:'%', peso:6, meta:'55%', actual:'50.79%', peor:'45%', ratio:92.35 },
       { cod:'4.2b', desc:'Cobertura de clientes nuevos',   unidad:'%', peso:5, meta:null,  actual:'33.53%', peor:null,  ratio:null  },
       { cod:'4.3a', desc:'Nuevos clientes',                unidad:'#', peso:5, meta:'25',  actual:'16',     peor:null,  ratio:64    },
@@ -392,22 +392,22 @@ export default function BalancedScorecard({ data }) {
     const liveMap = { ventas: ventasLive, productos: productosLive, clientes: clientesLive, entregas: entregasLive, oportunidades: oportunidadesLive }
     return PERSPECTIVAS.map(p => {
       const live = liveMap[p.id]
-      if (!live) return p
-      return {
-        ...p,
-        kpis: p.kpis.map(k => {
-          const live = liveMap[p.id]?.[k.cod]
-          if (!live) return k
-          // Si hay fuente live para este KPI, sus valores mandan (null = sin dato)
-          return {
-            ...k,
-            actual: live.actual,
-            ratio:  live.ratio,
-            ...(live.meta  ? { meta:  live.meta  } : {}),
-            ...(live.peor  ? { peor:  live.peor  } : {}),
-          }
-        }),
-      }
+      // Los KPIs marcados oculto:true se excluyen aquí, en el único punto donde se arma
+      // `perspectivas` — así quedan fuera de la tabla, los indicadores, las alertas y el
+      // cálculo de peso/calificación en todo el archivo sin tocar cada uso por separado.
+      const kpis = p.kpis.filter(k => !k.oculto).map(k => {
+        const liveK = live?.[k.cod]
+        if (!liveK) return k
+        // Si hay fuente live para este KPI, sus valores mandan (null = sin dato)
+        return {
+          ...k,
+          actual: liveK.actual,
+          ratio:  liveK.ratio,
+          ...(liveK.meta  ? { meta:  liveK.meta  } : {}),
+          ...(liveK.peor  ? { peor:  liveK.peor  } : {}),
+        }
+      })
+      return { ...p, kpis }
     })
   }, [ventasLive, productosLive, clientesLive, entregasLive, oportunidadesLive])
 
@@ -879,7 +879,7 @@ export default function BalancedScorecard({ data }) {
       </div>
 
       <p style={{ marginTop:10, fontSize:11, color:'#94a3b8', textAlign:'right' }}>
-        * Todos los KPIs conectados a Google Sheets. Metas provisionales (es_prueba): 4.1b, 4.3b, 5.1b y "Nuevas oportunidades" (7.1a–7.1d).
+        * Todos los KPIs conectados a Google Sheets. Metas provisionales (es_prueba): 4.3b, 5.1b y "Nuevas oportunidades" (7.1a–7.1d).
       </p>
     </div>
   )
