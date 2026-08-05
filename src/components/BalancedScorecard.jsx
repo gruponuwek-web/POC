@@ -729,7 +729,7 @@ export default function BalancedScorecard({ data }) {
                           <td style={{ padding:'7px 14px', width:110 }}>
                             <div style={{ display:'flex', flexDirection:'column', gap:3 }}>
                               <span style={{ fontSize:12.5, fontWeight:700, color: kpiCal > 0 ? cfg.color : '#cbd5e1', fontVariantNumeric:'tabular-nums' }}>
-                                {kpiCal.toFixed(1)}%
+                                {(totalPeso > 0 ? kpiCal / totalPeso * 100 : 0).toFixed(1)}%
                               </span>
                               <div style={{ height:3, background:'#f1f5f9', borderRadius:2 }}>
                                 <div style={{ height:'100%', width:`${kpi.peso > 0 ? Math.min((kpiCal/kpi.peso)*100, 100) : 0}%`,
