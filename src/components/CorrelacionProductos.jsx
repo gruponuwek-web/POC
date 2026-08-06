@@ -21,8 +21,9 @@ export default function CorrelacionProductos({ ap, filtros }) {
     const matrix = chord.matrix
     const grado = chord.grado || chord.productos.map((_, i) => matrix[i].reduce((s, v) => s + v, 0))
 
+    const phiM = chord.phi
     const pares = []
-    for (let i = 0; i < n; i++) for (let j = i + 1; j < n; j++) { const v = matrix[i][j]; if (v > 0) pares.push({ i, j, v }) }
+    for (let i = 0; i < n; i++) for (let j = i + 1; j < n; j++) { const v = matrix[i][j]; if (v > 0) pares.push({ i, j, v, phi: phiM ? phiM[i][j] : null }) }
     pares.sort((a, b) => b.v - a.v)
     const top = pares.slice(0, 40)
     const maxV = top.length ? top[0].v : 1
@@ -90,7 +91,7 @@ export default function CorrelacionProductos({ ap, filtros }) {
             return (
               <line key={idx} x1={a.x.toFixed(1)} y1={a.y.toFixed(1)} x2={b.x.toFixed(1)} y2={b.y.toFixed(1)}
                 stroke={LINK_C} strokeWidth={(0.5 + strength * 2.4).toFixed(2)} opacity={(0.35 + strength * 0.55).toFixed(2)}>
-                <title>{titulo(productos[p.i])} + {titulo(productos[p.j])}: {p.v} folios en común</title>
+                <title>{titulo(productos[p.i])} + {titulo(productos[p.j])}: {p.v} folios en común{p.phi != null ? ` · φ ${p.phi.toFixed(2)}` : ''}</title>
               </line>
             )
           })}
@@ -120,6 +121,11 @@ export default function CorrelacionProductos({ ap, filtros }) {
               <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 11, padding: '3px 0', borderBottom: '1px solid #f1f5f9' }}>
                 <span style={{ color: '#94a3b8', fontWeight: 700, width: 14, flexShrink: 0 }}>{i + 1}</span>
                 <span style={{ flex: 1, color: '#334155', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{titulo(productos[p.i])} + {titulo(productos[p.j])}</span>
+                {p.phi != null && (
+                  <span style={{ color: p.phi >= 0.3 ? '#15803d' : p.phi < 0 ? '#b91c1c' : '#94a3b8', fontWeight: 700, flexShrink: 0, fontVariantNumeric: 'tabular-nums' }} title="Coeficiente de correlación φ (Pearson binario): -1 a 1, positivo = se compran juntos más de lo esperado por azar, negativo = sustitutos">
+                    φ {p.phi.toFixed(2)}
+                  </span>
+                )}
                 <span style={{ color: HUB_C, fontWeight: 700, flexShrink: 0 }}>{p.v} folios</span>
               </div>
             ))}

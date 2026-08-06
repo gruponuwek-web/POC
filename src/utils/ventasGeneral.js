@@ -305,6 +305,7 @@ export function computeProductAnalytics(fact, filtros) {
   // --- Correlación: red de co-ocurrencia de productos, respeta los 6 filtros ---
   const prodTotal = new Map()      // proi -> nº de folios (filtrados) en que aparece
   const folioItemsList = []        // canastas filtradas (arrays de proi), para co-ocurrencia
+  let totalFoliosAlcance = 0       // N: folios en el alcance (año/mes/sucursal/equipo/agente), para el coeficiente φ
   for (let i = 0; i < foliosArr.length; i++) {
     const fo = foliosArr[i]
     const ry = fo[0], rm = fo[1], si = fo[2], eb = fo[3], items = fo[6], vi = fo[7]
@@ -315,6 +316,7 @@ export function computeProductAnalytics(fact, filtros) {
     if (equipo === 'comercial' && eb !== 0) continue
     if (equipo === 'resto' && eb !== 1) continue
     if (agenteSet && !agenteSet.has(dims.vendedores[vi].nombre)) continue
+    totalFoliosAlcance++
 
     const filtItems = (provIdx < 0 && lineaIdx < 0) ? items
       : items.filter(([, li, pi]) => (lineaIdx < 0 || li === lineaIdx) && (provIdx < 0 || pi === provIdx))
@@ -334,7 +336,24 @@ export function computeProductAnalytics(fact, filtros) {
     }
   })
   const grado = matrix.map(row => row.reduce((s, v) => s + v, 0))
-  const chord = { productos: topProds.map(proi => dims.productos[proi]), matrix, grado }
+
+  // Coeficiente φ (Phi) por par: correlación de Pearson sobre presencia/ausencia del producto
+  // en el folio. A diferencia del conteo de co-ocurrencia (siempre ≥0), φ va de -1 a 1 y puede
+  // salir negativo cuando dos productos rara vez se compran juntos (productos sustitutos).
+  const presentes = topProds.map(proi => prodTotal.get(proi) || 0) // n1_ de cada producto
+  const N = totalFoliosAlcance
+  const phi = Array.from({ length: n }, () => new Array(n).fill(0))
+  for (let a = 0; a < n; a++) {
+    for (let b = a + 1; b < n; b++) {
+      const n11 = matrix[a][b], nA = presentes[a], nB = presentes[b]
+      const n10 = nA - n11, n01 = nB - n11, n00 = N - n11 - n10 - n01
+      const denom = Math.sqrt(nA * (N - nA) * nB * (N - nB))
+      const val = denom > 0 ? (n11 * n00 - n10 * n01) / denom : 0
+      phi[a][b] = val; phi[b][a] = val
+    }
+  }
+
+  const chord = { productos: topProds.map(proi => dims.productos[proi]), matrix, grado, phi, n: N }
 
   return { sunburst, densidad, chord }
 }
