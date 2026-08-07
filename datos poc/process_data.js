@@ -208,7 +208,11 @@ function buildVentasGeneralFact(rowsByYear) {
       const prod = (r['DESCRIPCION'] || '(Sin descripción)').trim() || '(Sin descripción)';
       const cliNom = normClient(r['NOMBRE CLIENTE']);
       const cliNum = (r['CLIENTE'] || '').trim();
-      const cliKey = cliNum || cliNom;
+      // Se prioriza el nombre sobre el número: cada sucursal numera a sus clientes por
+      // separado (1, 2, 3...), así que el mismo número puede pertenecer a clientes distintos
+      // en sucursales distintas (ej. CLIENTE=18 es "Universidad La Salle" en Pachuca pero una
+      // persona totalmente distinta en Querétaro) — el nombre normalizado no choca así.
+      const cliKey = cliNom || cliNum;
       const imp = parseNum(r['IMPORTE']);
       const cost = Math.abs(parseNum(r['COSTO TOTAL']));
       const cant = parseNum(r['CANTIDAD']) || 0;
