@@ -148,14 +148,14 @@ export default function TablasVentasGeneral({ g, filtros }) {
         extra={<>
           <span style={{ fontSize: 11, color: 'rgba(255,255,255,.45)', fontWeight: 500 }}>{clientes.length} clientes</span>
           <BotonCSV onClick={() => exportCSV('clientes_general.csv',
-            ['#', 'Cliente', 'Núm', 'Agente', 'Venta', '% del Total'],
-            clientes.map((r, i) => [i + 1, `"${titulo(r.nombre)}"`, r.num, `"${titulo(r.agente)}"`, r.venta, (totalVentaCli > 0 ? r.venta / totalVentaCli * 100 : 0).toFixed(1) + '%']))} />
+            ['#', 'Cliente', 'Núm', 'Agente', 'Venta', '% del Total', 'Operaciones', 'Margen', 'Margen %'],
+            clientes.map((r, i) => [i + 1, `"${titulo(r.nombre)}"`, r.num, `"${titulo(r.agente)}"`, r.venta, (totalVentaCli > 0 ? r.venta / totalVentaCli * 100 : 0).toFixed(1) + '%', r.n, r.venta - r.costo, mgPct(r).toFixed(1) + '%']))} />
         </>}
         footer={<VerMas total={clientes.length} limite={limC} onMas={() => setLimC(l => l + 15)} />}>
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead><tr style={{ background: '#0f1f3d' }}>
             <th style={{ ...thStyle, textAlign: 'center' }}>#</th>
-            {['Cliente', 'Agente', 'Venta', '% del total'].map(h => <th key={h} style={thStyle}>{h}</th>)}
+            {['Cliente', 'Agente', 'Venta', '% del total', 'Operaciones', 'Margen $', 'Margen %'].map(h => <th key={h} style={thStyle}>{h}</th>)}
           </tr></thead>
           <tbody>
             {clientes.slice(0, limC).map((r, i) => {
@@ -163,15 +163,18 @@ export default function TablasVentasGeneral({ g, filtros }) {
               return (
                 <tr key={(r.num || '') + r.nombre} style={{ background: i % 2 === 0 ? '#fff' : '#f8fafc' }}>
                   <td style={{ ...tdStyle, textAlign: 'center', fontWeight: 700, color: '#94a3b8', fontSize: 11 }}>{i + 1}</td>
-                  <td style={{ ...tdStyle, fontWeight: 700, color: '#0f1f3d', maxWidth: 320, overflow: 'hidden', textOverflow: 'ellipsis' }}>{titulo(r.nombre)}</td>
-                  <td style={{ ...tdStyle, color: '#64748b', maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis' }}>{r.agente ? titulo(r.agente) : '—'}</td>
+                  <td style={{ ...tdStyle, fontWeight: 700, color: '#0f1f3d', maxWidth: 260, overflow: 'hidden', textOverflow: 'ellipsis' }}>{titulo(r.nombre)}</td>
+                  <td style={{ ...tdStyle, color: '#64748b', maxWidth: 180, overflow: 'hidden', textOverflow: 'ellipsis' }}>{r.agente ? titulo(r.agente) : '—'}</td>
                   <td style={{ ...tdStyle, fontWeight: 700 }}>{fmt.moneda(r.venta)}</td>
-                  <td style={{ ...tdStyle, minWidth: 140 }}>
+                  <td style={{ ...tdStyle, minWidth: 120 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
                       <div style={{ flex: 1, background: '#e2e8f0', borderRadius: 4, height: 6, overflow: 'hidden' }}><div style={{ width: `${r.venta / maxCli * 100}%`, height: '100%', background: '#34d399' }} /></div>
                       <span style={{ fontSize: 11, color: '#64748b', fontWeight: 600, width: 34, textAlign: 'right', flexShrink: 0 }}>{pct.toFixed(1)}%</span>
                     </div>
                   </td>
+                  <td style={{ ...tdStyle, textAlign: 'center' }}>{fmt.num(r.n)}</td>
+                  <td style={{ ...tdStyle, color: '#15803d' }}>{fmt.moneda(r.venta - r.costo)}</td>
+                  <td style={tdStyle}><span style={{ background: semBg(mgPct(r)), color: semC(mgPct(r)), padding: '2px 8px', borderRadius: 10, fontSize: 11, fontWeight: 700 }}>{mgPct(r).toFixed(1)}%</span></td>
                 </tr>
               )
             })}
