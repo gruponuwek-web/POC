@@ -1,3 +1,21 @@
+// Histograma simple: cuenta cuántos valores caen en cada uno de `nBins` intervalos iguales
+// dentro de [min, max]. Los valores deben venir en el mismo espacio que se va a graficar
+// (ya transformado a log si aplica), para alinear las barras con la curva KDE.
+export function histogram(values, min, max, nBins) {
+  const vals = (values || []).filter(v => Number.isFinite(v))
+  const span = Math.max(max - min, 1e-9)
+  const w = span / nBins
+  const bins = Array.from({ length: nBins }, (_, i) => ({ x0: min + i * w, x1: min + (i + 1) * w, count: 0 }))
+  vals.forEach(v => {
+    if (v < min || v > max) return
+    let idx = Math.floor((v - min) / w)
+    if (idx >= nBins) idx = nBins - 1
+    if (idx < 0) idx = 0
+    bins[idx].count++
+  })
+  return bins
+}
+
 // Estimación de densidad por kernel (KDE) simple, con ancho de banda de Silverman.
 export function kde(values, { nPoints = 60, bwMult = 1 } = {}) {
   const vals = (values || []).filter(v => Number.isFinite(v) && v >= 0)
