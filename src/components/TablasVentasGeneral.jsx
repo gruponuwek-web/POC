@@ -110,14 +110,14 @@ export default function TablasVentasGeneral({ g, filtros }) {
         extra={<>
           <span style={{ fontSize: 11, color: 'rgba(255,255,255,.45)', fontWeight: 500 }}>{proveedores.length} proveedores</span>
           <BotonCSV onClick={() => exportCSV('proveedores_general.csv',
-            ['#', 'Proveedor', 'Venta', '% del Total', 'Operaciones', 'Margen', 'Margen %'],
-            proveedores.map((r, i) => [i + 1, `"${titulo(r.nombre)}"`, r.venta, (totalVentaProv > 0 ? r.venta / totalVentaProv * 100 : 0).toFixed(1) + '%', r.n, r.venta - r.costo, mgPct(r).toFixed(1) + '%']))} />
+            ['#', 'Proveedor', 'Venta', '% del Total', 'Operaciones', 'Cantidad', 'Margen', 'Margen %'],
+            proveedores.map((r, i) => [i + 1, `"${titulo(r.nombre)}"`, r.venta, (totalVentaProv > 0 ? r.venta / totalVentaProv * 100 : 0).toFixed(1) + '%', r.n, r.cant, r.venta - r.costo, mgPct(r).toFixed(1) + '%']))} />
         </>}
         footer={<VerMas total={proveedores.length} limite={limP} onMas={() => setLimP(l => l + 15)} />}>
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead><tr style={{ background: '#0f1f3d' }}>
             <th style={{ ...thStyle, textAlign: 'center' }}>#</th>
-            {['Proveedor', 'Venta', '% del total', 'Operaciones', 'Margen $', 'Margen %'].map(h => <th key={h} style={thStyle}>{h}</th>)}
+            {['Proveedor', 'Venta', '% del total', 'Operaciones', 'Cantidad', 'Margen $', 'Margen %'].map(h => <th key={h} style={thStyle}>{h}</th>)}
           </tr></thead>
           <tbody>
             {proveedores.slice(0, limP).map((r, i) => {
@@ -134,6 +134,7 @@ export default function TablasVentasGeneral({ g, filtros }) {
                     </div>
                   </td>
                   <td style={{ ...tdStyle, textAlign: 'center' }}>{fmt.num(r.n)}</td>
+                  <td style={{ ...tdStyle, textAlign: 'center' }}>{fmt.num(r.cant)}</td>
                   <td style={{ ...tdStyle, color: '#15803d' }}>{fmt.moneda(r.venta - r.costo)}</td>
                   <td style={tdStyle}><span style={{ background: semBg(mgPct(r)), color: semC(mgPct(r)), padding: '2px 8px', borderRadius: 10, fontSize: 11, fontWeight: 700 }}>{mgPct(r).toFixed(1)}%</span></td>
                 </tr>

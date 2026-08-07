@@ -39,7 +39,7 @@ export function computeVG(fact, filtros) {
   for (let i = 0; i < rows.length; i++) {
     const r = rows[i]
     const ry = r[0], rm = r[1], si = r[2], pi = r[3], li = r[4], vi = r[6], ci = r[7]
-    const venta = r[8], costo = r[9], n = r[10]
+    const venta = r[8], costo = r[9], n = r[10], cant = r[11]
 
     if (provIdx >= 0 && pi !== provIdx) continue
     if (lineaIdx >= 0 && li !== lineaIdx) continue
@@ -95,8 +95,8 @@ export function computeVG(fact, filtros) {
     let vm = vendMap.get(vi); if (!vm) { vm = { nombre: vend.nombre, equipo: vend.equipo, venta: 0, costo: 0, n: 0 }; vendMap.set(vi, vm) }
     vm.venta += venta; vm.costo += costo; vm.n += n
 
-    let pv = provMap.get(pi); if (!pv) { pv = { nombre: dims.proveedores[pi], venta: 0, costo: 0, n: 0 }; provMap.set(pi, pv) }
-    pv.venta += venta; pv.costo += costo; pv.n += n
+    let pv = provMap.get(pi); if (!pv) { pv = { nombre: dims.proveedores[pi], venta: 0, costo: 0, n: 0, cant: 0 }; provMap.set(pi, pv) }
+    pv.venta += venta; pv.costo += costo; pv.n += n; pv.cant += cant
 
     let cm = cliMap.get(ci); if (!cm) { const c = dims.clientes[ci]; cm = { nombre: c.nombre, num: c.num, venta: 0, costo: 0, n: 0, porVend: new Map() }; cliMap.set(ci, cm) }
     cm.venta += venta; cm.costo += costo; cm.n += n
