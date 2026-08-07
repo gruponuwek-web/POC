@@ -159,6 +159,10 @@ function processVentas(rows, año) {
       mes_nombre: MESES_ES[mesNum - 1],
       cliente_num: r['CLIENTE'] || '',
       cliente_nombre: cliNorm,
+      // Identidad real del cliente: prioriza el nombre porque el número lo numera cada
+      // sucursal por separado y puede repetirse entre personas/empresas distintas (ver
+      // cliKey en buildVentasGeneralFact, mismo criterio para Empresa Completa).
+      cliente_key: cliNorm || (r['CLIENTE'] || '').trim(),
       agente_nombre: AGENTES_COMERCIALES.has(agNorm) ? agNorm : 'SIN AGENTE',
       segmento: r['SEGMENTO'] || '',
       linea: r['DECRIP. LINEA'] || r['DESCRIP. LINEA'] || '',
@@ -395,7 +399,7 @@ function buildClientesSobre3000(ventas) {
   const byMesCli = {};
   ventas.forEach(v => {
     if (v.solo_presencia) return;
-    const cli = v.cliente_num || v.cliente_nombre;
+    const cli = v.cliente_key;
     if (!byMesCli[v.mes_num]) byMesCli[v.mes_num] = {};
     byMesCli[v.mes_num][cli] = (byMesCli[v.mes_num][cli] || 0) + v.importe;
   });
@@ -494,7 +498,7 @@ function buildKPIMensual(ventas, año) {
     byMes[k].ventas += v.importe;
     byMes[k].costo += v.costo;
     byMes[k].tickets.add(v.folio_key);
-    byMes[k].clientes.add(v.cliente_num || v.cliente_nombre);
+    byMes[k].clientes.add(v.cliente_key);
   });
   return Object.values(byMes).sort((a, b) => a.mes_num - b.mes_num).map(m => ({
     ...m, tickets: m.tickets.size, clientes: m.clientes.size,
@@ -517,7 +521,7 @@ function buildKPIAgente(ventas2026, ventas2025, metas, cartera, clientesNR) {
     byAgent[ag].ventas += v.importe;
     byAgent[ag].costo += v.costo;
     if (!v.solo_presencia) byAgent[ag].tickets.add(v.folio_key);
-    byAgent[ag].clientes.add(v.cliente_num || v.cliente_nombre);
+    byAgent[ag].clientes.add(v.cliente_key);
     if (!ventasPorMes[ag]) { ventasPorMes[ag] = {}; costoPorMes[ag] = {}; ticketsPorMes[ag] = {}; clientesPorMes[ag] = {}; }
     ventasPorMes[ag][mes] = (ventasPorMes[ag][mes] || 0) + v.importe;
     costoPorMes[ag][mes]  = (costoPorMes[ag][mes]  || 0) + v.costo;
@@ -526,7 +530,7 @@ function buildKPIAgente(ventas2026, ventas2025, metas, cartera, clientesNR) {
       ticketsPorMes[ag][mes].add(v.folio_key);
     }
     if (!clientesPorMes[ag][mes]) clientesPorMes[ag][mes] = new Set();
-    clientesPorMes[ag][mes].add(v.cliente_num || v.cliente_nombre);
+    clientesPorMes[ag][mes].add(v.cliente_key);
   });
 
   const mesesConVentas = new Set(ventas2026.map(v => v.mes_num));
@@ -543,7 +547,7 @@ function buildKPIAgente(ventas2026, ventas2025, metas, cartera, clientesNR) {
   cartera.forEach(c => {
     const ag = c.agente_nombre;
     if (!carteraByAgent[ag]) carteraByAgent[ag] = new Set();
-    carteraByAgent[ag].add(c.cliente_num || c.cliente_nombre);
+    carteraByAgent[ag].add(c.cliente_key);
   });
 
   const ventas2025ByAgentMes = {};
@@ -615,14 +619,14 @@ function buildKPIAgente(ventas2026, ventas2025, metas, cartera, clientesNR) {
   ventas2026.forEach(v => {
     if (v.solo_presencia) return; // solo visita, no compra real
     if (!AGENTES_COMERCIALES.has(v.agente_nombre)) return;
-    const ag = v.agente_nombre; const k = v.cliente_num || v.cliente_nombre;
+    const ag = v.agente_nombre; const k = v.cliente_key;
     if (!ultimoMesAg[ag]) ultimoMesAg[ag] = {};
     if (ultimoMesAg[ag][k] === undefined || v.mes_num > ultimoMesAg[ag][k]) ultimoMesAg[ag][k] = v.mes_num;
     if (ultimoMesGlobal[k] === undefined || v.mes_num > ultimoMesGlobal[k]) ultimoMesGlobal[k] = v.mes_num;
   });
   ventas2025.forEach(v => {
     if (!AGENTES_COMERCIALES.has(v.agente_nombre)) return;
-    const ag = v.agente_nombre; const k = v.cliente_num || v.cliente_nombre;
+    const ag = v.agente_nombre; const k = v.cliente_key;
     const mesRel = v.mes_num - 12; // dic2025=0, nov=-1, ... ene=-11
     if (!ultimoMesAg[ag]) ultimoMesAg[ag] = {};
     if (ultimoMesAg[ag][k] === undefined || mesRel > ultimoMesAg[ag][k]) ultimoMesAg[ag][k] = mesRel;
@@ -633,7 +637,7 @@ function buildKPIAgente(ventas2026, ventas2025, metas, cartera, clientesNR) {
   const clientesPorMes2025 = {};
   ventas2025.forEach(v => {
     if (!AGENTES_COMERCIALES.has(v.agente_nombre)) return;
-    const ag = v.agente_nombre; const k = v.cliente_num || v.cliente_nombre;
+    const ag = v.agente_nombre; const k = v.cliente_key;
     if (!cli2025ByAgent[ag]) cli2025ByAgent[ag] = new Set();
     cli2025ByAgent[ag].add(k);
     if (!clientesPorMes2025[ag]) clientesPorMes2025[ag] = {};
@@ -645,7 +649,7 @@ function buildKPIAgente(ventas2026, ventas2025, metas, cartera, clientesNR) {
   const ultimoMes25Ag = {};
   ventas2025.forEach(v => {
     if (!AGENTES_COMERCIALES.has(v.agente_nombre)) return;
-    const ag = v.agente_nombre; const k = v.cliente_num || v.cliente_nombre;
+    const ag = v.agente_nombre; const k = v.cliente_key;
     if (!ultimoMes25Ag[ag]) ultimoMes25Ag[ag] = {};
     if (!ultimoMes25Ag[ag][k] || v.mes_num > ultimoMes25Ag[ag][k]) ultimoMes25Ag[ag][k] = v.mes_num;
   });
@@ -728,7 +732,7 @@ function buildClienteTable(ventas2026, ventas2025, cartera, clientesNR) {
   // ── Paso 1: acumular datos de 2026 ──────────────────────────────────────────
   const byClient = {};
   ventas2026.forEach(v => {
-    const key = v.cliente_num || v.cliente_nombre;
+    const key = v.cliente_key;
     if (!byClient[key]) byClient[key] = {
       cliente_num: v.cliente_num, cliente_nombre: v.cliente_nombre, agente: v.agente_nombre,
       ventas_2026: 0, costo_2026: 0, tickets_2026: new Set(), meses_activos_2026: new Set(),
@@ -750,7 +754,7 @@ function buildClienteTable(ventas2026, ventas2025, cartera, clientesNR) {
   const v25ultima = {};
   const v25meses = {};
   ventas2025.forEach(v => {
-    const key = v.cliente_num || v.cliente_nombre;
+    const key = v.cliente_key;
     v25ventas[key] = (v25ventas[key] || 0) + v.importe;
     if (!v.solo_presencia) {
       const fd = new Date(v.fecha);
@@ -767,7 +771,7 @@ function buildClienteTable(ventas2026, ventas2025, cartera, clientesNR) {
     ultima_compra_2026: null, ultima_compra_2025: null
   });
   ventas2025.forEach(v => {
-    const key = v.cliente_num || v.cliente_nombre;
+    const key = v.cliente_key;
     if (!byClient[key]) byClient[key] = clienteRef(v.cliente_num, v.cliente_nombre, v.agente_nombre);
   });
 
@@ -934,16 +938,22 @@ async function main() {
 
   const cartera = rawCartera
     .filter(r => r['Agente'] && r['NOMBRE'] && AGENTES_COMERCIALES.has(normAgent(r['Agente'])))
-    .map((r, i) => ({ id: `C${i+1}`, agente_nombre: normAgent(r['Agente']), cliente_num: r['NUM'] || '', cliente_nombre: normClient(r['NOMBRE']) }));
+    .map((r, i) => {
+      const num = r['NUM'] || '', nombre = normClient(r['NOMBRE']);
+      return { id: `C${i+1}`, agente_nombre: normAgent(r['Agente']), cliente_num: num, cliente_nombre: nombre, cliente_key: nombre || num };
+    });
 
   const clientesNR = rawCliNR
     .filter(r => r['Nombre'])
-    .map((r, i) => ({
-      id: `CNR${i+1}`, sucursal: r['Sucursal'] || '', cliente_num: (r['Id'] || '').replace(/,/g, '').trim(),
-      cliente_nombre: normClient(r['Nombre']), fecha_alta: r['Fecha de alta'] || '',
+    .map((r, i) => {
+      const num = (r['Id'] || '').replace(/,/g, '').trim(), nombre = normClient(r['Nombre']);
+      return {
+      id: `CNR${i+1}`, sucursal: r['Sucursal'] || '', cliente_num: num,
+      cliente_nombre: nombre, cliente_key: nombre || num, fecha_alta: r['Fecha de alta'] || '',
       año: parseInt(r['Año_a']) || 0, mes_num: parseInt(r['Mes_a']) || 0,
       agente_nombre: normAgent(r['Agente']), monto: parseNum(r['Monto']), status: (r['Status_Cli'] || '').trim()
-    }));
+      };
+    });
 
   // ── Estrategia ventas por productos — parsear filas de la hoja ───────────────
   const estratVentasProductos = rawEstratProd
@@ -1058,8 +1068,8 @@ async function main() {
   const agentesConMeta = new Set(metas.filter(m => m.año === AÑO_ACTUAL).map(m => m.agente_nombre));
   const ventaAgentesConMeta = ventas2026c.filter(v => agentesConMeta.has(v.agente_nombre)).reduce((s, v) => s + v.importe, 0);
   const totalTickets2026 = new Set(ventas2026c.map(v => v.folio_key)).size;
-  const totalClientes2026 = new Set(ventas2026c.map(v => v.cliente_num || v.cliente_nombre)).size;
-  const totalCartera = new Set(cartera.map(c => c.cliente_num || c.cliente_nombre)).size;
+  const totalClientes2026 = new Set(ventas2026c.map(v => v.cliente_key)).size;
+  const totalCartera = new Set(cartera.map(c => c.cliente_key)).size;
   // Cruce por ID — igual que buildKPIAgente: si el ID está en ventas se valida
   const _v26IDs  = new Set(ventas2026c.filter(v => v.cliente_num).map(v => v.cliente_num));
   const _v25IDs  = new Set(ventas2025c.filter(v => v.cliente_num).map(v => v.cliente_num));
@@ -1074,9 +1084,9 @@ async function main() {
   const mesMaxDatos = Math.max(...ventas2026c.map(v => v.mes_num));
   const mesCortePerdido = mesMaxDatos - 4;
   const ultimoMes2026 = {};
-  ventas2026c.forEach(v => { const k = v.cliente_num || v.cliente_nombre; if (!ultimoMes2026[k] || v.mes_num > ultimoMes2026[k]) ultimoMes2026[k] = v.mes_num; });
-  const cliCarteraSet = new Set(cartera.map(c => c.cliente_num || c.cliente_nombre));
-  const cli2025Set = new Set(ventas2025c.map(v => v.cliente_num || v.cliente_nombre));
+  ventas2026c.forEach(v => { const k = v.cliente_key; if (!ultimoMes2026[k] || v.mes_num > ultimoMes2026[k]) ultimoMes2026[k] = v.mes_num; });
+  const cliCarteraSet = new Set(cartera.map(c => c.cliente_key));
+  const cli2025Set = new Set(ventas2025c.map(v => v.cliente_key));
   const clientesReferencia = new Set([...cliCarteraSet, ...cli2025Set]);
   const perdidosCount = [...clientesReferencia].filter(c => { const u = ultimoMes2026[c]; return !u || u <= mesCortePerdido; }).length;
 
@@ -1232,12 +1242,12 @@ async function main() {
       const m = v.mes_num;
       if (!global[m]) global[m] = { monto: 0, clientes: new Set() };
       global[m].monto += v.importe;
-      global[m].clientes.add(v.cliente_num || v.cliente_nombre);
+      global[m].clientes.add(v.cliente_key);
       const ag = v.agente_nombre;
       if (!porAgente[ag]) porAgente[ag] = {};
       if (!porAgente[ag][m]) porAgente[ag][m] = { monto: 0, clientes: new Set() };
       porAgente[ag][m].monto += v.importe;
-      porAgente[ag][m].clientes.add(v.cliente_num || v.cliente_nombre);
+      porAgente[ag][m].clientes.add(v.cliente_key);
     });
     const gOut = {}, agOut = {};
     Object.entries(global).forEach(([m, d]) => { gOut[parseInt(m)] = { monto: Math.round(d.monto), clientes: d.clientes.size }; });
