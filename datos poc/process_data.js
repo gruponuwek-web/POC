@@ -182,10 +182,10 @@ function processVentas(rows, año) {
 // (año, mes, sucursal, proveedor, línea, vendedor, cliente) → {venta, costo, n}.
 // Permite filtrar/pivotar en el navegador por cualquier combinación de dimensiones.
 function buildVentasGeneralFact(rowsByYear) {
-  const dSuc = [], dProv = [], dLinea = [], dProd = [], dVend = [], dCli = [];
-  const mSuc = new Map(), mProv = new Map(), mLinea = new Map(), mProd = new Map(), mVend = new Map(), mCli = new Map();
+  const dSuc = [], dProv = [], dLinea = [], dProd = [], dVend = [], dCli = [], dTipo = [];
+  const mSuc = new Map(), mProv = new Map(), mLinea = new Map(), mProd = new Map(), mVend = new Map(), mCli = new Map(), mTipo = new Map();
   const idxSimple = (map, list, key) => { if (map.has(key)) return map.get(key); const i = list.length; map.set(key, i); list.push(key); return i; };
-  const agg = new Map(); // "año|mes|si|pi|li|proi|vi|ci" -> [venta, costo, n, cant]
+  const agg = new Map(); // "año|mes|si|pi|li|proi|vi|ci|ti" -> [venta, costo, n, cant]
 
   // Auxiliares para ticket promedio y clientes perdidos (no dependen de prov/línea)
   const tkCubo = new Map();   // "año|mes|si|eb" -> { tks:Set, v }
@@ -200,6 +200,7 @@ function buildVentasGeneralFact(rowsByYear) {
     rows.forEach(r => {
       const tipo = (r['TIPO DOCUMENTO'] || '').trim();
       if (!tipo) return;
+      const tipoNorm = tipo.toUpperCase();
       const f = parseDate(r['FECHA']);
       if (!f || f.getFullYear() !== año) return;
       const mes = f.getMonth() + 1;
@@ -227,14 +228,15 @@ function buildVentasGeneralFact(rowsByYear) {
       const proi = idxSimple(mProd, dProd, prod);
       let vi = mVend.get(ag); if (vi === undefined) { vi = dVend.length; mVend.set(ag, vi); dVend.push({ nombre: ag, equipo: esCom ? 'comercial' : 'resto' }); }
       let ci = mCli.get(cliKey); if (ci === undefined) { ci = dCli.length; mCli.set(cliKey, ci); dCli.push({ nombre: cliNom, num: cliNum }); }
+      const ti = idxSimple(mTipo, dTipo, tipoNorm);
 
-      const key = `${año}|${mes}|${si}|${pi}|${li}|${proi}|${vi}|${ci}`;
+      const key = `${año}|${mes}|${si}|${pi}|${li}|${proi}|${vi}|${ci}|${ti}`;
       let a = agg.get(key); if (!a) { a = [0, 0, 0, 0]; agg.set(key, a); }
       a[0] += imp; a[1] += cost; a[2] += 1; a[3] += cant;
 
-      // Ticket promedio: tickets únicos por (año, mes, sucursal, equipo, vendedor)
+      // Ticket promedio: tickets únicos por (año, mes, sucursal, equipo, vendedor, tipo documento)
       const eb = esCom ? 0 : 1;
-      const tkKey = `${año}|${mes}|${si}|${eb}|${vi}`;
+      const tkKey = `${año}|${mes}|${si}|${eb}|${vi}|${ti}`;
       let tc = tkCubo.get(tkKey); if (!tc) { tc = { tks: new Set(), v: 0 }; tkCubo.set(tkKey, tc); }
       const folioKey = `${r['FOLIO']}-${r['LETRA']}-${cliNum}`;
       tc.tks.add(folioKey);
@@ -242,7 +244,7 @@ function buildVentasGeneralFact(rowsByYear) {
 
       // Canasta del folio (para densidad de compra y correlación de productos)
       let fo = folioMap.get(folioKey);
-      if (!fo) { fo = { año, mes, si, eb, vi, ci, venta: 0, items: new Map() }; folioMap.set(folioKey, fo); }
+      if (!fo) { fo = { año, mes, si, eb, vi, ci, ti, venta: 0, items: new Map() }; folioMap.set(folioKey, fo); }
       fo.venta += imp;
       fo.items.set(proi, { li, pi });
 
@@ -259,16 +261,16 @@ function buildVentasGeneralFact(rowsByYear) {
 
   const rows = [];
   agg.forEach((v, key) => {
-    const [año, mes, si, pi, li, proi, vi, ci] = key.split('|').map(Number);
-    rows.push([año, mes, si, pi, li, proi, vi, ci, Math.round(v[0]), Math.round(v[1]), v[2], Math.round(v[3])]);
+    const [año, mes, si, pi, li, proi, vi, ci, ti] = key.split('|').map(Number);
+    rows.push([año, mes, si, pi, li, proi, vi, ci, Math.round(v[0]), Math.round(v[1]), v[2], Math.round(v[3]), ti]);
   });
 
-  // Canastas por folio → array compacto [año,mes,si,eb,ci,venta,[[proi,li,pi],...],vi]
+  // Canastas por folio → array compacto [año,mes,si,eb,ci,venta,[[proi,li,pi],...],vi,ti]
   const folios = [];
   folioMap.forEach(fo => {
     const items = [];
     fo.items.forEach((v, proi) => items.push([proi, v.li, v.pi]));
-    folios.push([fo.año, fo.mes, fo.si, fo.eb, fo.ci, Math.round(fo.venta), items, fo.vi]);
+    folios.push([fo.año, fo.mes, fo.si, fo.eb, fo.ci, Math.round(fo.venta), items, fo.vi, fo.ti]);
   });
 
   // Cubo de tickets → { "año|mes|si|eb": {t, v} }
@@ -288,7 +290,7 @@ function buildVentasGeneralFact(rowsByYear) {
   });
 
   return {
-    dims: { sucursales: dSuc, proveedores: dProv, lineas: dLinea, productos: dProd, vendedores: dVend, clientes: dCli },
+    dims: { sucursales: dSuc, proveedores: dProv, lineas: dLinea, productos: dProd, vendedores: dVend, clientes: dCli, tiposDocumento: dTipo },
     rows, folios, ticketsCubo, perdidosCubo, perdidosRegla: MESES_PERDIDO, mesMax2026,
   };
 }

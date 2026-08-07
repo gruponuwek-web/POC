@@ -1,7 +1,7 @@
 // Cómputo pivotable de Ventas General a partir de la tabla de hechos (fact table).
-// fact = { dims:{sucursales,proveedores,lineas,productos,vendedores,clientes},
-//          rows:[[año,mes,si,pi,li,proi,vi,ci,venta,costo,n,cant]],
-//          folios:[[año,mes,si,eb,ci,venta,[[proi,li,pi],...],vi]] }
+// fact = { dims:{sucursales,proveedores,lineas,productos,vendedores,clientes,tiposDocumento},
+//          rows:[[año,mes,si,pi,li,proi,vi,ci,venta,costo,n,cant,ti]],
+//          folios:[[año,mes,si,eb,ci,venta,[[proi,li,pi],...],vi,ti]] }
 // Un solo recorrido produce todos los agregados que necesita la página.
 
 export function computeVG(fact, filtros) {
@@ -15,6 +15,7 @@ export function computeVG(fact, filtros) {
   const sucIdx = (filtros.sucursal && filtros.sucursal !== 'todas') ? dims.sucursales.indexOf(filtros.sucursal) : -1
   const provIdx = (filtros.vgProveedor && filtros.vgProveedor !== 'todos') ? dims.proveedores.indexOf(filtros.vgProveedor) : -1
   const lineaIdx = (filtros.vgLinea && filtros.vgLinea !== 'todas') ? dims.lineas.indexOf(filtros.vgLinea) : -1
+  const tipoIdx = (filtros.vgTipoDocumento && filtros.vgTipoDocumento !== 'todos') ? dims.tiposDocumento.indexOf(filtros.vgTipoDocumento) : -1
 
   // Punto de referencia ("a la fecha de...") para Clientes Perdidos, en la escala relativa
   // 2026=mes, 2025=mes-12. Permite que Año/Mes muevan la fecha de corte de recencia.
@@ -39,10 +40,11 @@ export function computeVG(fact, filtros) {
   for (let i = 0; i < rows.length; i++) {
     const r = rows[i]
     const ry = r[0], rm = r[1], si = r[2], pi = r[3], li = r[4], vi = r[6], ci = r[7]
-    const venta = r[8], costo = r[9], n = r[10], cant = r[11]
+    const venta = r[8], costo = r[9], n = r[10], cant = r[11], ti = r[12]
 
     if (provIdx >= 0 && pi !== provIdx) continue
     if (lineaIdx >= 0 && li !== lineaIdx) continue
+    if (tipoIdx >= 0 && ti !== tipoIdx) continue
     const vend = dims.vendedores[vi]
     const esCom = vend.equipo === 'comercial'
     if (equipo === 'comercial' && !esCom) continue
@@ -128,7 +130,7 @@ export function computeVG(fact, filtros) {
   let tkVenta = 0, tkCount = 0
   if (fact.ticketsCubo) {
     for (const k in fact.ticketsCubo) {
-      const [ry, rm, si, eb, vi] = k.split('|').map(Number)
+      const [ry, rm, si, eb, vi, ti] = k.split('|').map(Number)
       if (año === '2025' && ry !== 2025) continue
       if (año === '2026' && ry !== 2026) continue
       if (mesesSet && !mesesSet.has(rm)) continue
@@ -136,6 +138,7 @@ export function computeVG(fact, filtros) {
       if (equipo === 'comercial' && eb !== 0) continue
       if (equipo === 'resto' && eb !== 1) continue
       if (agenteSet && !agenteSet.has(dims.vendedores[vi].nombre)) continue
+      if (tipoIdx >= 0 && ti !== tipoIdx) continue
       const c = fact.ticketsCubo[k]; tkVenta += c.v; tkCount += c.t
     }
   }
@@ -171,13 +174,14 @@ export function computeVG(fact, filtros) {
     let prevTkVenta = 0, prevTkCount = 0
     if (fact.ticketsCubo) {
       for (const k in fact.ticketsCubo) {
-        const [ry, rm, si, eb, vi] = k.split('|').map(Number)
+        const [ry, rm, si, eb, vi, ti] = k.split('|').map(Number)
         if (ry !== 2025) continue
         if (mesesSet && !mesesSet.has(rm)) continue
         if (sucIdx >= 0 && si !== sucIdx) continue
         if (equipo === 'comercial' && eb !== 0) continue
         if (equipo === 'resto' && eb !== 1) continue
         if (agenteSet && !agenteSet.has(dims.vendedores[vi].nombre)) continue
+        if (tipoIdx >= 0 && ti !== tipoIdx) continue
         const c = fact.ticketsCubo[k]; prevTkVenta += c.v; prevTkCount += c.t
       }
     }
@@ -220,19 +224,21 @@ export function computeProductAnalytics(fact, filtros) {
   const sucIdx = (filtros.sucursal && filtros.sucursal !== 'todas') ? dims.sucursales.indexOf(filtros.sucursal) : -1
   const provIdx = (filtros.vgProveedor && filtros.vgProveedor !== 'todos') ? dims.proveedores.indexOf(filtros.vgProveedor) : -1
   const lineaIdx = (filtros.vgLinea && filtros.vgLinea !== 'todas') ? dims.lineas.indexOf(filtros.vgLinea) : -1
+  const tipoIdx = (filtros.vgTipoDocumento && filtros.vgTipoDocumento !== 'todos') ? dims.tiposDocumento.indexOf(filtros.vgTipoDocumento) : -1
 
   // --- Sunburst: línea -> producto ---
   const lineaMap = new Map() // li -> { venta, cantidad, prods: Map(proi -> {venta,cantidad}) }
   for (let i = 0; i < rows.length; i++) {
     const r = rows[i]
     const ry = r[0], rm = r[1], si = r[2], pi = r[3], li = r[4], proi = r[5], vi = r[6]
-    const venta = r[8], cant = r[11]
+    const venta = r[8], cant = r[11], ti = r[12]
     if (año === '2025' && ry !== 2025) continue
     if (año === '2026' && ry !== 2026) continue
     if (mesesSet && !mesesSet.has(rm)) continue
     if (sucIdx >= 0 && si !== sucIdx) continue
     if (provIdx >= 0 && pi !== provIdx) continue
     if (lineaIdx >= 0 && li !== lineaIdx) continue
+    if (tipoIdx >= 0 && ti !== tipoIdx) continue
     const vend = dims.vendedores[vi]
     const esCom = vend.equipo === 'comercial'
     if (equipo === 'comercial' && !esCom) continue
@@ -264,12 +270,13 @@ export function computeProductAnalytics(fact, filtros) {
   const cliFreqY = { 2025: new Map(), 2026: new Map() }
   for (let i = 0; i < foliosArr.length; i++) {
     const fo = foliosArr[i]
-    const ry = fo[0], rm = fo[1], si = fo[2], eb = fo[3], ci = fo[4], items = fo[6], vi = fo[7]
+    const ry = fo[0], rm = fo[1], si = fo[2], eb = fo[3], ci = fo[4], items = fo[6], vi = fo[7], ti = fo[8]
     if (mesesSet && !mesesSet.has(rm)) continue
     if (sucIdx >= 0 && si !== sucIdx) continue
     if (equipo === 'comercial' && eb !== 0) continue
     if (equipo === 'resto' && eb !== 1) continue
     if (agenteSet && !agenteSet.has(dims.vendedores[vi].nombre)) continue
+    if (tipoIdx >= 0 && ti !== tipoIdx) continue
     if (provIdx >= 0 || lineaIdx >= 0) {
       const matches = items.some(([, li, pi]) => (lineaIdx < 0 || li === lineaIdx) && (provIdx < 0 || pi === provIdx))
       if (!matches) continue
@@ -283,11 +290,12 @@ export function computeProductAnalytics(fact, filtros) {
   for (let i = 0; i < rows.length; i++) {
     const r = rows[i]
     const ry = r[0], rm = r[1], si = r[2], pi = r[3], li = r[4], vi = r[6], ci = r[7]
-    const venta = r[8]
+    const venta = r[8], ti = r[12]
     if (mesesSet && !mesesSet.has(rm)) continue
     if (sucIdx >= 0 && si !== sucIdx) continue
     if (provIdx >= 0 && pi !== provIdx) continue
     if (lineaIdx >= 0 && li !== lineaIdx) continue
+    if (tipoIdx >= 0 && ti !== tipoIdx) continue
     const vend = dims.vendedores[vi]
     const esCom = vend.equipo === 'comercial'
     if (equipo === 'comercial' && !esCom) continue
@@ -308,7 +316,7 @@ export function computeProductAnalytics(fact, filtros) {
   let totalFoliosAlcance = 0       // N: folios en el alcance (año/mes/sucursal/equipo/agente), para el coeficiente φ
   for (let i = 0; i < foliosArr.length; i++) {
     const fo = foliosArr[i]
-    const ry = fo[0], rm = fo[1], si = fo[2], eb = fo[3], items = fo[6], vi = fo[7]
+    const ry = fo[0], rm = fo[1], si = fo[2], eb = fo[3], items = fo[6], vi = fo[7], ti = fo[8]
     if (año === '2025' && ry !== 2025) continue
     if (año === '2026' && ry !== 2026) continue
     if (mesesSet && !mesesSet.has(rm)) continue
@@ -316,6 +324,7 @@ export function computeProductAnalytics(fact, filtros) {
     if (equipo === 'comercial' && eb !== 0) continue
     if (equipo === 'resto' && eb !== 1) continue
     if (agenteSet && !agenteSet.has(dims.vendedores[vi].nombre)) continue
+    if (tipoIdx >= 0 && ti !== tipoIdx) continue
     totalFoliosAlcance++
 
     const filtItems = (provIdx < 0 && lineaIdx < 0) ? items
@@ -364,6 +373,7 @@ export function scopeLabel(filtros) {
   if (filtros.sucursal && filtros.sucursal !== 'todas') partes.push(filtros.sucursal)
   if (filtros.vgLinea && filtros.vgLinea !== 'todas') partes.push(filtros.vgLinea)
   if (filtros.vgProveedor && filtros.vgProveedor !== 'todos') partes.push(filtros.vgProveedor)
+  if (filtros.vgTipoDocumento && filtros.vgTipoDocumento !== 'todos') partes.push(filtros.vgTipoDocumento)
   if (filtros.vgAgentes && filtros.vgAgentes.length === 1) partes.push(filtros.vgAgentes[0])
   else if (filtros.vgAgentes && filtros.vgAgentes.length > 1) partes.push(`${filtros.vgAgentes.length} agentes`)
   if (filtros.equipo === 'comercial') partes.push('Equipo comercial')

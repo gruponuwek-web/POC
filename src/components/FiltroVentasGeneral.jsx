@@ -161,7 +161,7 @@ function Campo({ label, info, children }) {
 
 const Sep = () => <div style={{ width: 1, alignSelf: 'stretch', minHeight: 22, background: '#e2e8f0', margin: '0 4px' }} />
 
-export default function FiltroVentasGeneral({ filtros, onChange, sucursales = [], proveedores = [], lineas = [], agentes = [] }) {
+export default function FiltroVentasGeneral({ filtros, onChange, sucursales = [], proveedores = [], lineas = [], agentes = [], tiposDocumento = [] }) {
   const vgAño = filtros.vgAño || 'todos'
   const vgMeses = filtros.vgMeses || []
   const equipo = filtros.equipo || 'todos'
@@ -169,10 +169,12 @@ export default function FiltroVentasGeneral({ filtros, onChange, sucursales = []
   const sucursal = filtros.sucursal || 'todas'
   const vgProveedor = filtros.vgProveedor || 'todos'
   const vgLinea = filtros.vgLinea || 'todas'
+  const vgTipoDocumento = filtros.vgTipoDocumento || 'todos'
   const provOrden = [...proveedores].sort((a, b) => a.localeCompare(b))
   const lineaOrden = [...lineas].sort((a, b) => a.localeCompare(b))
   const agenteOrden = [...agentes].sort((a, b) => a.localeCompare(b))
-  const hayFiltros = vgAño !== 'todos' || vgMeses.length > 0 || equipo !== 'todos' || vgAgentes.length > 0 || sucursal !== 'todas' || vgProveedor !== 'todos' || vgLinea !== 'todas'
+  const tipoOrden = [...tiposDocumento].sort((a, b) => a.localeCompare(b))
+  const hayFiltros = vgAño !== 'todos' || vgMeses.length > 0 || equipo !== 'todos' || vgAgentes.length > 0 || sucursal !== 'todas' || vgProveedor !== 'todos' || vgLinea !== 'todas' || vgTipoDocumento !== 'todos'
 
   return (
     <div style={{
@@ -240,8 +242,17 @@ export default function FiltroVentasGeneral({ filtros, onChange, sucursales = []
         </Campo>
       )}
 
+      {tipoOrden.length > 0 && (
+        <Campo label="Tipo doc." info="Filtra por tipo de documento (FACTURA, NOTA, NCR). Afecta a todas las tarjetas y gráficas de la página, incluyendo Ticket Promedio, Densidad de Compra y Correlación de Productos.">
+          <select value={vgTipoDocumento} onChange={e => onChange({ ...filtros, vgTipoDocumento: e.target.value })} style={selectStyle}>
+            <option value="todos">Todos</option>
+            {tipoOrden.map(t => <option key={t} value={t}>{t}</option>)}
+          </select>
+        </Campo>
+      )}
+
       {hayFiltros && (
-        <button onClick={() => onChange({ ...filtros, vgAño: 'todos', vgMeses: [], equipo: 'todos', vgAgentes: [], sucursal: 'todas', vgProveedor: 'todos', vgLinea: 'todas' })} style={{
+        <button onClick={() => onChange({ ...filtros, vgAño: 'todos', vgMeses: [], equipo: 'todos', vgAgentes: [], sucursal: 'todas', vgProveedor: 'todos', vgLinea: 'todas', vgTipoDocumento: 'todos' })} style={{
           marginLeft: 'auto', padding: '5px 14px', borderRadius: 6, fontSize: 11,
           fontWeight: 700, border: '1.5px solid #ef4444', background: '#fff5f5',
           color: '#ef4444', cursor: 'pointer'

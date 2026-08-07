@@ -52,6 +52,7 @@ export default function App() {
     vgProveedor: 'todos', // solo Empresa Completa
     vgLinea: 'todas', // solo Empresa Completa
     vgAgentes: [], // solo Empresa Completa — filtra por NOMBRE AGENTE, uno o varios a la vez
+    vgTipoDocumento: 'todos', // solo Empresa Completa — FACTURA | NOTA | NCR
   })
 
   useEffect(() => {
@@ -446,6 +447,7 @@ export default function App() {
             proveedores={ventasGeneral?.dims?.proveedores || []}
             lineas={ventasGeneral?.dims?.lineas || []}
             agentes={ventasGeneral?.dims?.vendedores?.map(v => v.nombre) || []}
+            tiposDocumento={ventasGeneral?.dims?.tiposDocumento || []}
           />
           {vgComputed ? (
             <>
