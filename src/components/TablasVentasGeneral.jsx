@@ -51,22 +51,85 @@ function VerMas({ total, limite, onMas }) {
   )
 }
 
+// ── Ordenamiento por columna ────────────────────────────────────────────────
+// Estado { key, dir } por tabla. Al hacer clic en un encabezado nuevo, arranca
+// en el orden "natural" de esa columna (texto → A-Z, número → mayor primero);
+// al hacer clic de nuevo en la misma columna, invierte la dirección.
+function useSort(initialKey) {
+  const [sort, setSort] = useState({ key: initialKey, dir: 'desc' })
+  const onSort = (key, kind) => setSort(s => s.key === key
+    ? { key, dir: s.dir === 'desc' ? 'asc' : 'desc' }
+    : { key, dir: kind === 'str' ? 'asc' : 'desc' })
+  return [sort, onSort]
+}
+
+function sortRows(rows, sort, getters) {
+  const get = getters[sort.key]
+  if (!get) return rows
+  const arr = [...rows]
+  arr.sort((a, b) => {
+    const va = get(a), vb = get(b)
+    const cmp = (typeof va === 'string' || typeof vb === 'string')
+      ? String(va || '').localeCompare(String(vb || ''), 'es')
+      : (va || 0) - (vb || 0)
+    return sort.dir === 'asc' ? cmp : -cmp
+  })
+  return arr
+}
+
+// Encabezado clickeable con flecha discreta (▲/▼) que solo se resalta en la
+// columna activa; el resto queda muy tenue, solo insinuando que se puede ordenar.
+function ThSort({ label, sortKey, kind = 'num', sort, onSort, align = 'left' }) {
+  const active = sort.key === sortKey
+  return (
+    <th onClick={() => onSort(sortKey, kind)} title="Ordenar"
+      style={{ ...thStyle, textAlign: align, cursor: 'pointer', userSelect: 'none' }}>
+      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+        {label}
+        <span style={{ fontSize: 8, color: active ? '#fff' : '#93c5fd', opacity: active ? 0.9 : 0.35 }}>
+          {active && sort.dir === 'asc' ? '▲' : '▼'}
+        </span>
+      </span>
+    </th>
+  )
+}
+
 export default function TablasVentasGeneral({ g, filtros }) {
   const [limV, setLimV] = useState(10)
   const [limP, setLimP] = useState(10)
   const [limC, setLimC] = useState(10)
+  const [sortV, onSortV] = useSort('venta')
+  const [sortP, onSortP] = useSort('venta')
+  const [sortC, onSortC] = useSort('venta')
 
   if (!g) return null
   const suf = scopeLabel(filtros || {})
-  const vendedores = g.vendedores || []
-  const proveedores = g.proveedores || []
-  const clientes = g.clientes || []
-  if (!vendedores.length && !proveedores.length && !clientes.length) return null
+  const vendedoresBase = g.vendedores || []
+  const proveedoresBase = g.proveedores || []
+  const clientesBase = g.clientes || []
+  if (!vendedoresBase.length && !proveedoresBase.length && !clientesBase.length) return null
 
-  const totalVentaProv = proveedores.reduce((s, r) => s + r.venta, 0)
-  const totalVentaCli = clientes.reduce((s, r) => s + r.venta, 0)
-  const maxCli = clientes.length ? clientes[0].venta : 1
+  const totalVentaProv = proveedoresBase.reduce((s, r) => s + r.venta, 0)
+  const totalVentaCli = clientesBase.reduce((s, r) => s + r.venta, 0)
+  const maxCli = clientesBase.length ? Math.max(...clientesBase.map(r => r.venta)) : 1
   const mgPct = (r) => r.venta > 0 ? (r.venta - r.costo) / r.venta * 100 : 0
+
+  const vendGetters = {
+    nombre: r => r.nombre, equipo: r => r.equipo, venta: r => r.venta, n: r => r.n,
+    promxop: r => r.n > 0 ? r.venta / r.n : 0, margen: r => r.venta - r.costo, margenpct: r => mgPct(r),
+  }
+  const provGetters = {
+    nombre: r => r.nombre, venta: r => r.venta, pct: r => r.venta, n: r => r.n, cant: r => r.cant,
+    margen: r => r.venta - r.costo, margenpct: r => mgPct(r),
+  }
+  const cliGetters = {
+    nombre: r => r.nombre, agente: r => r.agente || '', venta: r => r.venta, pct: r => r.venta, n: r => r.n,
+    margen: r => r.venta - r.costo, margenpct: r => mgPct(r),
+  }
+
+  const vendedores = sortRows(vendedoresBase, sortV, vendGetters)
+  const proveedores = sortRows(proveedoresBase, sortP, provGetters)
+  const clientes = sortRows(clientesBase, sortC, cliGetters)
 
   return (
     <>
@@ -82,7 +145,13 @@ export default function TablasVentasGeneral({ g, filtros }) {
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead><tr style={{ background: '#0f1f3d' }}>
             <th style={{ ...thStyle, textAlign: 'center' }}>#</th>
-            {['Vendedor', 'Equipo', 'Venta', 'Operaciones', 'Prom. x op.', 'Margen $', 'Margen %'].map(h => <th key={h} style={thStyle}>{h}</th>)}
+            <ThSort label="Vendedor" sortKey="nombre" kind="str" sort={sortV} onSort={onSortV} />
+            <ThSort label="Equipo" sortKey="equipo" kind="str" sort={sortV} onSort={onSortV} />
+            <ThSort label="Venta" sortKey="venta" sort={sortV} onSort={onSortV} />
+            <ThSort label="Operaciones" sortKey="n" sort={sortV} onSort={onSortV} />
+            <ThSort label="Prom. x op." sortKey="promxop" sort={sortV} onSort={onSortV} />
+            <ThSort label="Margen $" sortKey="margen" sort={sortV} onSort={onSortV} />
+            <ThSort label="Margen %" sortKey="margenpct" sort={sortV} onSort={onSortV} />
           </tr></thead>
           <tbody>
             {vendedores.slice(0, limV).map((r, i) => (
@@ -117,7 +186,13 @@ export default function TablasVentasGeneral({ g, filtros }) {
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead><tr style={{ background: '#0f1f3d' }}>
             <th style={{ ...thStyle, textAlign: 'center' }}>#</th>
-            {['Proveedor', 'Venta', '% del total', 'Operaciones', 'Cantidad', 'Margen $', 'Margen %'].map(h => <th key={h} style={thStyle}>{h}</th>)}
+            <ThSort label="Proveedor" sortKey="nombre" kind="str" sort={sortP} onSort={onSortP} />
+            <ThSort label="Venta" sortKey="venta" sort={sortP} onSort={onSortP} />
+            <ThSort label="% del total" sortKey="pct" sort={sortP} onSort={onSortP} />
+            <ThSort label="Operaciones" sortKey="n" sort={sortP} onSort={onSortP} />
+            <ThSort label="Cantidad" sortKey="cant" sort={sortP} onSort={onSortP} />
+            <ThSort label="Margen $" sortKey="margen" sort={sortP} onSort={onSortP} />
+            <ThSort label="Margen %" sortKey="margenpct" sort={sortP} onSort={onSortP} />
           </tr></thead>
           <tbody>
             {proveedores.slice(0, limP).map((r, i) => {
@@ -156,7 +231,13 @@ export default function TablasVentasGeneral({ g, filtros }) {
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead><tr style={{ background: '#0f1f3d' }}>
             <th style={{ ...thStyle, textAlign: 'center' }}>#</th>
-            {['Cliente', 'Agente', 'Venta', '% del total', 'Operaciones', 'Margen $', 'Margen %'].map(h => <th key={h} style={thStyle}>{h}</th>)}
+            <ThSort label="Cliente" sortKey="nombre" kind="str" sort={sortC} onSort={onSortC} />
+            <ThSort label="Agente" sortKey="agente" kind="str" sort={sortC} onSort={onSortC} />
+            <ThSort label="Venta" sortKey="venta" sort={sortC} onSort={onSortC} />
+            <ThSort label="% del total" sortKey="pct" sort={sortC} onSort={onSortC} />
+            <ThSort label="Operaciones" sortKey="n" sort={sortC} onSort={onSortC} />
+            <ThSort label="Margen $" sortKey="margen" sort={sortC} onSort={onSortC} />
+            <ThSort label="Margen %" sortKey="margenpct" sort={sortC} onSort={onSortC} />
           </tr></thead>
           <tbody>
             {clientes.slice(0, limC).map((r, i) => {
