@@ -1,6 +1,8 @@
 import React from 'react'
 import { fmt } from '../utils/format.js'
-import { scopeLabel } from '../utils/ventasGeneral.js'
+import { scopeLabel, GRUPOS } from '../utils/ventasGeneral.js'
+// Orden de apilado del gráfico de barra única (de abajo hacia arriba)
+const STACK_ORDEN = [...GRUPOS].reverse()
 
 const MESES3 = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic']
 
@@ -54,15 +56,18 @@ export default function VentaMensualComparativa({ g, filtros }) {
   if (!g || !g.mesesY.length) return null
 
   const equipo = filtros.equipo || 'todos'
-  const scoped = equipo === 'comercial' ? 'comercial' : equipo === 'resto' ? 'resto' : 'todos'
+  const scoped = GRUPOS.some(x => x.id === equipo) ? equipo : 'todos'
   const alcance = scopeLabel(filtros)
   const añoFiltro = filtros.vgAño || 'todos'
 
+  // porMesY ya viene filtrado por equipo desde computeVG (los grupos fuera de alcance quedan
+  // en 0), así que aquí solo sumamos los grupos.
   const vYear = (d, year) => {
-    const s = d && d[year]; if (!s) return { com: 0, resto: 0, total: 0 }
-    const com = scoped === 'resto' ? 0 : s.vc
-    const resto = scoped === 'comercial' ? 0 : s.vr
-    return { com, resto, total: com + resto }
+    const s = d && d[year]; if (!s) return { grupos: { pachuca: 0, tepeji: 0, resto: 0 }, total: 0 }
+    const grupos = {}
+    let total = 0
+    GRUPOS.forEach(gr => { const v = s[gr.id].v; grupos[gr.id] = v; total += v })
+    return { grupos, total }
   }
 
   const agrupado = añoFiltro === 'todos'
@@ -71,10 +76,10 @@ export default function VentaMensualComparativa({ g, filtros }) {
     chart = g.mesesY.map(m => { const d = g.porMesY[m]; return { mes: m, a: vYear(d, 2025).total, b: vYear(d, 2026).total } })
   } else {
     const yr = añoFiltro === '2025' ? 2025 : 2026
-    chart = g.mesesY.map(m => { const v = vYear(g.porMesY[m], yr); return { mes: m, com: v.com, resto: v.resto, total: v.total } }).filter(c => c.total > 0)
+    chart = g.mesesY.map(m => { const v = vYear(g.porMesY[m], yr); return { mes: m, grupos: v.grupos, total: v.total } }).filter(c => c.total > 0)
   }
   const maxTop = g.topResto.length ? g.topResto[0].venta : 1
-  const mostrarTopResto = scoped !== 'comercial' && g.topResto.length > 0
+  const mostrarTopResto = (scoped === 'todos' || scoped === 'resto') && g.topResto.length > 0
 
   // Tendencia principal: 2026 en modo agrupado (o el total en modo año único)
   const trendPoints = agrupado ? chart.filter(c => c.b > 0).map(c => ({ mes: c.mes, v: c.b })) : chart.map(c => ({ mes: c.mes, v: c.total }))
@@ -141,13 +146,23 @@ export default function VentaMensualComparativa({ g, filtros }) {
                     <text x={xC(i) + barWPair / 2 + 1.5} y={yTop(c.b) - 4} fontSize="8" fill="#1a6cf0" textAnchor="middle" fontWeight="700">${(c.b / 1e6).toFixed(1)}M</text>
                   </>}
                 </g>
-              )) : chart.map((c, i) => (
-                <g key={c.mes}>
-                  {c.resto > 0 && <rect x={xC(i) - barWSingle / 2} y={yTop(c.resto)} width={barWSingle} height={Math.max(0, yBase - yTop(c.resto))} rx="3" fill="#f59e0b" />}
-                  {c.com > 0 && <rect x={xC(i) - barWSingle / 2} y={yTop(c.total)} width={barWSingle} height={Math.max(0, yTop(c.resto) - yTop(c.total))} rx={c.resto > 0 ? 0 : 3} fill="#1a6cf0" />}
-                  <text x={xC(i)} y={yTop(c.total) - 4} fontSize="9" fill="#64748b" textAnchor="middle" fontWeight="600">${(c.total / 1e6).toFixed(1)}M</text>
-                </g>
-              ))}
+              )) : chart.map((c, i) => {
+                const activos = STACK_ORDEN.filter(gr => (c.grupos[gr.id] || 0) > 0)
+                let cum = 0
+                return (
+                  <g key={c.mes}>
+                    {STACK_ORDEN.map(gr => {
+                      const val = c.grupos[gr.id] || 0
+                      if (val <= 0) return null
+                      const y0 = yTop(cum), y1 = yTop(cum + val)
+                      cum += val
+                      const rx = activos.length === 1 ? 3 : 0
+                      return <rect key={gr.id} x={xC(i) - barWSingle / 2} y={y1} width={barWSingle} height={Math.max(0, y0 - y1)} rx={rx} fill={gr.color} />
+                    })}
+                    <text x={xC(i)} y={yTop(c.total) - 4} fontSize="9" fill="#64748b" textAnchor="middle" fontWeight="600">${(c.total / 1e6).toFixed(1)}M</text>
+                  </g>
+                )
+              })}
 
               {trend25 && <TrendLine pts={trend25Pts} color="#94a3b8" id="t25" thin />}
               {trend && <TrendLine pts={trendPts} color="#0f1f3d" id="t26" />}
@@ -160,8 +175,9 @@ export default function VentaMensualComparativa({ g, filtros }) {
               <span><span style={{ display: 'inline-block', width: 10, height: 10, background: '#93c5fd', borderRadius: 2, marginRight: 5 }} />2025</span>
               <span><span style={{ display: 'inline-block', width: 10, height: 10, background: '#1a6cf0', borderRadius: 2, marginRight: 5 }} />2026 (a jul)</span>
             </> : <>
-              <span><span style={{ display: 'inline-block', width: 10, height: 10, background: '#1a6cf0', borderRadius: 2, marginRight: 5 }} />Comercial</span>
-              <span><span style={{ display: 'inline-block', width: 10, height: 10, background: '#f59e0b', borderRadius: 2, marginRight: 5 }} />El resto</span>
+              {GRUPOS.map(gr => (
+                <span key={gr.id}><span style={{ display: 'inline-block', width: 10, height: 10, background: gr.color, borderRadius: 2, marginRight: 5 }} />{gr.label}</span>
+              ))}
             </>}
             {trend && <span><span style={{ display: 'inline-block', width: 14, height: 0, borderTop: '3px dashed #0f1f3d', marginRight: 5, verticalAlign: 'middle' }} />Tendencia {agrupado ? '2026' : ''}</span>}
             {trend25 && <span><span style={{ display: 'inline-block', width: 14, height: 0, borderTop: '2px dashed #94a3b8', marginRight: 5, verticalAlign: 'middle' }} />Tendencia 2025</span>}
@@ -170,7 +186,7 @@ export default function VentaMensualComparativa({ g, filtros }) {
 
         {mostrarTopResto && (
           <div style={{ background: '#f8fafc', border: '1.5px solid #e2e8f0', borderRadius: 9, padding: '12px 14px' }}>
-            <div style={{ fontSize: 10.5, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '.4px', marginBottom: 10 }}>Top vendedores fuera del equipo comercial</div>
+            <div style={{ fontSize: 10.5, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '.4px', marginBottom: 10 }}>Top vendedores de El resto</div>
             {g.topResto.map((r, i) => (
               <div key={r.nombre} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '5px 0', borderBottom: '1px solid #eef2f7' }}>
                 <span style={{ fontSize: 11, fontWeight: 700, color: '#94a3b8', width: 14 }}>{i + 1}</span>

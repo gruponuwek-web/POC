@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react'
 import InfoTip from './InfoTip.jsx'
+import { GRUPOS } from '../utils/ventasGeneral.js'
 
 const MESES = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
 
@@ -201,11 +202,10 @@ export default function FiltroVentasGeneral({ filtros, onChange, sucursales = []
       <Sep />
 
       {/* ── Segmento ── */}
-      <Campo label="Equipo" info="Compara el equipo comercial gestionado contra el resto de la operación de la empresa.">
+      <Campo label="Equipo" info="Compara los equipos gestionados (Pachuca, Tepeji) contra el resto de la operación de la empresa.">
         <select value={equipo} onChange={e => onChange({ ...filtros, equipo: e.target.value })} style={selectStyle}>
           <option value="todos">Todos</option>
-          <option value="comercial">Equipo comercial</option>
-          <option value="resto">El resto</option>
+          {GRUPOS.map(g => <option key={g.id} value={g.id}>{g.label}</option>)}
         </select>
       </Campo>
       {agenteOrden.length > 0 && (

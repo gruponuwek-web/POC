@@ -47,7 +47,7 @@ export default function App() {
     proveedor: 'todos',
     vgAño: 'todos', // solo Empresa Completa — independiente de "año"
     vgMeses: [], // solo Empresa Completa — independiente de "meses"
-    equipo: 'todos', // solo Empresa Completa: todos | comercial | resto
+    equipo: 'todos', // solo Empresa Completa: todos | pachuca | tepeji | resto
     sucursal: 'todas', // solo Empresa Completa: todas | <nombre sucursal>
     vgProveedor: 'todos', // solo Empresa Completa
     vgLinea: 'todas', // solo Empresa Completa

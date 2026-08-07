@@ -118,6 +118,24 @@ const AGENTES_COMERCIALES = new Set([
   'ITZEL ZORAIDA HERNANDEZ BARBOSA'
 ]);
 
+// ── Equipos de Empresa Completa (agrupación del filtro "Equipo", solo esa pestaña) ──────────
+// "Pachuca" reutiliza el mismo set de agentes gestionados que Dashboard Táctico
+// (AGENTES_COMERCIALES, antes llamado "Equipo comercial"). "Tepeji" es un equipo nuevo,
+// exclusivo de Empresa Completa. Todo lo demás cae en "resto". El orden de este arreglo debe
+// coincidir con el de GRUPOS en src/utils/ventasGeneral.js — el código 0/1/2 (eb) viaja
+// codificado como número por las claves de ticketsCubo/folios y se decodifica allá por índice.
+const AGENTES_EQUIPO_TEPEJI = new Set([
+  'MARIA DEL ROCIO LAGUNA VEGA',
+  'LUIS ALBERTO DAVILA REYES',
+  'NIDIA ALVAREZ REYES',
+]);
+const EQUIPO_CODES = { pachuca: 0, tepeji: 1, resto: 2 };
+function equipoDe(ag) {
+  if (AGENTES_COMERCIALES.has(ag)) return 'pachuca';
+  if (AGENTES_EQUIPO_TEPEJI.has(ag)) return 'tepeji';
+  return 'resto';
+}
+
 // ── Agentes excluidos de Empresa Completa (por el momento) ───────────────────
 // No son agentes reales de venta (ventas directas, movimientos internos, cuentas
 // suspendidas) o se pidió omitirlos temporalmente. Sus filas se ignoran por
@@ -206,7 +224,7 @@ function buildVentasGeneralFact(rowsByYear) {
       const mes = f.getMonth() + 1;
       const ag = normAgent(r['NOMBRE AGENTE']);
       if (AGENTES_EXCLUIDOS_EMPRESA_COMPLETA.has(ag)) return;
-      const esCom = AGENTES_COMERCIALES.has(ag);
+      const grupo = equipoDe(ag);
       const suc = (r['Sucursal'] || 'Pachuca').trim() || 'Pachuca';
       const prov = (r['NOMBRE PROV.'] || '(Sin proveedor)').trim() || '(Sin proveedor)';
       const lin = (r['DECRIP. LINEA'] || r['DESCRIP. LINEA'] || '(Sin línea)').trim() || '(Sin línea)';
@@ -226,7 +244,7 @@ function buildVentasGeneralFact(rowsByYear) {
       const pi = idxSimple(mProv, dProv, prov);
       const li = idxSimple(mLinea, dLinea, lin);
       const proi = idxSimple(mProd, dProd, prod);
-      let vi = mVend.get(ag); if (vi === undefined) { vi = dVend.length; mVend.set(ag, vi); dVend.push({ nombre: ag, equipo: esCom ? 'comercial' : 'resto' }); }
+      let vi = mVend.get(ag); if (vi === undefined) { vi = dVend.length; mVend.set(ag, vi); dVend.push({ nombre: ag, equipo: grupo }); }
       let ci = mCli.get(cliKey); if (ci === undefined) { ci = dCli.length; mCli.set(cliKey, ci); dCli.push({ nombre: cliNom, num: cliNum }); }
       const ti = idxSimple(mTipo, dTipo, tipoNorm);
 
@@ -235,7 +253,7 @@ function buildVentasGeneralFact(rowsByYear) {
       a[0] += imp; a[1] += cost; a[2] += 1; a[3] += cant;
 
       // Ticket promedio: tickets únicos por (año, mes, sucursal, equipo, vendedor, tipo documento)
-      const eb = esCom ? 0 : 1;
+      const eb = EQUIPO_CODES[grupo];
       const tkKey = `${año}|${mes}|${si}|${eb}|${vi}|${ti}`;
       let tc = tkCubo.get(tkKey); if (!tc) { tc = { tks: new Set(), v: 0 }; tkCubo.set(tkKey, tc); }
       const folioKey = `${r['FOLIO']}-${r['LETRA']}-${cliNum}`;

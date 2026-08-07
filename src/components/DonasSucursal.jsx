@@ -1,11 +1,11 @@
 import React from 'react'
 import { fmt } from '../utils/format.js'
-import { scopeLabel } from '../utils/ventasGeneral.js'
+import { scopeLabel, GRUPOS } from '../utils/ventasGeneral.js'
 import InfoTip from './InfoTip.jsx'
 
-const COMc = '#1a6cf0', RESTOc = '#f59e0b', TRACK = '#eef2f7'
-// Colores de sucursal: distintos entre sí y distintos del azul (comercial) y ámbar (resto)
-const SUC_COLORS = ['#7c3aed', '#14b8a6', '#f43f5e', '#0891b2', '#84cc16', '#d946ef']
+const TRACK = '#eef2f7'
+// Colores de sucursal: distintos entre sí y distintos de los colores de equipo (GRUPOS)
+const SUC_COLORS = ['#14b8a6', '#f43f5e', '#0891b2', '#84cc16', '#d946ef']
 
 function DonaGeneral({ sucursales, totalEmpresa }) {
   const R = 52, C = 2 * Math.PI * R
@@ -43,11 +43,9 @@ function DonaGeneral({ sucursales, totalEmpresa }) {
 
 function Dona({ s, totalEmpresa }) {
   const R = 52, C = 2 * Math.PI * R
-  const pCom = s.total > 0 ? s.com / s.total : 0
-  const pResto = s.total > 0 ? s.resto / s.total : 0
   const share = totalEmpresa > 0 ? (s.total / totalEmpresa * 100) : 0
-  const lenResto = C * pResto, lenCom = C * pCom
-  const gap = (pCom > 0 && pResto > 0) ? 3 : 0
+  const activos = GRUPOS.filter(gr => s.porGrupo[gr.id] > 0)
+  let offset = 0
 
   return (
     <div style={{ background: '#fff', border: '1.5px solid #e2e8f0', borderRadius: 10, padding: 14, textAlign: 'center' }}>
@@ -55,16 +53,24 @@ function Dona({ s, totalEmpresa }) {
       <div style={{ fontSize: 10.5, color: '#94a3b8', marginBottom: 6 }}>{share.toFixed(0)}% de la empresa</div>
       <svg viewBox="0 0 140 140" style={{ width: 150, height: 150 }}>
         <circle cx="70" cy="70" r={R} fill="none" stroke={TRACK} strokeWidth="16" />
-        {pResto > 0 && <circle cx="70" cy="70" r={R} fill="none" stroke={RESTOc} strokeWidth="16"
-          strokeDasharray={`${Math.max(0, lenResto - gap).toFixed(1)} ${(C - Math.max(0, lenResto - gap)).toFixed(1)}`} strokeDashoffset="0" transform="rotate(-90 70 70)" />}
-        {pCom > 0 && <circle cx="70" cy="70" r={R} fill="none" stroke={COMc} strokeWidth="16"
-          strokeDasharray={`${Math.max(0, lenCom - gap).toFixed(1)} ${(C - Math.max(0, lenCom - gap)).toFixed(1)}`} strokeDashoffset={(-lenResto).toFixed(1)} transform="rotate(-90 70 70)" />}
+        {activos.map(gr => {
+          const p = s.total > 0 ? s.porGrupo[gr.id] / s.total : 0
+          const len = C * p
+          const gap = activos.length > 1 ? 3 : 0
+          const visible = Math.max(0, len - gap)
+          const el = <circle key={gr.id} cx="70" cy="70" r={R} fill="none" stroke={gr.color} strokeWidth="16"
+            strokeDasharray={`${visible.toFixed(1)} ${(C - visible).toFixed(1)}`} strokeDashoffset={(-offset).toFixed(1)} transform="rotate(-90 70 70)" />
+          offset += len
+          return el
+        })}
         <text x="70" y="66" textAnchor="middle" fontSize="16" fontWeight="800" fill="#0f1f3d">${(s.total / 1e6).toFixed(1)}M</text>
         <text x="70" y="84" textAnchor="middle" fontSize="10" fill="#94a3b8">total</text>
       </svg>
       <div style={{ display: 'flex', justifyContent: 'space-around', marginTop: 6, fontSize: 11.5 }}>
-        <div><div style={{ color: COMc, fontWeight: 800 }}>{(pCom * 100).toFixed(1)}%</div><div style={{ color: '#94a3b8', fontSize: 10 }}>{fmt.moneda(s.com)}</div></div>
-        <div><div style={{ color: '#b45309', fontWeight: 800 }}>{(pResto * 100).toFixed(1)}%</div><div style={{ color: '#94a3b8', fontSize: 10 }}>{fmt.moneda(s.resto)}</div></div>
+        {GRUPOS.map(gr => {
+          const p = s.total > 0 ? s.porGrupo[gr.id] / s.total : 0
+          return <div key={gr.id}><div style={{ color: gr.color, fontWeight: 800 }}>{(p * 100).toFixed(1)}%</div><div style={{ color: '#94a3b8', fontSize: 10 }}>{fmt.moneda(s.porGrupo[gr.id])}</div></div>
+        })}
       </div>
     </div>
   )
@@ -79,7 +85,7 @@ export default function DonasSucursal({ g, filtros }) {
     <div style={{ background: '#fff', borderRadius: 10, border: '1.5px solid #e2e8f0', boxShadow: '0 1px 4px rgba(0,0,0,.05)', overflow: 'hidden', marginBottom: 16 }}>
       <div style={{ padding: '14px 18px 0', display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
         <span style={{ fontSize: 12, fontWeight: 700, color: '#0f1f3d', textTransform: 'uppercase', letterSpacing: '.4px' }}>🍩 Venta por Sucursal — {alcance}</span>
-        <InfoTip text="Una dona por sucursal con su split comercial/resto y su participación en la empresa. Compara todas las sucursales (ignora el filtro de Sucursal) pero sí respeta año, mes, equipo, línea y proveedor." />
+        <InfoTip text="Una dona por sucursal con su split por equipo y su participación en la empresa. Compara todas las sucursales (ignora el filtro de Sucursal) pero sí respeta año, mes, equipo, línea y proveedor." />
       </div>
       <div style={{ padding: 18 }}>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(200px,1fr))', gap: 16 }}>
@@ -87,8 +93,9 @@ export default function DonasSucursal({ g, filtros }) {
           {g.sucursalesVenta.map(s => <Dona key={s.nombre} s={s} totalEmpresa={totalEmpresa} />)}
         </div>
         <div style={{ display: 'flex', gap: 18, marginTop: 16, fontSize: 11.5, color: '#64748b', justifyContent: 'center' }}>
-          <span><span style={{ display: 'inline-block', width: 11, height: 11, background: COMc, borderRadius: 2, marginRight: 6 }} />Equipo comercial</span>
-          <span><span style={{ display: 'inline-block', width: 11, height: 11, background: RESTOc, borderRadius: 2, marginRight: 6 }} />El resto</span>
+          {GRUPOS.map(gr => (
+            <span key={gr.id}><span style={{ display: 'inline-block', width: 11, height: 11, background: gr.color, borderRadius: 2, marginRight: 6 }} />{gr.label}</span>
+          ))}
         </div>
       </div>
     </div>

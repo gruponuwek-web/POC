@@ -4,6 +4,18 @@
 //          folios:[[año,mes,si,eb,ci,venta,[[proi,li,pi],...],vi,ti]] }
 // Un solo recorrido produce todos los agregados que necesita la página.
 
+// Equipos del filtro "Equipo" (Empresa Completa). El orden aquí debe coincidir con
+// EQUIPO_CODES en datos poc/process_data.js: el bit `eb` de ticketsCubo/folios es el índice
+// de este arreglo (0=pachuca, 1=tepeji, 2=resto).
+export const GRUPOS = [
+  { id: 'pachuca', label: 'Equipo Pachuca', short: 'Pachuca', color: '#059669', bg: '#d1fae5', fg: '#047857' },
+  { id: 'tepeji', label: 'Equipo Tepeji', short: 'Tepeji', color: '#7c3aed', bg: '#ede9fe', fg: '#6d28d9' },
+  { id: 'resto', label: 'El resto', short: 'Resto', color: '#f59e0b', bg: '#fef3c7', fg: '#b45309' },
+]
+const grupoInfo = (id) => GRUPOS.find(g => g.id === id) || GRUPOS[GRUPOS.length - 1]
+const mkPorGrupo = () => ({ pachuca: { v: 0, c: 0, n: 0 }, tepeji: { v: 0, c: 0, n: 0 }, resto: { v: 0, c: 0, n: 0 } })
+const sumPorGrupo = (pg, campo) => GRUPOS.reduce((s, g) => s + pg[g.id][campo], 0)
+
 export function computeVG(fact, filtros) {
   if (!fact || !fact.rows || !fact.dims) return null
   const { dims, rows } = fact
@@ -26,14 +38,13 @@ export function computeVG(fact, filtros) {
     : año === '2026' ? (soloMes != null ? soloMes : mesMax2026)
     : (soloMes != null ? soloMes : mesMax2026)
 
-  let comV = 0, comC = 0, comN = 0, restoV = 0, restoC = 0, restoN = 0
-  let prevComV = 0, prevRestoV = 0
-  const porMes = {}                 // { mes: {comV,restoV,comC,restoC,comN,restoN} } (respeta año)
-  const porMesY = {}                // { mes: {2025:{vc,vr,cc,cr,nc,nr}, 2026:{...}} } (ambos años)
+  const porGrupo = mkPorGrupo()
+  const prevPorGrupo = { pachuca: 0, tepeji: 0, resto: 0 }
+  const porMesY = {}                // { mes: {2025:{pachuca:{v,c,n},tepeji:{...},resto:{...}}, 2026:{...}} } (ambos años)
   const vendMap = new Map()         // vi -> {nombre,equipo,venta,costo,n}
   const provMap = new Map()         // pi -> {nombre,venta,costo,n}
   const cliMap = new Map()          // ci -> {nombre,num,venta}
-  const porSucursal = {}            // si -> {com,resto} (IGNORA el filtro de sucursal)
+  const porSucursal = {}            // si -> {pachuca,tepeji,resto} (IGNORA el filtro de sucursal)
   const cliLast = new Map()         // ci -> última compra (mes relativo) dentro del alcance actual
   const comparar = año === '2026'
 
@@ -46,9 +57,7 @@ export function computeVG(fact, filtros) {
     if (lineaIdx >= 0 && li !== lineaIdx) continue
     if (tipoIdx >= 0 && ti !== tipoIdx) continue
     const vend = dims.vendedores[vi]
-    const esCom = vend.equipo === 'comercial'
-    if (equipo === 'comercial' && !esCom) continue
-    if (equipo === 'resto' && esCom) continue
+    if (equipo !== 'todos' && vend.equipo !== equipo) continue
     if (agenteSet && !agenteSet.has(vend.nombre)) continue
 
     const inMeses = !mesesSet || mesesSet.has(rm)
@@ -56,8 +65,8 @@ export function computeVG(fact, filtros) {
 
     // Venta por sucursal (ignora el filtro de sucursal; respeta año/mes/equipo/prov/línea)
     if (passYear && inMeses) {
-      let ps = porSucursal[si]; if (!ps) { ps = { com: 0, resto: 0 }; porSucursal[si] = ps }
-      if (esCom) ps.com += venta; else ps.resto += venta
+      let ps = porSucursal[si]; if (!ps) { ps = { pachuca: 0, tepeji: 0, resto: 0 }; porSucursal[si] = ps }
+      ps[vend.equipo] += venta
     }
 
     // A partir de aquí, todo respeta el filtro de sucursal
@@ -74,14 +83,14 @@ export function computeVG(fact, filtros) {
 
     // Desglose por año-mes (ambos años, respeta el resto de filtros menos año)
     if (inMeses) {
-      let pmy = porMesY[rm]; if (!pmy) { pmy = { 2025: { vc: 0, vr: 0, cc: 0, cr: 0, nc: 0, nr: 0 }, 2026: { vc: 0, vr: 0, cc: 0, cr: 0, nc: 0, nr: 0 } }; porMesY[rm] = pmy }
+      let pmy = porMesY[rm]; if (!pmy) { pmy = { 2025: mkPorGrupo(), 2026: mkPorGrupo() }; porMesY[rm] = pmy }
       const slot = pmy[ry]
-      if (slot) { if (esCom) { slot.vc += venta; slot.cc += costo; slot.nc += n } else { slot.vr += venta; slot.cr += costo; slot.nr += n } }
+      if (slot) { const gs = slot[vend.equipo]; gs.v += venta; gs.c += costo; gs.n += n }
     }
 
     // Comparación vs año anterior (solo vista 2026): acumula 2025 en mismos meses/scope
     if (comparar && ry === 2025 && inMeses) {
-      if (esCom) prevComV += venta; else prevRestoV += venta
+      prevPorGrupo[vend.equipo] += venta
     }
 
     // Filtro de año para el agregado principal
@@ -89,10 +98,7 @@ export function computeVG(fact, filtros) {
     if (año === '2026' && ry !== 2026) continue
     if (!inMeses) continue
 
-    if (esCom) { comV += venta; comC += costo; comN += n } else { restoV += venta; restoC += costo; restoN += n }
-
-    let pm = porMes[rm]; if (!pm) { pm = { comV: 0, restoV: 0, comC: 0, restoC: 0, comN: 0, restoN: 0 }; porMes[rm] = pm }
-    if (esCom) { pm.comV += venta; pm.comC += costo; pm.comN += n } else { pm.restoV += venta; pm.restoC += costo; pm.restoN += n }
+    const gs = porGrupo[vend.equipo]; gs.v += venta; gs.c += costo; gs.n += n
 
     let vm = vendMap.get(vi); if (!vm) { vm = { nombre: vend.nombre, equipo: vend.equipo, venta: 0, costo: 0, n: 0 }; vendMap.set(vi, vm) }
     vm.venta += venta; vm.costo += costo; vm.n += n
@@ -114,16 +120,19 @@ export function computeVG(fact, filtros) {
     const top = [...c.porVend.entries()].sort((a, b) => b[1] - a[1])[0]
     return { nombre: c.nombre, num: c.num, venta: c.venta, costo: c.costo, n: c.n, agente: top ? dims.vendedores[top[0]].nombre : null }
   }).sort(bySales)
+  // Top vendedores del grupo "resto": es el único grupo sin roster fijo (Pachuca y Tepeji ya
+  // tienen tarjeta propia con su total), así que aquí se muestra un ranking de sus mejores.
   const topResto = vendedores.filter(v => v.equipo === 'resto').slice(0, 7)
 
-  const meses = Object.keys(porMes).map(Number).sort((a, b) => a - b)
   const mesesY = Object.keys(porMesY).map(Number).sort((a, b) => a - b)
-  const total = comV + restoV
+  const total = sumPorGrupo(porGrupo, 'v')
+  const totalN = sumPorGrupo(porGrupo, 'n')
 
-  // Venta por sucursal (para las donas): nombre + split comercial/resto
+  // Venta por sucursal (para las donas): nombre + split por equipo
   const sucursalesVenta = Object.keys(porSucursal).map(si => {
     const p = porSucursal[si]
-    return { nombre: dims.sucursales[si], com: p.com, resto: p.resto, total: p.com + p.resto }
+    const total = p.pachuca + p.tepeji + p.resto
+    return { nombre: dims.sucursales[si], porGrupo: p, total }
   }).filter(s => s.total > 0).sort((a, b) => b.total - a.total)
 
   // Ticket promedio (desde cubo de tickets únicos; responde a año/mes/sucursal/equipo, no a prov/línea)
@@ -135,8 +144,7 @@ export function computeVG(fact, filtros) {
       if (año === '2026' && ry !== 2026) continue
       if (mesesSet && !mesesSet.has(rm)) continue
       if (sucIdx >= 0 && si !== sucIdx) continue
-      if (equipo === 'comercial' && eb !== 0) continue
-      if (equipo === 'resto' && eb !== 1) continue
+      if (equipo !== 'todos' && GRUPOS[eb]?.id !== equipo) continue
       if (agenteSet && !agenteSet.has(dims.vendedores[vi].nombre)) continue
       if (tipoIdx >= 0 && ti !== tipoIdx) continue
       const c = fact.ticketsCubo[k]; tkVenta += c.v; tkCount += c.t
@@ -178,8 +186,7 @@ export function computeVG(fact, filtros) {
         if (ry !== 2025) continue
         if (mesesSet && !mesesSet.has(rm)) continue
         if (sucIdx >= 0 && si !== sucIdx) continue
-        if (equipo === 'comercial' && eb !== 0) continue
-        if (equipo === 'resto' && eb !== 1) continue
+        if (equipo !== 'todos' && GRUPOS[eb]?.id !== equipo) continue
         if (agenteSet && !agenteSet.has(dims.vendedores[vi].nombre)) continue
         if (tipoIdx >= 0 && ti !== tipoIdx) continue
         const c = fact.ticketsCubo[k]; prevTkVenta += c.v; prevTkCount += c.t
@@ -189,15 +196,15 @@ export function computeVG(fact, filtros) {
     let prevPerdidos = 0, prevPerdidosTotal = 0
     cliLast.forEach(rel => { prevPerdidosTotal++; if (rel >= minRel2025 && rel <= maxRel2025) prevPerdidos++ })
     prev = {
-      comV: prevComV, restoV: prevRestoV, total: prevComV + prevRestoV,
+      porGrupo: prevPorGrupo, total: prevPorGrupo.pachuca + prevPorGrupo.tepeji + prevPorGrupo.resto,
       ticketProm: prevTkCount > 0 ? prevTkVenta / prevTkCount : null,
       perdidos: prevPerdidos, perdidosTotal: prevPerdidosTotal,
     }
   }
 
   return {
-    comV, restoV, comN, restoN, total, totalN: comN + restoN, prev,
-    porMes, meses, porMesY, mesesY, vendedores, proveedores, clientes, topResto, sucursalesVenta,
+    porGrupo, total, totalN, prev,
+    porMesY, mesesY, vendedores, proveedores, clientes, topResto, sucursalesVenta,
     ticketProm, tickets: tkCount, perdidos, perdidosTotal, perdidosPct: perdidosTotal > 0 ? perdidos / perdidosTotal * 100 : 0,
   }
 }
@@ -240,9 +247,7 @@ export function computeProductAnalytics(fact, filtros) {
     if (lineaIdx >= 0 && li !== lineaIdx) continue
     if (tipoIdx >= 0 && ti !== tipoIdx) continue
     const vend = dims.vendedores[vi]
-    const esCom = vend.equipo === 'comercial'
-    if (equipo === 'comercial' && !esCom) continue
-    if (equipo === 'resto' && esCom) continue
+    if (equipo !== 'todos' && vend.equipo !== equipo) continue
     if (agenteSet && !agenteSet.has(vend.nombre)) continue
 
     let lm = lineaMap.get(li); if (!lm) { lm = { venta: 0, cantidad: 0, prods: new Map() }; lineaMap.set(li, lm) }
@@ -273,8 +278,7 @@ export function computeProductAnalytics(fact, filtros) {
     const ry = fo[0], rm = fo[1], si = fo[2], eb = fo[3], ci = fo[4], items = fo[6], vi = fo[7], ti = fo[8]
     if (mesesSet && !mesesSet.has(rm)) continue
     if (sucIdx >= 0 && si !== sucIdx) continue
-    if (equipo === 'comercial' && eb !== 0) continue
-    if (equipo === 'resto' && eb !== 1) continue
+    if (equipo !== 'todos' && GRUPOS[eb]?.id !== equipo) continue
     if (agenteSet && !agenteSet.has(dims.vendedores[vi].nombre)) continue
     if (tipoIdx >= 0 && ti !== tipoIdx) continue
     if (provIdx >= 0 || lineaIdx >= 0) {
@@ -297,9 +301,7 @@ export function computeProductAnalytics(fact, filtros) {
     if (lineaIdx >= 0 && li !== lineaIdx) continue
     if (tipoIdx >= 0 && ti !== tipoIdx) continue
     const vend = dims.vendedores[vi]
-    const esCom = vend.equipo === 'comercial'
-    if (equipo === 'comercial' && !esCom) continue
-    if (equipo === 'resto' && esCom) continue
+    if (equipo !== 'todos' && vend.equipo !== equipo) continue
     if (agenteSet && !agenteSet.has(vend.nombre)) continue
     const m = cliMontoY[ry]; if (!m) continue
     m.set(ci, (m.get(ci) || 0) + venta)
@@ -321,8 +323,7 @@ export function computeProductAnalytics(fact, filtros) {
     if (año === '2026' && ry !== 2026) continue
     if (mesesSet && !mesesSet.has(rm)) continue
     if (sucIdx >= 0 && si !== sucIdx) continue
-    if (equipo === 'comercial' && eb !== 0) continue
-    if (equipo === 'resto' && eb !== 1) continue
+    if (equipo !== 'todos' && GRUPOS[eb]?.id !== equipo) continue
     if (agenteSet && !agenteSet.has(dims.vendedores[vi].nombre)) continue
     if (tipoIdx >= 0 && ti !== tipoIdx) continue
     totalFoliosAlcance++
@@ -376,7 +377,6 @@ export function scopeLabel(filtros) {
   if (filtros.vgTipoDocumento && filtros.vgTipoDocumento !== 'todos') partes.push(filtros.vgTipoDocumento)
   if (filtros.vgAgentes && filtros.vgAgentes.length === 1) partes.push(filtros.vgAgentes[0])
   else if (filtros.vgAgentes && filtros.vgAgentes.length > 1) partes.push(`${filtros.vgAgentes.length} agentes`)
-  if (filtros.equipo === 'comercial') partes.push('Equipo comercial')
-  else if (filtros.equipo === 'resto') partes.push('El resto')
+  if (filtros.equipo && filtros.equipo !== 'todos') partes.push(grupoInfo(filtros.equipo).label)
   return partes.length ? partes.join(' · ') : 'Toda la empresa'
 }

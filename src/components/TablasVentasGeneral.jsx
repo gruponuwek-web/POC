@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { fmt } from '../utils/format.js'
-import { scopeLabel } from '../utils/ventasGeneral.js'
+import { scopeLabel, GRUPOS } from '../utils/ventasGeneral.js'
 
 function titulo(s) {
   return String(s || '').toLowerCase().replace(/\b\w/g, c => c.toUpperCase())
@@ -159,9 +159,11 @@ export default function TablasVentasGeneral({ g, filtros }) {
                 <td style={{ ...tdStyle, textAlign: 'center', fontWeight: 700, color: '#94a3b8', fontSize: 11 }}>{i + 1}</td>
                 <td style={{ ...tdStyle, fontWeight: 700, color: '#0f1f3d', maxWidth: 240, overflow: 'hidden', textOverflow: 'ellipsis' }}>{titulo(r.nombre)}</td>
                 <td style={tdStyle}>
-                  <span style={{ background: r.equipo === 'comercial' ? '#dbeafe' : '#fef3c7', color: r.equipo === 'comercial' ? '#1d4ed8' : '#b45309', padding: '2px 8px', borderRadius: 10, fontSize: 10.5, fontWeight: 700 }}>
-                    {r.equipo === 'comercial' ? 'Comercial' : 'Resto'}
-                  </span>
+                  {(() => { const gr = GRUPOS.find(x => x.id === r.equipo) || GRUPOS[GRUPOS.length - 1]; return (
+                    <span style={{ background: gr.bg, color: gr.fg, padding: '2px 8px', borderRadius: 10, fontSize: 10.5, fontWeight: 700 }}>
+                      {gr.short}
+                    </span>
+                  ) })()}
                 </td>
                 <td style={{ ...tdStyle, fontWeight: 700 }}>{fmt.moneda(r.venta)}</td>
                 <td style={{ ...tdStyle, textAlign: 'center' }}>{fmt.num(r.n)}</td>

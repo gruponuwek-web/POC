@@ -1,6 +1,6 @@
 import React from 'react'
 import { fmt } from '../utils/format.js'
-import { scopeLabel } from '../utils/ventasGeneral.js'
+import { scopeLabel, GRUPOS } from '../utils/ventasGeneral.js'
 import InfoTip from './InfoTip.jsx'
 
 const MESES3 = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']
@@ -21,18 +21,17 @@ function Card({ titulo, sub, info, children }) {
 export default function VentasGeneralCharts({ g, filtros }) {
   if (!g || !g.mesesY.length) return null
 
-  const equipo = filtros.equipo || 'todos'
-  const scoped = equipo === 'comercial' ? 'comercial' : equipo === 'resto' ? 'resto' : 'todos'
   const alcance = scopeLabel(filtros)
   const sufijo = alcance === 'Toda la empresa' ? 'Toda la empresa' : alcance
   const añoFiltro = filtros.vgAño || 'todos'
   const agrupado = añoFiltro === 'todos'
 
+  // porMesY ya viene filtrado por equipo desde computeVG (los grupos fuera de alcance quedan
+  // en 0), así que aquí solo sumamos los grupos.
   const yData = (d, year) => {
     const s = d && d[year]; if (!s) return { venta: 0, costo: 0, n: 0, mgPct: 0 }
-    const venta = (scoped === 'resto' ? 0 : s.vc) + (scoped === 'comercial' ? 0 : s.vr)
-    const costo = (scoped === 'resto' ? 0 : s.cc) + (scoped === 'comercial' ? 0 : s.cr)
-    const n = (scoped === 'resto' ? 0 : s.nc) + (scoped === 'comercial' ? 0 : s.nr)
+    let venta = 0, costo = 0, n = 0
+    GRUPOS.forEach(gr => { const x = s[gr.id]; venta += x.v; costo += x.c; n += x.n })
     return { venta, costo, n, mgPct: venta > 0 ? (venta - costo) / venta * 100 : 0 }
   }
 

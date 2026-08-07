@@ -1,6 +1,6 @@
 import React from 'react'
 import { fmt } from '../utils/format.js'
-import { scopeLabel } from '../utils/ventasGeneral.js'
+import { scopeLabel, GRUPOS } from '../utils/ventasGeneral.js'
 import InfoTip from './InfoTip.jsx'
 
 function titulo(s) {
@@ -54,20 +54,18 @@ export default function SeccionVentasGeneral({ g, filtros }) {
   if (!g || g.total <= 0) return null
 
   const equipo = filtros.equipo || 'todos'
-  const esComercial = equipo === 'comercial'
-  const esResto = equipo === 'resto'
-  const scoped = esComercial ? 'comercial' : esResto ? 'resto' : 'todos'
+  const scoped = GRUPOS.some(x => x.id === equipo) ? equipo : 'todos'
+  const grupoActual = GRUPOS.find(x => x.id === scoped)
   const alcance = scopeLabel(filtros)
   const filtrado = alcance !== 'Toda la empresa'
 
-  const pctCom = g.total > 0 ? g.comV / g.total * 100 : 0
-  const pctResto = 100 - pctCom
+  const pctDe = (id) => g.total > 0 ? g.porGrupo[id].v / g.total * 100 : 0
 
-  const subtitulo = esComercial ? 'Solo equipo comercial' : esResto ? 'Solo el resto (fuera del equipo comercial)' : 'Incluye equipo comercial + el resto'
+  const subtitulo = scoped === 'todos' ? 'Incluye todos los equipos' : `Solo ${grupoActual.label}`
 
   let insight
   if (scoped === 'todos') {
-    insight = <>El <strong>equipo comercial</strong> genera el <strong>{fmt.pct(pctCom)}</strong> de la venta; el <strong>{fmt.pct(pctResto)}</strong> ({fmt.moneda(g.restoV)}) proviene del <strong>resto</strong> de la operación.</>
+    insight = <>La venta se reparte: {GRUPOS.map((gr, i) => <React.Fragment key={gr.id}>{i > 0 ? ', ' : ''}<strong>{gr.label}</strong> {fmt.pct(pctDe(gr.id))}</React.Fragment>)}.</>
   } else {
     const topV = g.vendedores[0], topP = g.proveedores[0]
     insight = <>Alcance <strong>{alcance}</strong>: {fmt.moneda(g.total)} en {fmt.num(g.totalN)} operaciones{topV ? <> · Top vendedor: <strong>{titulo(topV.nombre)}</strong></> : null}{topP ? <> · Top proveedor: <strong>{titulo(topP.nombre)}</strong></> : null}.</>
@@ -91,21 +89,20 @@ export default function SeccionVentasGeneral({ g, filtros }) {
             <Tarjeta icon="💰" label="Venta Total Empresa" valor={g.total} borde="#1a6cf0"
               sub={`${fmt.num(g.totalN)} operaciones`}
               comp={g.prev && <Comparacion cur={g.total} prev={g.prev.total} />} />
-            <Tarjeta icon="👥" label="Equipo Comercial" valor={g.comV} borde="#0f1f3d"
-              sub={<>{fmt.num(g.comN)} operaciones · <span style={{ background: '#dbeafe', color: '#1d4ed8', padding: '1px 7px', borderRadius: 9, fontWeight: 700 }}>{fmt.pct(pctCom)}</span></>}
-              comp={g.prev && <Comparacion cur={g.comV} prev={g.prev.comV} />} />
-            <Tarjeta icon="🏭" label="El Resto" valor={g.restoV} borde="#f59e0b"
-              sub={<>{fmt.num(g.restoN)} operaciones · <span style={{ background: '#fef3c7', color: '#b45309', padding: '1px 7px', borderRadius: 9, fontWeight: 700 }}>{fmt.pct(pctResto)}</span></>}
-              comp={g.prev && <Comparacion cur={g.restoV} prev={g.prev.restoV} />} />
+            {GRUPOS.map(gr => (
+              <Tarjeta key={gr.id} icon={gr.id === 'resto' ? '🏭' : '👥'} label={gr.label} valor={g.porGrupo[gr.id].v} borde={gr.color}
+                sub={<>{fmt.num(g.porGrupo[gr.id].n)} operaciones · <span style={{ background: gr.bg, color: gr.fg, padding: '1px 7px', borderRadius: 9, fontWeight: 700 }}>{fmt.pct(pctDe(gr.id))}</span></>}
+                comp={g.prev && <Comparacion cur={g.porGrupo[gr.id].v} prev={g.prev.porGrupo[gr.id]} />} />
+            ))}
           </div>
         ) : (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(200px,1fr))', gap: 12, marginBottom: 16 }}>
             <Tarjeta
-              icon={esComercial ? '👥' : '🏭'}
-              label={esComercial ? 'Venta Equipo Comercial' : 'Venta El Resto'}
-              valor={esComercial ? g.comV : g.restoV} borde={esComercial ? '#0f1f3d' : '#f59e0b'}
-              sub={<>{fmt.num(esComercial ? g.comN : g.restoN)} operaciones · <span style={{ background: esComercial ? '#dbeafe' : '#fef3c7', color: esComercial ? '#1d4ed8' : '#b45309', padding: '1px 7px', borderRadius: 9, fontWeight: 700 }}>{fmt.pct(esComercial ? pctCom : pctResto)} del total</span></>}
-              comp={g.prev && <Comparacion cur={esComercial ? g.comV : g.restoV} prev={esComercial ? g.prev.comV : g.prev.restoV} />} />
+              icon={grupoActual.id === 'resto' ? '🏭' : '👥'}
+              label={`Venta ${grupoActual.label}`}
+              valor={g.porGrupo[grupoActual.id].v} borde={grupoActual.color}
+              sub={<>{fmt.num(g.porGrupo[grupoActual.id].n)} operaciones · <span style={{ background: grupoActual.bg, color: grupoActual.fg, padding: '1px 7px', borderRadius: 9, fontWeight: 700 }}>{fmt.pct(pctDe(grupoActual.id))} del total</span></>}
+              comp={g.prev && <Comparacion cur={g.porGrupo[grupoActual.id].v} prev={g.prev.porGrupo[grupoActual.id]} />} />
           </div>
         )}
 
@@ -127,12 +124,14 @@ export default function SeccionVentasGeneral({ g, filtros }) {
           <div style={{ background: '#fff', border: '1.5px solid #e2e8f0', borderRadius: 9, padding: '12px 14px' }}>
             <div style={{ fontSize: 10.5, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '.4px', marginBottom: 8 }}>Participación de la venta</div>
             <div style={{ display: 'flex', height: 26, borderRadius: 6, overflow: 'hidden', fontSize: 11, fontWeight: 700, color: '#fff' }}>
-              {pctCom > 0 && <div style={{ width: `${pctCom}%`, background: '#1a6cf0', display: 'flex', alignItems: 'center', justifyContent: 'center', minWidth: 40 }}>{fmt.pct(pctCom)}</div>}
-              {pctResto > 0 && <div style={{ width: `${pctResto}%`, background: '#f59e0b', display: 'flex', alignItems: 'center', justifyContent: 'center', minWidth: 40 }}>{fmt.pct(pctResto)}</div>}
+              {GRUPOS.map(gr => pctDe(gr.id) > 0 && (
+                <div key={gr.id} style={{ width: `${pctDe(gr.id)}%`, background: gr.color, display: 'flex', alignItems: 'center', justifyContent: 'center', minWidth: 40 }}>{fmt.pct(pctDe(gr.id))}</div>
+              ))}
             </div>
             <div style={{ display: 'flex', gap: 16, marginTop: 8, fontSize: 11, color: '#64748b' }}>
-              <span><span style={{ display: 'inline-block', width: 10, height: 10, background: '#1a6cf0', borderRadius: 2, marginRight: 5 }} />Equipo comercial</span>
-              <span><span style={{ display: 'inline-block', width: 10, height: 10, background: '#f59e0b', borderRadius: 2, marginRight: 5 }} />El resto</span>
+              {GRUPOS.map(gr => (
+                <span key={gr.id}><span style={{ display: 'inline-block', width: 10, height: 10, background: gr.color, borderRadius: 2, marginRight: 5 }} />{gr.label}</span>
+              ))}
             </div>
           </div>
         )}
